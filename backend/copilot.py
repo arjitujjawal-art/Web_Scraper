@@ -17,78 +17,7 @@ except ImportError:
 # ==========================================
 # 1. KNOWLEDGE BASE: LINKEDIN SCRAPED DATA
 # ==========================================
-LINKEDIN_JOBS_DB = [
-    {
-        "id": "lk_job_1",
-        "title": "Senior AI Engineer (LLMs & Agents)",
-        "company": "Aura AI",
-        "location": "Bengaluru",
-        "domain": "AI/ML",
-        "source": "LinkedIn Jobs",
-        "type": "Full-time (Remote)",
-        "salary_range": "₹28,00,000 - ₹36,00,000 per annum",
-        "extracted_date": "2026-08-20",
-        "summary": "Aura AI is hiring an AI Engineer to lead the development of agentic workflows and multi-agent RAG systems. Requires 3+ years of Python and PyTorch experience.",
-        "skills_required": ["Python", "PyTorch", "LLMs", "RAG", "Agentic Systems"],
-        "url": "https://www.linkedin.com/jobs/view/aura-ai-engineer-bengaluru"
-    },
-    {
-        "id": "lk_job_2",
-        "title": "Frontend Engineer (React & Tailwind)",
-        "company": "Zeta FinTech",
-        "location": "Pune",
-        "domain": "FinTech",
-        "source": "LinkedIn Jobs",
-        "type": "Full-time (Hybrid)",
-        "salary_range": "₹12,00,000 - ₹18,00,000 per annum",
-        "extracted_date": "2026-08-18",
-        "summary": "Zeta FinTech is looking for a frontend developer to build responsive banking dashboards. Strong knowledge of React, Tailwind CSS, and TypeScript is required.",
-        "skills_required": ["React", "Tailwind CSS", "TypeScript", "JavaScript", "FinTech Dashboards"],
-        "url": "https://www.linkedin.com/jobs/view/zeta-fintech-frontend-pune"
-    },
-    {
-        "id": "lk_job_3",
-        "title": "Machine Learning Research Scientist",
-        "company": "DeepScale Labs",
-        "location": "Bengaluru",
-        "domain": "AI/ML",
-        "source": "LinkedIn Jobs",
-        "type": "Full-time (On-site)",
-        "salary_range": "₹32,00,000 - ₹42,00,000 per annum",
-        "extracted_date": "2026-08-21",
-        "summary": "DeepScale Labs is seeking an ML researcher to work on vision-language models and spatial intelligence. Prior publications at NeurIPS/CVPR are a strong plus.",
-        "skills_required": ["Machine Learning", "Computer Vision", "Multimodal models", "PyTorch", "Research"],
-        "url": "https://www.linkedin.com/jobs/view/deepscale-labs-ml-researcher"
-    },
-    {
-        "id": "lk_job_4",
-        "title": "DevOps Engineer (Cloud Infrastructure)",
-        "company": "CloudCore Solutions",
-        "location": "Hyderabad",
-        "domain": "Cloud",
-        "source": "LinkedIn Jobs",
-        "type": "Contract (Remote)",
-        "salary_range": "₹15,00,000 - ₹22,00,000 per annum",
-        "extracted_date": "2026-08-19",
-        "summary": "CloudCore is seeking a DevOps engineer to optimize Kubernetes clusters and manage terraform infrastructures. Experience with AWS is mandatory.",
-        "skills_required": ["Kubernetes", "Docker", "Terraform", "AWS", "CI/CD"],
-        "url": "https://www.linkedin.com/jobs/view/cloudcore-devops-hyderabad"
-    },
-    {
-        "id": "lk_job_5",
-        "title": "Full Stack Developer",
-        "company": "Nexus Health",
-        "location": "Mumbai",
-        "domain": "HealthTech",
-        "source": "LinkedIn Jobs",
-        "type": "Full-time (Remote)",
-        "salary_range": "₹18,00,000 - ₹24,00,000 per annum",
-        "extracted_date": "2026-08-20",
-        "summary": "Nexus Health is building a patient care platform and is looking for a developer experienced in Django and React. Knowledge of Docker is required.",
-        "skills_required": ["Python", "Django", "React", "Docker", "PostgreSQL"],
-        "url": "https://www.linkedin.com/jobs/view/nexus-health-fullstack-mumbai"
-    }
-]
+# (No hardcoded database. Data is loaded dynamically in real-time from scraped_linkedin_data.json)
 
 # ==========================================
 # 2. KNOWLEDGE BASE: WEBSCRAPER USER GUIDE
@@ -150,37 +79,47 @@ class RAGRetriever:
         self._build_index()
 
     def _build_index(self):
+        self.documents = []
+        
+        # Load from file if it exists
+        linkedin_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scraped_linkedin_data.json")
+        scraped_jobs = []
+        if os.path.exists(linkedin_file):
+            try:
+                with open(linkedin_file, "r", encoding="utf-8") as f:
+                    scraped_jobs = json.load(f)
+                logger.info(f"Loaded {len(scraped_jobs)} real-time scraped jobs from {linkedin_file}")
+            except Exception as e:
+                logger.error(f"Error loading scraped JSON file {linkedin_file}: {e}")
+        else:
+            logger.warning(f"Scraped data file not found at {linkedin_file}. Please run the web scraper to populate it.")
+
+
         # Index LinkedIn jobs
-        for job in LINKEDIN_JOBS_DB:
+        for job in scraped_jobs:
             text = (
-                f"Source: {job['source']}\n"
-                f"Job ID: {job['id']}\n"
-                f"Title: {job['title']}\n"
-                f"Company: {job['company']}\n"
-                f"Location: {job['location']}\n"
-                f"Domain: {job['domain']}\n"
-                f"Type: {job['type']}\n"
-                f"Salary: {job['salary_range']}\n"
-                f"Summary: {job['summary']}\n"
-                f"Skills: {', '.join(job['skills_required'])}\n"
-                f"URL: {job['url']}\n"
+                f"Source: {job.get('source', 'LinkedIn Jobs')}\n"
+                f"Job ID: {job.get('id', 'N/A')}\n"
+                f"Title: {job.get('title', 'N/A')}\n"
+                f"Company: {job.get('company', 'N/A')}\n"
+                f"Location: {job.get('location', 'N/A')}\n"
+                f"Domain: {job.get('domain', 'N/A')}\n"
+                f"Type: {job.get('type', 'N/A')}\n"
+                f"Salary: {job.get('salary_range', 'N/A')}\n"
+                f"Summary: {job.get('summary', 'N/A')}\n"
+                f"Skills: {', '.join(job.get('skills_required', [])) if isinstance(job.get('skills_required'), list) else job.get('skills_required', 'N/A')}\n"
+                f"URL: {job.get('url', 'N/A')}\n"
             )
             self.documents.append({
                 "type": "linkedin_job",
-                "city": job["location"],
-                "domain": job["domain"],
+                "city": job.get("location"),
+                "domain": job.get("domain"),
                 "text": text
             })
         
-        # Index Webscraper User Guide
-        for guide in WEBSCRAPER_USER_GUIDE:
-            text = f"Guide Section: {guide['section']}\nContent: {guide['content']}\n"
-            self.documents.append({
-                "type": "user_guide",
-                "city": None,
-                "domain": None,
-                "text": text
-            })
+        # No longer indexing user guide inside RAG index.
+        # User guide is handled statically in the system prompt.
+
 
     def retrieve(self, query: str, top_k: int = 3) -> List[Dict[str, Any]]:
         """Retrieves top_k document chunks based on simple keyword token overlap (BM25-like matching)."""
@@ -412,6 +351,9 @@ class SignalCopilot:
 
     def process_chat(self, user_message: str) -> Dict[str, Any]:
         """Processes the chat query through RAG pipeline, retrieving context and calling the LLM."""
+        # Re-build/reload index in real-time to get fresh scraper results
+        self.retriever._build_index()
+        
         # 1. Retrieve relevant context
         retrieved = self.retriever.retrieve(user_message, top_k=3)
         
@@ -426,19 +368,28 @@ class SignalCopilot:
             return self._offline_fallback(user_message, retrieved, context_str)
 
         try:
+            # Static User Guide knowledge (Non-RAG source)
+            guide_knowledge = (
+                "WEBSCRAPER USER GUIDE & SITE INSTRUCTIONS:\n"
+                "- Signal Atlas has two views: (1) The Convergence Map Dashboard displaying pulsing opportunity hubs based on job/expansion signals, and (2) The Scraper Health Monitor showing active web scrapers.\n"
+                "- Using Bright Data Scraper Studio: To create a custom scraper, run `bdata scraper create <target_url> --name <collector_name> \"<instructions>\"`.\n"
+                "- Running Scrapers via CLI: Execute data collection with `bdata scraper run --urls \"<target_url>\" --name \"<collector_id>\" --json -o scraped_linkedin_data.json`.\n"
+                "- Diagnosing Scraper Breakages: Check Scraper Health Monitor. If Field Fill Rate (FFR) < 80%, status is DEGRADED (🔴), indicating broken DOM selectors.\n"
+                "- Executing Scraper Self-Healing: Run `bdata scraper heal <collector_id> \"<feedback_on_selectors>\"` to prompt Scraper Studio AI to repair selectors, verify, and run `bdata scraper approve <collector_id>` to redeploy.\n"
+            )
+
             # RAG System Prompt
             system_prompt = (
-                "You are Signal Copilot, the AI assistant for Signal Atlas. "
-                "You answer questions regarding scraped LinkedIn jobs, companies, or the webscraper user guide. "
-                "\n\n"
+                "You are Signal Copilot, the AI assistant for Signal Atlas.\n\n"
                 "CRITICAL INSTRUCTIONS:\n"
-                "1. Answer the user query strictly using the provided context chunks below.\n"
-                "2. Do NOT invent, assume, or hallucinate any details. If the context does not contain the answer, "
-                "you MUST respond with: 'I cannot find this information in the scraped LinkedIn database or user guide.'\n"
-                "3. If the user asks about how to use the website, how Scraper Studio works, or how to run/heal scrapers, "
-                "use the provided 'Guide Section' context and explain the instructions clearly.\n"
-                "4. When listing jobs, always include the Company, Location, Salary Range, and a direct URL if available.\n"
-                "5. Keep responses concise, helpful, and formatted in clean Markdown."
+                "1. If the user asks about how to use the website, how Scraper Studio works, or how to run/heal scrapers, "
+                "answer statically using the WEBSCRAPER USER GUIDE provided below. You do not need the RAG context to answer these guide-specific questions.\n"
+                "2. For all queries about LinkedIn jobs, companies, salaries, or skills, you must strictly and ONLY answer using the provided RAG Context chunks. "
+                "Do NOT invent, assume, or extrapolate any details. If the RAG context does not contain the answer, you must respond with: "
+                "'I cannot find this information in the scraped LinkedIn database.'\n"
+                "3. When listing jobs, always include the Company, Location, Salary Range, and a direct URL if available.\n"
+                "4. Keep responses concise, helpful, and formatted in clean Markdown.\n\n"
+                f"{guide_knowledge}"
             )
 
             # Combined prompt
