@@ -1,17 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Rocket, Sparkles, Volume2, VolumeX, Globe, Compass } from 'lucide-react';
+import { Rocket, Sparkles, Globe, Compass } from 'lucide-react';
 
 interface LandingViewProps {
+  onBegin?: () => void;
   onLaunch: (city?: 'delhi' | 'sf') => void;
 }
 
-export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+export const LandingView: React.FC<LandingViewProps> = ({ onBegin, onLaunch }) => {
   const [animState, setAnimState] = useState<'idle' | 'focus' | 'lock' | 'expand'>('idle');
   const [lockedHub, setLockedHub] = useState<'delhi' | 'sf' | null>(null);
   const [cardTransform, setCardTransform] = useState<string>('');
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const globeCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const starfieldCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const pinSfRef = useRef<HTMLButtonElement | null>(null);
@@ -20,25 +19,12 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
   const heroContentRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
 
-  const toggleAudio = () => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio('/audio/spider-theme.mp3');
-      audioRef.current.loop = true;
-    }
-    if (isPlayingAudio) {
-      audioRef.current.pause();
-      setIsPlayingAudio(false);
-    } else {
-      audioRef.current.play().then(() => {
-        setIsPlayingAudio(true);
-      }).catch((e) => {
-        console.warn('Audio autoplay blocked', e);
-      });
-    }
-  };
-
   const handleStart = (city?: 'delhi' | 'sf') => {
     if (animState !== 'idle') return;
+
+    if (!city && onBegin) {
+      onBegin();
+    }
 
     if (city) setLockedHub(city);
 
@@ -331,18 +317,10 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
 
         <div className="flex items-center gap-3">
           <button
-            onClick={toggleAudio}
-            className="p-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 transition-all active:scale-95"
-            title={isPlayingAudio ? "Mute Background Track" : "Play Spidey Theme Track"}
-          >
-            {isPlayingAudio ? <Volume2 className="w-4 h-4 text-[#ff4d55]" /> : <VolumeX className="w-4 h-4 text-zinc-400" />}
-          </button>
-
-          <button
             onClick={() => handleStart()}
             className="font-bold text-xs tracking-wider text-[#ff4d55] bg-[#ff4d55]/10 border border-[#ff4d55]/30 px-5 py-2.5 rounded-full shadow-[0_0_18px_rgba(239,68,68,0.25)] hover:bg-[#ff4d55] hover:text-white hover:shadow-[0_0_28px_rgba(239,68,68,0.6)] transition-all uppercase flex items-center gap-2 active:scale-95"
           >
-            <span>LAUNCH TRACKER</span>
+            <span>LET'S BEGIN</span>
             <Rocket className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -378,7 +356,7 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
                 onClick={() => handleStart()}
                 className="group flex items-center justify-center gap-3 bg-gradient-to-r from-[#dc2626] via-[#ff3b45] to-[#98cdf2] text-white font-bold text-sm sm:text-base tracking-wider uppercase px-9 py-4 rounded-full shadow-[0_0_30px_rgba(220,38,38,0.6)] hover:shadow-[0_0_45px_rgba(239,68,68,0.9)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-300"
               >
-                <span>LET'S START</span>
+                <span>LET'S BEGIN</span>
                 <Compass className="w-5 h-5 group-hover:rotate-45 transition-transform" />
               </button>
             </div>

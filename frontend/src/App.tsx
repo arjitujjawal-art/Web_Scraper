@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { apiClient, getCoordinatesForLocation } from './api/client';
 import type { OpportunityZone, SignalSummary, JobPosting, AdHocScrapeResult, CopilotCitation, Domain } from './api/types';
 import { LandingView } from './components/landing/LandingView';
@@ -39,6 +39,32 @@ export const App: React.FC = () => {
   // Navigation view state machine: 'landing' -> 'hub-map' -> 'dashboard'
   const [view, setView] = useState<'landing' | 'hub-map' | 'dashboard'>('landing');
   const [activeTab, setActiveTab] = useState<string>('radar');
+
+  // Background Audio Controller for Landing -> Hub Map transition
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const startMusic = () => {
+    try {
+      if (!audioRef.current) {
+        audioRef.current = new Audio('/audio/spider-theme.mp3');
+        audioRef.current.loop = true;
+      }
+      audioRef.current.play().catch((e) => console.warn('Audio autoplay blocked:', e));
+    } catch (e) {
+      console.warn('Audio init error:', e);
+    }
+  };
+
+  const stopMusic = () => {
+    try {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    } catch (e) {
+      console.warn('Audio pause error:', e);
+    }
+  };
 
   // Map Size / Mode state: 'standard' (480px) | 'expanded' (680px) | 'fullscreen' (100vh)
   const [mapMode, setMapMode] = useState<'standard' | 'expanded' | 'fullscreen'>('standard');
@@ -174,9 +200,18 @@ export const App: React.FC = () => {
   if (view === 'landing') {
     return (
       <LandingView
+        onBegin={() => {
+          startMusic();
+        }}
         onLaunch={(city) => {
-          if (city) setActiveCity(city);
-          setView('hub-map');
+          if (city) {
+            stopMusic();
+            setActiveCity(city);
+            setView('dashboard');
+          } else {
+            startMusic();
+            setView('hub-map');
+          }
         }}
       />
     );
@@ -189,10 +224,14 @@ export const App: React.FC = () => {
         initialCity={activeCity}
         jobs={jobs}
         onSelectCityAndLaunch={(city) => {
+          stopMusic();
           setActiveCity(city);
           setView('dashboard');
         }}
-        onBackToLanding={() => setView('landing')}
+        onBackToLanding={() => {
+          stopMusic();
+          setView('landing');
+        }}
       />
     );
   }
