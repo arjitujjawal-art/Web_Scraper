@@ -39,6 +39,84 @@
     "url": "https://www.linkedin.com/jobs/view/39827103"
   },
   {
+    "id": "job_delhi_ai_004",
+    "source": "LinkedIn Jobs",
+    "title": "Senior Computer Vision Specialist",
+    "company": "VisionNoida AI Labs",
+    "location": "Sector 62, Noida, Delhi NCR",
+    "domain": "AI/ML",
+    "type": "Full-time",
+    "salary_range": "₹20,00,000 - ₹28,00,000 PA",
+    "summary": "Develop real-time edge vision inference for industrial quality inspection and autonomous drones.",
+    "skills_required": ["Python", "OpenCV", "TensorRT", "YOLOv10", "PyTorch"],
+    "url": "https://www.linkedin.com/jobs/view/39827107"
+  },
+  {
+    "id": "job_delhi_ai_005",
+    "source": "Fellowships & Grants",
+    "title": "Generative AI Postdoctoral Fellowship",
+    "company": "Noida Technology Research Hub",
+    "location": "Noida, Delhi NCR",
+    "domain": "AI/ML",
+    "type": "Fellowship",
+    "salary_range": "₹12,00,000 - ₹16,00,000 PA + Research Grant",
+    "summary": "Funded 2-year research fellowship focused on sparse mixture-of-experts model efficiency.",
+    "skills_required": ["PyTorch", "Deep Learning Research", "Mathematical Modeling", "CUDA"],
+    "url": "https://www.linkedin.com/jobs/view/39827108"
+  },
+  {
+    "id": "job_delhi_greentech_001",
+    "source": "LinkedIn Jobs",
+    "title": "EV Battery Systems Architect",
+    "company": "GreenPower Mobility",
+    "location": "Sector 125, Noida, Delhi NCR",
+    "domain": "Climate & Energy",
+    "type": "Full-time",
+    "salary_range": "₹22,00,000 - ₹30,00,000 PA",
+    "summary": "Design battery management systems (BMS) and thermal simulation models for high-capacity EV packs.",
+    "skills_required": ["MATLAB", "Simulink", "BMS", "Battery Chemistry", "Embedded C"],
+    "url": "https://www.linkedin.com/jobs/view/39827105"
+  },
+  {
+    "id": "job_delhi_greentech_002",
+    "source": "LinkedIn Jobs",
+    "title": "Grid Storage Power Electronics Lead",
+    "company": "Noida CleanGrid Solutions",
+    "location": "Sector 132, Noida, Delhi NCR",
+    "domain": "Climate & Energy",
+    "type": "Full-time",
+    "salary_range": "₹24,00,000 - ₹34,00,000 PA",
+    "summary": "Design high-voltage inverters and microgrid synchronization controllers for renewable solar farms.",
+    "skills_required": ["Power Electronics", "Inverter Design", "Microgrid", "Hardware Simulation"],
+    "url": "https://www.linkedin.com/jobs/view/39827109"
+  },
+  {
+    "id": "job_delhi_semi_001",
+    "source": "LinkedIn Jobs",
+    "title": "VLSI Physical Design Engineer",
+    "company": "IndoSilicon Design Labs",
+    "location": "Sector 62, Noida, Delhi NCR",
+    "domain": "Semiconductors",
+    "type": "Full-time",
+    "salary_range": "₹18,00,000 - ₹26,00,000 PA",
+    "summary": "Handle RTL-to-GDSII physical implementation, clock tree synthesis, and timing closure on 5nm nodes.",
+    "skills_required": ["Cadence Innovus", "Synopsys PrimeTime", "Static Timing Analysis", "Verilog"],
+    "url": "https://www.linkedin.com/jobs/view/39827110"
+  },
+  {
+    "id": "job_delhi_cyber_001",
+    "source": "LinkedIn Jobs",
+    "title": "Cloud Threat Intelligence Analyst",
+    "company": "SecureNoida Defense Systems",
+    "location": "Noida, Delhi NCR",
+    "domain": "Cybersecurity",
+    "type": "Full-time",
+    "salary_range": "₹16,00,000 - ₹22,00,000 PA",
+    "summary": "Analyze adversary tactics, build zero-trust identity pipelines, and monitor telemetry across AWS/GCP clusters.",
+    "skills_required": ["SIEM", "Threat Modeling", "Python", "Kubernetes Security", "Zero Trust"],
+    "url": "https://www.linkedin.com/jobs/view/39827111"
+  },
+  {
     "id": "job_delhi_robotics_001",
     "source": "LinkedIn Jobs",
     "title": "Robotics Software Engineer",
@@ -52,17 +130,17 @@
     "url": "https://www.linkedin.com/jobs/view/39827104"
   },
   {
-    "id": "job_delhi_greentech_001",
+    "id": "job_delhi_robotics_002",
     "source": "LinkedIn Jobs",
-    "title": "EV Battery Systems Architect",
-    "company": "GreenPower Mobility",
-    "location": "Noida, Delhi NCR",
-    "domain": "GreenTech",
+    "title": "Autonomous Drone Systems Engineer",
+    "company": "AeroRobotics Noida",
+    "location": "Sector 63, Noida, Delhi NCR",
+    "domain": "Robotics",
     "type": "Full-time",
-    "salary_range": "₹22,00,000 - ₹30,00,000 PA",
-    "summary": "Design battery management systems (BMS) and thermal simulation models for high-capacity EV packs.",
-    "skills_required": ["MATLAB", "Simulink", "BMS", "Battery Chemistry", "Embedded C"],
-    "url": "https://www.linkedin.com/jobs/view/39827105"
+    "salary_range": "₹17,00,000 - ₹24,00,000 PA",
+    "summary": "Implement visual odometry and PX4 flight control firmware for mapping UAVs.",
+    "skills_required": ["PX4", "C++", "ROS2", "Drone Navigation", "Embedded Linux"],
+    "url": "https://www.linkedin.com/jobs/view/39827112"
   },
   {
     "id": "job_delhi_fintech_001",
@@ -76,6 +154,19 @@
     "summary": "Architect low-latency distributed ledger and transaction processing backends handling millions of payments.",
     "skills_required": ["Go", "Kafka", "PostgreSQL", "Distributed Systems", "Kubernetes"],
     "url": "https://www.linkedin.com/jobs/view/39827106"
+  },
+  {
+    "id": "job_delhi_biotech_001",
+    "source": "Fellowships & Grants",
+    "title": "Bioinformatics Research Fellow",
+    "company": "Delhi Genomics Consortium",
+    "location": "Hauz Khas, New Delhi",
+    "domain": "Biotech",
+    "type": "Fellowship",
+    "salary_range": "₹14,00,000 - ₹18,00,000 PA + Grant",
+    "summary": "Conduct computational sequence analysis on rare disease variants using high-throughput sequencing pipelines.",
+    "skills_required": ["Python", "Nextflow", "R", "Bioinformatics", "Genomics"],
+    "url": "https://www.linkedin.com/jobs/view/39827113"
   },
   {
     "id": "job_sf_ai_001",
@@ -102,6 +193,19 @@
     "summary": "Develop RLHF, DPO, and mechanistic interpretability probes to detect model sycophancy and hallucinations.",
     "skills_required": ["Python", "PyTorch", "RLHF", "Interpretability", "JAX"],
     "url": "https://www.linkedin.com/jobs/view/39827202"
+  },
+  {
+    "id": "job_sf_ai_003",
+    "source": "Fellowships & Grants",
+    "title": "Berkeley Postdoctoral Fellow in Embodied AI",
+    "company": "Berkeley AI Research (BAIR)",
+    "location": "Berkeley, CA",
+    "domain": "AI/ML",
+    "type": "Fellowship",
+    "salary_range": "$95,000 - $120,000 + Grant",
+    "summary": "Conduct groundbreaking research at the intersection of vision-language-action foundation models and manipulation.",
+    "skills_required": ["PyTorch", "Robotics Learning", "Diffusion Models", "Transformers"],
+    "url": "https://www.linkedin.com/jobs/view/39827207"
   },
   {
     "id": "job_sf_robotics_001",
@@ -135,7 +239,7 @@
     "title": "Senior Climate Modeling Software Engineer",
     "company": "TerraScope Climate Labs",
     "location": "San Francisco",
-    "domain": "GreenTech",
+    "domain": "Climate & Energy",
     "type": "Full-time",
     "salary_range": "$175,000 - $225,000",
     "summary": "Develop scalable geospatial simulations for planetary carbon capture and carbon offset verification.",
@@ -154,5 +258,18 @@
     "summary": "Design specialized tensor processing units and low-power matrix multiplication accelerators for edge devices.",
     "skills_required": ["SystemVerilog", "Chisel", "Computer Architecture", "VMM", "ASIC Design"],
     "url": "https://www.linkedin.com/jobs/view/39827206"
+  },
+  {
+    "id": "job_sf_quantum_001",
+    "source": "Fellowships & Grants",
+    "title": "Quantum Photonics Postdoctoral Fellow",
+    "company": "Stanford Quantum Initiative",
+    "location": "Palo Alto, CA",
+    "domain": "Quantum",
+    "type": "Fellowship",
+    "salary_range": "$100,000 - $130,000 + Lab Grant",
+    "summary": "Research room-temperature integrated photonic quantum interconnects and entanglement distribution.",
+    "skills_required": ["Quantum Optics", "Photonics", "Python", "Lumerical", "LabVIEW"],
+    "url": "https://www.linkedin.com/jobs/view/39827208"
   }
 ]
