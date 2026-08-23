@@ -557,6 +557,29 @@ mindmap
       Honesty section
       Judge-reproducible demo
 ```
+---
+
+## Documentation map
+
+| Read this | If you are |
+|---|---|
+| [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md) + [`examples/sample_signals.json`](examples/sample_signals.json) | building the map frontend |
+| [`docs/COPILOT_BRIEF.md`](docs/COPILOT_BRIEF.md) | building the Signal Copilot |
+| [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) | reproducing the self-healing run |
+| [`docs/adr/`](docs/adr/) | asking why a decision went the way it did |
+| [`EXECUTION.md`](EXECUTION.md) | picking the work up, or checking a verified fact |
+
+The four ADRs, each written at the point the obvious answer turned out to be wrong:
+
+1. [Async CLI jobs](docs/adr/0001-async-cli-jobs.md) — why admin endpoints return `202` instead of
+   a result
+2. [argv subprocess, no shell](docs/adr/0002-argv-subprocess-no-shell.md) — why a heal prompt
+   containing `rm -rf /` is harmless
+3. [Source-concentration cap math](docs/adr/0003-source-concentration-cap-math.md) — why the
+   obvious cap does not cap
+4. [Manual healing only](docs/adr/0004-manual-healing-only.md) — why `--auto-approve` appears
+   nowhere in this codebase
+
 
 ## 👥 Team & Links
 
