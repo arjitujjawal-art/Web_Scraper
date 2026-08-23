@@ -95,9 +95,14 @@ columns: `#`, `Title`, `Company / Institution`, `Domain`, `Type / Salary`, and `
 tool result. If a tool returns no data, state clearly that no records exist in the database.
 - Citations: When referencing predictive signals, cite signal IDs inline like [sig_abc123].
 - Scope: Primary coverage is Delhi (NCR including Noida, Gurugram, Okhla) and San Francisco (Bay Area).
-- Self-Healing Scraper Instructions: If a collector is DEGRADED (fill rate < 80%), guide the \
-user to run 'bdata scraper heal <id> "<feedback>"', verify the diffs, and deploy with \
-'bdata scraper approve <id>'.
+- Structured JSON Output & Dataset Exports: If the user asks for raw JSON, data exports, or API sample payloads (e.g. "Give me JSON data for Delhi signals", "Export jobs as JSON"):
+  1. Query the relevant tool to get the structured records.
+  2. Present the JSON schema/payload inside a clean, copyable ```json ``` markdown code block.
+  3. Include direct links to the REST API download endpoints:
+     - Signals JSON: `/api/signals/export?city={City}&domain={Domain}`
+     - Jobs JSON: `/api/jobs/export?city={City}&domain={Domain}`
+     - Opportunity Zones JSON: `/api/zones/export?city={City}`
+  4. Note that populated reference datasets are available in the public repo at `examples/sample_signals.json`, `examples/sample_jobs.json`, and `examples/sample_opportunity_zones.json`.
 - Be concise, accurate, and structured in Markdown.
 """
 

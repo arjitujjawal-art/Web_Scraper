@@ -1,0 +1,699 @@
+{
+  "items": [
+    {
+      "zone_id": "delhi-ai-ml",
+      "city": "Delhi",
+      "domain": "AI/ML",
+      "score": 7.198,
+      "confidence": "HIGH",
+      "coordinates": {
+        "latitude": 28.5494,
+        "longitude": 77.2001
+      },
+      "signal_count": 8,
+      "deduplicated_count": 6,
+      "distinct_source_types": 4,
+      "was_capped": true,
+      "contributions": [
+        {
+          "source_type": "university_research",
+          "raw": 2.648,
+          "capped": 2.648,
+          "was_capped": true
+        },
+        {
+          "source_type": "startup_newsroom",
+          "raw": 1.706,
+          "capped": 1.706,
+          "was_capped": false
+        },
+        {
+          "source_type": "incubator_news",
+          "raw": 1.697,
+          "capped": 1.697,
+          "was_capped": false
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 1.147,
+          "capped": 1.147,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_delhi_ai-ml_fcbcc7b545",
+        "sig_delhi_ai-ml_54313dfd4a",
+        "sig_delhi_ai-ml_2760d3b2cc",
+        "sig_delhi_ai-ml_b0434b4f62",
+        "sig_delhi_ai-ml_2f187548c8",
+        "sig_delhi_ai-ml_42dcfc1ecd"
+      ]
+    },
+    {
+      "zone_id": "san-francisco-ai-ml",
+      "city": "San Francisco",
+      "domain": "AI/ML",
+      "score": 5.66,
+      "confidence": "HIGH",
+      "coordinates": {
+        "latitude": 37.8715,
+        "longitude": -122.273
+      },
+      "signal_count": 4,
+      "deduplicated_count": 4,
+      "distinct_source_types": 4,
+      "was_capped": false,
+      "contributions": [
+        {
+          "source_type": "incubator_news",
+          "raw": 2.303,
+          "capped": 2.303,
+          "was_capped": false
+        },
+        {
+          "source_type": "startup_newsroom",
+          "raw": 1.389,
+          "capped": 1.389,
+          "was_capped": false
+        },
+        {
+          "source_type": "university_research",
+          "raw": 1.029,
+          "capped": 1.029,
+          "was_capped": false
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 0.938,
+          "capped": 0.938,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_san-francisco_ai-ml_af11187816",
+        "sig_san-francisco_ai-ml_d337d947df",
+        "sig_san-francisco_ai-ml_b2a17da6d0",
+        "sig_san-francisco_ai-ml_d33f674324"
+      ]
+    },
+    {
+      "zone_id": "san-francisco-robotics",
+      "city": "San Francisco",
+      "domain": "Robotics",
+      "score": 5.03,
+      "confidence": "HIGH",
+      "coordinates": {
+        "latitude": 37.8715,
+        "longitude": -122.273
+      },
+      "signal_count": 4,
+      "deduplicated_count": 4,
+      "distinct_source_types": 4,
+      "was_capped": false,
+      "contributions": [
+        {
+          "source_type": "startup_newsroom",
+          "raw": 2.546,
+          "capped": 2.546,
+          "was_capped": false
+        },
+        {
+          "source_type": "incubator_news",
+          "raw": 1.706,
+          "capped": 1.706,
+          "was_capped": false
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 0.569,
+          "capped": 0.569,
+          "was_capped": false
+        },
+        {
+          "source_type": "university_research",
+          "raw": 0.209,
+          "capped": 0.209,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_san-francisco_robotics_72a1343f6d",
+        "sig_san-francisco_robotics_25bd6a61e3",
+        "sig_san-francisco_robotics_9ee69f93d5",
+        "sig_san-francisco_robotics_399b396283"
+      ]
+    },
+    {
+      "zone_id": "san-francisco-quantum",
+      "city": "San Francisco",
+      "domain": "Quantum",
+      "score": 4.364,
+      "confidence": "HIGH",
+      "coordinates": {
+        "latitude": 37.8715,
+        "longitude": -122.273
+      },
+      "signal_count": 3,
+      "deduplicated_count": 3,
+      "distinct_source_types": 3,
+      "was_capped": false,
+      "contributions": [
+        {
+          "source_type": "university_research",
+          "raw": 2.546,
+          "capped": 2.546,
+          "was_capped": false
+        },
+        {
+          "source_type": "startup_newsroom",
+          "raw": 1.397,
+          "capped": 1.397,
+          "was_capped": false
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 0.421,
+          "capped": 0.421,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_san-francisco_quantum_74e8e832dc",
+        "sig_san-francisco_quantum_61f965e821",
+        "sig_san-francisco_quantum_093eadabcf"
+      ]
+    },
+    {
+      "zone_id": "delhi-robotics",
+      "city": "Delhi",
+      "domain": "Robotics",
+      "score": 4.078,
+      "confidence": "HIGH",
+      "coordinates": {
+        "latitude": 28.5494,
+        "longitude": 77.2001
+      },
+      "signal_count": 4,
+      "deduplicated_count": 4,
+      "distinct_source_types": 4,
+      "was_capped": false,
+      "contributions": [
+        {
+          "source_type": "incubator_news",
+          "raw": 1.886,
+          "capped": 1.886,
+          "was_capped": false
+        },
+        {
+          "source_type": "startup_newsroom",
+          "raw": 1.035,
+          "capped": 1.035,
+          "was_capped": false
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 0.695,
+          "capped": 0.695,
+          "was_capped": false
+        },
+        {
+          "source_type": "university_research",
+          "raw": 0.462,
+          "capped": 0.462,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_delhi_robotics_e6b4278070",
+        "sig_delhi_robotics_9c89b01695",
+        "sig_delhi_robotics_83293e353d",
+        "sig_delhi_robotics_a8d24be159"
+      ]
+    },
+    {
+      "zone_id": "san-francisco-climate-energy",
+      "city": "San Francisco",
+      "domain": "Climate & Energy",
+      "score": 2.983,
+      "confidence": "HIGH",
+      "coordinates": {
+        "latitude": 37.8044,
+        "longitude": -122.2712
+      },
+      "signal_count": 4,
+      "deduplicated_count": 4,
+      "distinct_source_types": 4,
+      "was_capped": false,
+      "contributions": [
+        {
+          "source_type": "university_research",
+          "raw": 1.389,
+          "capped": 1.389,
+          "was_capped": false
+        },
+        {
+          "source_type": "startup_newsroom",
+          "raw": 0.936,
+          "capped": 0.936,
+          "was_capped": false
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 0.345,
+          "capped": 0.345,
+          "was_capped": false
+        },
+        {
+          "source_type": "incubator_news",
+          "raw": 0.312,
+          "capped": 0.312,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_san-francisco_climate-energy_1a8fbe51fb",
+        "sig_san-francisco_climate-energy_1163fea023",
+        "sig_san-francisco_climate-energy_99d1de9b92",
+        "sig_san-francisco_climate-energy_c01ced901c"
+      ]
+    },
+    {
+      "zone_id": "san-francisco-biotech",
+      "city": "San Francisco",
+      "domain": "Biotech",
+      "score": 2.378,
+      "confidence": "HIGH",
+      "coordinates": {
+        "latitude": 37.7706,
+        "longitude": -122.3893
+      },
+      "signal_count": 3,
+      "deduplicated_count": 3,
+      "distinct_source_types": 3,
+      "was_capped": false,
+      "contributions": [
+        {
+          "source_type": "university_research",
+          "raw": 0.847,
+          "capped": 0.847,
+          "was_capped": false
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 0.768,
+          "capped": 0.768,
+          "was_capped": false
+        },
+        {
+          "source_type": "incubator_news",
+          "raw": 0.763,
+          "capped": 0.763,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_san-francisco_biotech_dbe1a01e48",
+        "sig_san-francisco_biotech_0e264e6a11",
+        "sig_san-francisco_biotech_1f8c341bec"
+      ]
+    },
+    {
+      "zone_id": "delhi-climate-energy",
+      "city": "Delhi",
+      "domain": "Climate & Energy",
+      "score": 2.228,
+      "confidence": "HIGH",
+      "coordinates": {
+        "latitude": 28.5494,
+        "longitude": 77.2001
+      },
+      "signal_count": 4,
+      "deduplicated_count": 4,
+      "distinct_source_types": 4,
+      "was_capped": true,
+      "contributions": [
+        {
+          "source_type": "startup_newsroom",
+          "raw": 1.544,
+          "capped": 1.337,
+          "was_capped": true
+        },
+        {
+          "source_type": "incubator_news",
+          "raw": 0.465,
+          "capped": 0.465,
+          "was_capped": false
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 0.312,
+          "capped": 0.312,
+          "was_capped": false
+        },
+        {
+          "source_type": "university_research",
+          "raw": 0.114,
+          "capped": 0.114,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_delhi_climate-energy_dfd69a1e0e",
+        "sig_delhi_climate-energy_42d1769423",
+        "sig_delhi_climate-energy_ecfc1f0fb5",
+        "sig_delhi_climate-energy_b66025846d"
+      ]
+    },
+    {
+      "zone_id": "delhi-semiconductors",
+      "city": "Delhi",
+      "domain": "Semiconductors",
+      "score": 1.906,
+      "confidence": "HIGH",
+      "coordinates": {
+        "latitude": 28.7495,
+        "longitude": 77.0565
+      },
+      "signal_count": 3,
+      "deduplicated_count": 3,
+      "distinct_source_types": 3,
+      "was_capped": false,
+      "contributions": [
+        {
+          "source_type": "university_research",
+          "raw": 1.138,
+          "capped": 1.138,
+          "was_capped": false
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 0.515,
+          "capped": 0.515,
+          "was_capped": false
+        },
+        {
+          "source_type": "startup_newsroom",
+          "raw": 0.254,
+          "capped": 0.254,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_delhi_semiconductors_14296ff072",
+        "sig_delhi_semiconductors_f51995c9b8",
+        "sig_delhi_semiconductors_6ab16e0f85"
+      ]
+    },
+    {
+      "zone_id": "san-francisco-semiconductors",
+      "city": "San Francisco",
+      "domain": "Semiconductors",
+      "score": 1.35,
+      "confidence": "HIGH",
+      "coordinates": {
+        "latitude": 37.8715,
+        "longitude": -122.273
+      },
+      "signal_count": 3,
+      "deduplicated_count": 3,
+      "distinct_source_types": 3,
+      "was_capped": false,
+      "contributions": [
+        {
+          "source_type": "tech_event",
+          "raw": 0.629,
+          "capped": 0.629,
+          "was_capped": false
+        },
+        {
+          "source_type": "incubator_news",
+          "raw": 0.379,
+          "capped": 0.379,
+          "was_capped": false
+        },
+        {
+          "source_type": "university_research",
+          "raw": 0.343,
+          "capped": 0.343,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_san-francisco_semiconductors_6eb4b2d902",
+        "sig_san-francisco_semiconductors_693c83838f",
+        "sig_san-francisco_semiconductors_7342ce2f32"
+      ]
+    },
+    {
+      "zone_id": "delhi-iot",
+      "city": "Delhi",
+      "domain": "IoT",
+      "score": 1.333,
+      "confidence": "MEDIUM",
+      "coordinates": {
+        "latitude": 28.5355,
+        "longitude": 77.391
+      },
+      "signal_count": 2,
+      "deduplicated_count": 2,
+      "distinct_source_types": 2,
+      "was_capped": false,
+      "contributions": [
+        {
+          "source_type": "tech_event",
+          "raw": 0.768,
+          "capped": 0.768,
+          "was_capped": false
+        },
+        {
+          "source_type": "incubator_news",
+          "raw": 0.565,
+          "capped": 0.565,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_delhi_iot_826ea06a19",
+        "sig_delhi_iot_9ca21d59c4"
+      ]
+    },
+    {
+      "zone_id": "delhi-fintech",
+      "city": "Delhi",
+      "domain": "Fintech",
+      "score": 1.164,
+      "confidence": "MEDIUM",
+      "coordinates": {
+        "latitude": 28.5494,
+        "longitude": 77.2506
+      },
+      "signal_count": 2,
+      "deduplicated_count": 2,
+      "distinct_source_types": 2,
+      "was_capped": true,
+      "contributions": [
+        {
+          "source_type": "incubator_news",
+          "raw": 0.843,
+          "capped": 0.699,
+          "was_capped": true
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 0.466,
+          "capped": 0.466,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_delhi_fintech_14b4a2d68f",
+        "sig_delhi_fintech_8c69c8b4e7"
+      ]
+    },
+    {
+      "zone_id": "san-francisco-iot",
+      "city": "San Francisco",
+      "domain": "IoT",
+      "score": 0.42,
+      "confidence": "MEDIUM",
+      "coordinates": {
+        "latitude": 37.8044,
+        "longitude": -122.2712
+      },
+      "signal_count": 2,
+      "deduplicated_count": 2,
+      "distinct_source_types": 2,
+      "was_capped": false,
+      "contributions": [
+        {
+          "source_type": "tech_event",
+          "raw": 0.231,
+          "capped": 0.231,
+          "was_capped": false
+        },
+        {
+          "source_type": "startup_newsroom",
+          "raw": 0.189,
+          "capped": 0.189,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_san-francisco_iot_d9675e98cf",
+        "sig_san-francisco_iot_08e5ca4f59"
+      ]
+    },
+    {
+      "zone_id": "delhi-quantum",
+      "city": "Delhi",
+      "domain": "Quantum",
+      "score": 0.351,
+      "confidence": "MEDIUM",
+      "coordinates": {
+        "latitude": 28.5494,
+        "longitude": 77.2001
+      },
+      "signal_count": 2,
+      "deduplicated_count": 2,
+      "distinct_source_types": 2,
+      "was_capped": true,
+      "contributions": [
+        {
+          "source_type": "university_research",
+          "raw": 1.144,
+          "capped": 0.21,
+          "was_capped": true
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 0.14,
+          "capped": 0.14,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_delhi_quantum_a362c99028",
+        "sig_delhi_quantum_9b51ff2eb0"
+      ]
+    },
+    {
+      "zone_id": "san-francisco-cybersecurity",
+      "city": "San Francisco",
+      "domain": "Cybersecurity",
+      "score": 0.317,
+      "confidence": "MEDIUM",
+      "coordinates": {
+        "latitude": 37.7946,
+        "longitude": -122.3999
+      },
+      "signal_count": 2,
+      "deduplicated_count": 2,
+      "distinct_source_types": 2,
+      "was_capped": true,
+      "contributions": [
+        {
+          "source_type": "startup_newsroom",
+          "raw": 0.418,
+          "capped": 0.19,
+          "was_capped": true
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 0.127,
+          "capped": 0.127,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_san-francisco_cybersecurity_b5c7789d8f",
+        "sig_san-francisco_cybersecurity_46f8af89cf"
+      ]
+    },
+    {
+      "zone_id": "delhi-biotech",
+      "city": "Delhi",
+      "domain": "Biotech",
+      "score": 0.213,
+      "confidence": "MEDIUM",
+      "coordinates": {
+        "latitude": 28.5355,
+        "longitude": 77.2731
+      },
+      "signal_count": 2,
+      "deduplicated_count": 2,
+      "distinct_source_types": 2,
+      "was_capped": true,
+      "contributions": [
+        {
+          "source_type": "startup_newsroom",
+          "raw": 0.511,
+          "capped": 0.128,
+          "was_capped": true
+        },
+        {
+          "source_type": "tech_event",
+          "raw": 0.085,
+          "capped": 0.085,
+          "was_capped": false
+        }
+      ],
+      "signal_ids": [
+        "sig_delhi_biotech_dfc3111776",
+        "sig_delhi_biotech_010a9b322a"
+      ]
+    },
+    {
+      "zone_id": "delhi-cybersecurity",
+      "city": "Delhi",
+      "domain": "Cybersecurity",
+      "score": 0.092,
+      "confidence": "LOW",
+      "coordinates": {
+        "latitude": 28.5494,
+        "longitude": 77.2001
+      },
+      "signal_count": 1,
+      "deduplicated_count": 1,
+      "distinct_source_types": 1,
+      "was_capped": true,
+      "contributions": [
+        {
+          "source_type": "incubator_news",
+          "raw": 0.154,
+          "capped": 0.092,
+          "was_capped": true
+        }
+      ],
+      "signal_ids": [
+        "sig_delhi_cybersecurity_d1afde5fbe"
+      ]
+    },
+    {
+      "zone_id": "san-francisco-fintech",
+      "city": "San Francisco",
+      "domain": "Fintech",
+      "score": 0.056,
+      "confidence": "LOW",
+      "coordinates": {
+        "latitude": 37.453,
+        "longitude": -122.1817
+      },
+      "signal_count": 1,
+      "deduplicated_count": 1,
+      "distinct_source_types": 1,
+      "was_capped": true,
+      "contributions": [
+        {
+          "source_type": "tech_event",
+          "raw": 0.094,
+          "capped": 0.056,
+          "was_capped": true
+        }
+      ],
+      "signal_ids": [
+        "sig_san-francisco_fintech_7cad8fc0ba"
+      ]
+    }
+  ],
+  "total": 18
+}

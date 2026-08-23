@@ -5,7 +5,8 @@ import {
   Layers, 
   Bot, 
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  Download
 } from 'lucide-react';
 import { DOMAIN_COLORS } from '../../styles/mapTheme';
 
@@ -133,6 +134,17 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
             <span>Fleet Health</span>
             <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-[9px] font-mono text-emerald-300">100%</span>
           </button>
+
+          {/* Export Structured JSON Dataset */}
+          <a
+            href={`http://localhost:8000/api/signals/export?city=${activeCity === 'delhi' ? 'Delhi' : 'San Francisco'}${selectedDomain ? `&domain=${encodeURIComponent(selectedDomain)}` : ''}`}
+            download
+            className="flex items-center gap-1.5 px-3 py-2.5 rounded-2xl text-xs font-bold text-slate-200 glass-pill hover:text-cyan-300 hover:border-cyan-400/50 transition-all shadow hover:scale-105"
+            title="Download structured JSON dataset for active filters"
+          >
+            <Download className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Export JSON</span>
+          </a>
 
           {/* Copilot Launcher */}
           <button

@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, Response, status
 
 from app.api.deps import SignalServiceDep
 from app.domain.enums import SourceType
@@ -41,6 +41,32 @@ async def list_signals(
         meta=PageMeta(
             total=page.total, limit=page.limit, offset=page.offset, has_more=page.has_more
         ),
+    )
+
+
+@router.get("/export", summary="Export signals as downloadable JSON")
+async def export_signals(
+    signals: SignalServiceDep,
+    city: Annotated[str | None, Query(max_length=64)] = None,
+    domain: Annotated[str | None, Query(max_length=64)] = None,
+    source_type: SourceType | None = None,
+) -> Response:
+    """Download full filtered signals dataset as an attachment JSON file."""
+    import json
+    page = await signals.search(
+        city=city,
+        domain=domain,
+        source_type=source_type,
+        limit=500,
+        offset=0,
+    )
+    data = [SignalOut.model_validate(s).model_dump(mode="json") for s in page.items]
+    json_bytes = json.dumps(data, indent=2, default=str).encode("utf-8")
+    filename = f"signals_export_{city or 'all'}_{domain or 'all'}.json"
+    return Response(
+        content=json_bytes,
+        media_type="application/json",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
 
 

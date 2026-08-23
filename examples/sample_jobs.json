@@ -1,0 +1,544 @@
+{
+  "items": [
+    {
+      "id": "job_berkeley_ai_001",
+      "title": "Berkeley Postdoctoral Fellow in Embodied AI",
+      "company": "Berkeley AI Research (BAIR)",
+      "city": "Berkeley, CA",
+      "domain": "AI/ML",
+      "job_type": "Fellowship",
+      "salary_range": "$95,000 - $125,000 + Grant",
+      "summary": "Conduct groundbreaking research on vision-language-action models and dextrous robotic manipulation.",
+      "skills": [
+        "PyTorch",
+        "Robotics Learning",
+        "Diffusion Models",
+        "Transformers"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827207",
+      "source": "Fellowships & Grants",
+      "lat": 37.8715,
+      "lng": -122.273
+    },
+    {
+      "id": "job_berkeley_ai_002",
+      "title": "Distributed LLM Systems Engineer",
+      "company": "SkyComputing Berkeley Innovations",
+      "city": "Berkeley, CA",
+      "domain": "AI/ML",
+      "job_type": "Full-time",
+      "salary_range": "$210,000 - $275,000 + Equity",
+      "summary": "Optimize vLLM and Ray distributed inference engines for multi-node GPU clusters.",
+      "skills": [
+        "Python",
+        "C++",
+        "CUDA",
+        "vLLM",
+        "Ray",
+        "Distributed Systems"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827210",
+      "source": "LinkedIn Jobs",
+      "lat": 37.8715,
+      "lng": -122.273
+    },
+    {
+      "id": "job_berkeley_biotech_001",
+      "title": "Computational Biologist - Gene Editing",
+      "company": "HelixGen Therapeutics",
+      "city": "Berkeley, CA",
+      "domain": "Biotech",
+      "job_type": "Full-time",
+      "salary_range": "$160,000 - $210,000",
+      "summary": "Analyze high-throughput sequencing data to assess CRISPR off-target editing profiles and guide RNA efficacy.",
+      "skills": [
+        "Nextflow",
+        "Python",
+        "R",
+        "CRISPR",
+        "Bioinformatics"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827204",
+      "source": "LinkedIn Jobs",
+      "lat": 37.8715,
+      "lng": -122.273
+    },
+    {
+      "id": "job_berkeley_biotech_002",
+      "title": "CRISPR Functional Genomics Fellow",
+      "company": "Innovative Genomics Institute (IGI)",
+      "city": "Berkeley, CA",
+      "domain": "Biotech",
+      "job_type": "Fellowship",
+      "salary_range": "$90,000 - $115,000 + Research Fund",
+      "summary": "Pioneer base-editing screens for agricultural disease resistance and human epigenetic therapeutic targets.",
+      "skills": [
+        "CRISPR Cas9/Cas12",
+        "Cell Culture",
+        "RNA-Seq",
+        "Bioinformatics"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827212",
+      "source": "Fellowships & Grants",
+      "lat": 37.8715,
+      "lng": -122.273
+    },
+    {
+      "id": "job_berkeley_climate_001",
+      "title": "Direct Air Capture Systems Engineer",
+      "company": "CalCarbon Solutions",
+      "city": "Berkeley, CA",
+      "domain": "Climate & Energy",
+      "job_type": "Full-time",
+      "salary_range": "$155,000 - $205,000",
+      "summary": "Scale chemical adsorption reactor columns and thermodynamic regeneration loops for modular DAC.",
+      "skills": [
+        "Chemical Engineering",
+        "Aspen Plus",
+        "CO2 Capture",
+        "Thermodynamics"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827213",
+      "source": "LinkedIn Jobs",
+      "lat": 37.8715,
+      "lng": -122.273
+    },
+    {
+      "id": "job_berkeley_quantum_001",
+      "title": "Quantum Simulation Postdoctoral Scientist",
+      "company": "Lawrence Berkeley National Lab (LBNL)",
+      "city": "Berkeley, CA",
+      "domain": "Quantum",
+      "job_type": "Fellowship",
+      "salary_range": "$105,000 - $135,000 + Grant",
+      "summary": "Simulate strongly correlated quantum chemistry materials on superconducting qutrit hardware.",
+      "skills": [
+        "Qiskit",
+        "Cirq",
+        "Python",
+        "Quantum Chemistry",
+        "Hamiltonian Simulation"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827211",
+      "source": "Fellowships & Grants",
+      "lat": 37.8715,
+      "lng": -122.273
+    },
+    {
+      "id": "job_berkeley_robotics_001",
+      "title": "Robotic Manipulation & Grasping Engineer",
+      "company": "AmbiRobotics Labs",
+      "city": "Berkeley, CA",
+      "domain": "Robotics",
+      "job_type": "Full-time",
+      "salary_range": "$170,000 - $230,000 + Equity",
+      "summary": "Design sim-to-real robotic sorting systems using suction/parallel grippers and deep reinforcement learning.",
+      "skills": [
+        "C++",
+        "ROS2",
+        "Python",
+        "PyBullet",
+        "Grasp Planning"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827209",
+      "source": "LinkedIn Jobs",
+      "lat": 37.8715,
+      "lng": -122.273
+    },
+    {
+      "id": "job_delhi_ai_001",
+      "title": "Senior Machine Learning Engineer",
+      "company": "CyberTech Labs",
+      "city": "Gurugram, Delhi NCR",
+      "domain": "AI/ML",
+      "job_type": "Full-time",
+      "salary_range": "\u20b924,00,000 - \u20b932,00,000 PA",
+      "summary": "Build distributed inference pipelines and fine-tune open weights transformer models for enterprise retrieval systems.",
+      "skills": [
+        "Python",
+        "PyTorch",
+        "Transformers",
+        "LLMs",
+        "FastAPI"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827101",
+      "source": "LinkedIn Jobs",
+      "lat": 28.4595,
+      "lng": 77.0266
+    },
+    {
+      "id": "job_delhi_ai_002",
+      "title": "AI Research Associate",
+      "company": "InnoAI Systems",
+      "city": "Noida, Delhi NCR",
+      "domain": "AI/ML",
+      "job_type": "Full-time",
+      "salary_range": "\u20b918,00,000 - \u20b924,00,000 PA",
+      "summary": "Research and implement multi-modal diffusion architectures and vision-language alignment.",
+      "skills": [
+        "Python",
+        "TensorFlow",
+        "Computer Vision",
+        "Multimodal AI"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827102",
+      "source": "LinkedIn Jobs",
+      "lat": 28.5355,
+      "lng": 77.391
+    },
+    {
+      "id": "job_delhi_ai_003",
+      "title": "Lead NLP Engineer",
+      "company": "Delhi NLP Innovations",
+      "city": "New Delhi",
+      "domain": "AI/ML",
+      "job_type": "Full-time",
+      "salary_range": "\u20b928,00,000 - \u20b936,00,000 PA",
+      "summary": "Lead the development of Indic-language LLM tokenizers and localized dialogue systems.",
+      "skills": [
+        "Python",
+        "Hugging Face",
+        "NLP",
+        "PyTorch"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827103",
+      "source": "LinkedIn Jobs",
+      "lat": 28.6139,
+      "lng": 77.209
+    },
+    {
+      "id": "job_delhi_ai_004",
+      "title": "Senior Computer Vision Specialist",
+      "company": "VisionNoida AI Labs",
+      "city": "Sector 62, Noida, Delhi NCR",
+      "domain": "AI/ML",
+      "job_type": "Full-time",
+      "salary_range": "\u20b920,00,000 - \u20b928,00,000 PA",
+      "summary": "Develop real-time edge vision inference for industrial quality inspection and autonomous drones.",
+      "skills": [
+        "Python",
+        "OpenCV",
+        "TensorRT",
+        "YOLOv10",
+        "PyTorch"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827107",
+      "source": "LinkedIn Jobs",
+      "lat": 28.5355,
+      "lng": 77.391
+    },
+    {
+      "id": "job_delhi_ai_005",
+      "title": "Generative AI Postdoctoral Fellowship",
+      "company": "Noida Technology Research Hub",
+      "city": "Noida, Delhi NCR",
+      "domain": "AI/ML",
+      "job_type": "Fellowship",
+      "salary_range": "\u20b912,00,000 - \u20b916,00,000 PA + Research Grant",
+      "summary": "Funded 2-year research fellowship focused on sparse mixture-of-experts model efficiency.",
+      "skills": [
+        "PyTorch",
+        "Deep Learning Research",
+        "Mathematical Modeling",
+        "CUDA"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827108",
+      "source": "Fellowships & Grants",
+      "lat": 28.5355,
+      "lng": 77.391
+    },
+    {
+      "id": "job_delhi_biotech_001",
+      "title": "Bioinformatics Research Fellow",
+      "company": "Delhi Genomics Consortium",
+      "city": "Hauz Khas, New Delhi",
+      "domain": "Biotech",
+      "job_type": "Fellowship",
+      "salary_range": "\u20b914,00,000 - \u20b918,00,000 PA + Grant",
+      "summary": "Conduct computational sequence analysis on rare disease variants using high-throughput sequencing pipelines.",
+      "skills": [
+        "Python",
+        "Nextflow",
+        "R",
+        "Bioinformatics",
+        "Genomics"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827113",
+      "source": "Fellowships & Grants",
+      "lat": 28.5494,
+      "lng": 77.2001
+    },
+    {
+      "id": "job_delhi_cyber_001",
+      "title": "Cloud Threat Intelligence Analyst",
+      "company": "SecureNoida Defense Systems",
+      "city": "Noida, Delhi NCR",
+      "domain": "Cybersecurity",
+      "job_type": "Full-time",
+      "salary_range": "\u20b916,00,000 - \u20b922,00,000 PA",
+      "summary": "Analyze adversary tactics, build zero-trust identity pipelines, and monitor telemetry across AWS/GCP clusters.",
+      "skills": [
+        "SIEM",
+        "Threat Modeling",
+        "Python",
+        "Kubernetes Security",
+        "Zero Trust"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827111",
+      "source": "LinkedIn Jobs",
+      "lat": 28.5355,
+      "lng": 77.391
+    },
+    {
+      "id": "job_delhi_fintech_001",
+      "title": "Principal Fintech Backend Engineer",
+      "company": "PayWave Global",
+      "city": "Gurugram, Delhi NCR",
+      "domain": "Fintech",
+      "job_type": "Full-time",
+      "salary_range": "\u20b935,00,000 - \u20b945,00,000 PA",
+      "summary": "Architect low-latency distributed ledger and transaction processing backends handling millions of payments.",
+      "skills": [
+        "Go",
+        "Kafka",
+        "PostgreSQL",
+        "Distributed Systems",
+        "Kubernetes"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827106",
+      "source": "LinkedIn Jobs",
+      "lat": 28.4595,
+      "lng": 77.0266
+    },
+    {
+      "id": "job_delhi_greentech_001",
+      "title": "EV Battery Systems Architect",
+      "company": "GreenPower Mobility",
+      "city": "Sector 125, Noida, Delhi NCR",
+      "domain": "Climate & Energy",
+      "job_type": "Full-time",
+      "salary_range": "\u20b922,00,000 - \u20b930,00,000 PA",
+      "summary": "Design battery management systems (BMS) and thermal simulation models for high-capacity EV packs.",
+      "skills": [
+        "MATLAB",
+        "Simulink",
+        "BMS",
+        "Battery Chemistry",
+        "Embedded C"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827105",
+      "source": "LinkedIn Jobs",
+      "lat": 28.5355,
+      "lng": 77.391
+    },
+    {
+      "id": "job_delhi_greentech_002",
+      "title": "Grid Storage Power Electronics Lead",
+      "company": "Noida CleanGrid Solutions",
+      "city": "Sector 132, Noida, Delhi NCR",
+      "domain": "Climate & Energy",
+      "job_type": "Full-time",
+      "salary_range": "\u20b924,00,000 - \u20b934,00,000 PA",
+      "summary": "Design high-voltage inverters and microgrid synchronization controllers for renewable solar farms.",
+      "skills": [
+        "Power Electronics",
+        "Inverter Design",
+        "Microgrid",
+        "Hardware Simulation"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827109",
+      "source": "LinkedIn Jobs",
+      "lat": 28.5355,
+      "lng": 77.391
+    },
+    {
+      "id": "job_delhi_robotics_001",
+      "title": "Robotics Software Engineer",
+      "company": "IndoBotics Dynamics",
+      "city": "Okhla, New Delhi",
+      "domain": "Robotics",
+      "job_type": "Full-time",
+      "salary_range": "\u20b916,00,000 - \u20b922,00,000 PA",
+      "summary": "Design motion planning and SLAM algorithms for autonomous mobile robots in warehouse logistics.",
+      "skills": [
+        "ROS2",
+        "C++",
+        "Python",
+        "SLAM",
+        "Gazebo"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827104",
+      "source": "LinkedIn Jobs",
+      "lat": 28.5355,
+      "lng": 77.2731
+    },
+    {
+      "id": "job_delhi_robotics_002",
+      "title": "Autonomous Drone Systems Engineer",
+      "company": "AeroRobotics Noida",
+      "city": "Sector 63, Noida, Delhi NCR",
+      "domain": "Robotics",
+      "job_type": "Full-time",
+      "salary_range": "\u20b917,00,000 - \u20b924,00,000 PA",
+      "summary": "Implement visual odometry and PX4 flight control firmware for mapping UAVs.",
+      "skills": [
+        "PX4",
+        "C++",
+        "ROS2",
+        "Drone Navigation",
+        "Embedded Linux"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827112",
+      "source": "LinkedIn Jobs",
+      "lat": 28.5355,
+      "lng": 77.391
+    },
+    {
+      "id": "job_delhi_semi_001",
+      "title": "VLSI Physical Design Engineer",
+      "company": "IndoSilicon Design Labs",
+      "city": "Sector 62, Noida, Delhi NCR",
+      "domain": "Semiconductors",
+      "job_type": "Full-time",
+      "salary_range": "\u20b918,00,000 - \u20b926,00,000 PA",
+      "summary": "Handle RTL-to-GDSII physical implementation, clock tree synthesis, and timing closure on 5nm nodes.",
+      "skills": [
+        "Cadence Innovus",
+        "Synopsys PrimeTime",
+        "Static Timing Analysis",
+        "Verilog"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827110",
+      "source": "LinkedIn Jobs",
+      "lat": 28.5355,
+      "lng": 77.391
+    },
+    {
+      "id": "job_sf_ai_001",
+      "title": "Staff Foundation Model Engineer",
+      "company": "Nexus AI Labs",
+      "city": "SoMa, San Francisco",
+      "domain": "AI/ML",
+      "job_type": "Full-time",
+      "salary_range": "$220,000 - $280,000 + Equity",
+      "summary": "Pre-train and scale multi-billion parameter autoregressive models on heterogeneous GPU clusters.",
+      "skills": [
+        "PyTorch",
+        "CUDA",
+        "Megatron-LM",
+        "Distributed Training",
+        "Triton"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827201",
+      "source": "LinkedIn Jobs",
+      "lat": 37.7785,
+      "lng": -122.4056
+    },
+    {
+      "id": "job_sf_ai_002",
+      "title": "Senior AI Alignment & Safety Researcher",
+      "company": "Cortex Alignment Research",
+      "city": "San Francisco",
+      "domain": "AI/ML",
+      "job_type": "Full-time",
+      "salary_range": "$190,000 - $250,000 + Equity",
+      "summary": "Develop RLHF, DPO, and mechanistic interpretability probes to detect model sycophancy and hallucinations.",
+      "skills": [
+        "Python",
+        "PyTorch",
+        "RLHF",
+        "Interpretability",
+        "JAX"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827202",
+      "source": "LinkedIn Jobs",
+      "lat": 37.7749,
+      "lng": -122.4194
+    },
+    {
+      "id": "job_sf_greentech_001",
+      "title": "Senior Climate Modeling Software Engineer",
+      "company": "TerraScope Climate Labs",
+      "city": "San Francisco",
+      "domain": "Climate & Energy",
+      "job_type": "Full-time",
+      "salary_range": "$175,000 - $225,000",
+      "summary": "Develop scalable geospatial simulations for planetary carbon capture and carbon offset verification.",
+      "skills": [
+        "Python",
+        "Rust",
+        "GDAL",
+        "Zarr",
+        "Dask"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827205",
+      "source": "LinkedIn Jobs",
+      "lat": 37.7749,
+      "lng": -122.4194
+    },
+    {
+      "id": "job_sf_quantum_001",
+      "title": "Quantum Photonics Postdoctoral Fellow",
+      "company": "Stanford Quantum Initiative",
+      "city": "Palo Alto, CA",
+      "domain": "Quantum",
+      "job_type": "Fellowship",
+      "salary_range": "$100,000 - $130,000 + Lab Grant",
+      "summary": "Research room-temperature integrated photonic quantum interconnects and entanglement distribution.",
+      "skills": [
+        "Quantum Optics",
+        "Photonics",
+        "Python",
+        "Lumerical",
+        "LabVIEW"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827208",
+      "source": "Fellowships & Grants",
+      "lat": 37.4419,
+      "lng": -122.143
+    },
+    {
+      "id": "job_sf_robotics_001",
+      "title": "Humanoid Robotics Control Engineer",
+      "company": "Aura Robotics",
+      "city": "Mission Bay, San Francisco",
+      "domain": "Robotics",
+      "job_type": "Full-time",
+      "salary_range": "$180,000 - $240,000 + Equity",
+      "summary": "Implement whole-body control, reinforcement learning for locomotion, and tactile sensing feedback for bipedal robots.",
+      "skills": [
+        "C++20",
+        "Python",
+        "MuJoCo",
+        "Reinforcement Learning",
+        "Control Theory"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827203",
+      "source": "LinkedIn Jobs",
+      "lat": 37.7706,
+      "lng": -122.3893
+    },
+    {
+      "id": "job_sf_semi_001",
+      "title": "AI Silicon Architecture Engineer",
+      "company": "SiliconEdge Computing",
+      "city": "Santa Clara, Bay Area",
+      "domain": "Semiconductors",
+      "job_type": "Full-time",
+      "salary_range": "$200,000 - $260,000 + Equity",
+      "summary": "Design specialized tensor processing units and low-power matrix multiplication accelerators for edge devices.",
+      "skills": [
+        "SystemVerilog",
+        "Chisel",
+        "Computer Architecture",
+        "VMM",
+        "ASIC Design"
+      ],
+      "source_url": "https://www.linkedin.com/jobs/view/39827206",
+      "source": "LinkedIn Jobs",
+      "lat": 37.3541,
+      "lng": -121.9552
+    }
+  ],
+  "total": 26
+}

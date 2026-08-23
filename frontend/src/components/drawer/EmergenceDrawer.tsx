@@ -9,8 +9,19 @@ import {
   Calendar,
   Info,
   MapPin,
-  Briefcase
+  Briefcase,
+  Download
 } from 'lucide-react';
+
+const downloadJson = (data: any, filename: string) => {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+};
 
 interface EmergenceDrawerProps {
   zone: OpportunityZone | null;
@@ -108,6 +119,14 @@ export const EmergenceDrawer: React.FC<EmergenceDrawerProps> = ({
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           )}
+
+          <button
+            onClick={() => downloadJson(job, `job_${job.id}.json`)}
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl glass-panel text-slate-300 hover:text-white hover:border-emerald-500/50 text-xs font-semibold transition-all"
+          >
+            <Download className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Download Job JSON</span>
+          </button>
         </div>
       </aside>
     );
@@ -191,6 +210,14 @@ export const EmergenceDrawer: React.FC<EmergenceDrawerProps> = ({
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           )}
+
+          <button
+            onClick={() => downloadJson(signal, `signal_${signal.signal_id}.json`)}
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl glass-panel text-slate-300 hover:text-white hover:border-cyan-500/50 text-xs font-semibold transition-all"
+          >
+            <Download className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Download Signal JSON</span>
+          </button>
         </div>
       </aside>
     );
@@ -316,6 +343,17 @@ export const EmergenceDrawer: React.FC<EmergenceDrawerProps> = ({
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Export Zone JSON Button */}
+        <div className="pt-2">
+          <button
+            onClick={() => downloadJson(zone, `zone_${zone.city}_${zone.domain}.json`)}
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-xs transition-all shadow-lg hover:scale-[1.02]"
+          >
+            <Download className="w-4 h-4" />
+            <span>Export Zone & Evidence JSON</span>
+          </button>
         </div>
       </div>
     </aside>

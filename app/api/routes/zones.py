@@ -7,7 +7,7 @@ than shipping none. Noted in the README alongside the other dropped field.
 
 from typing import Annotated
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Response
 
 from app.api.deps import ZoneServiceDep
 from app.schemas.signals import SignalOut
@@ -31,6 +31,26 @@ async def list_zones(
     """
     found = await zones.list_zones(city=city, domain=domain, min_score=min_score)
     return ZoneListOut(items=[ZoneOut.model_validate(zone) for zone in found], total=len(found))
+
+
+@router.get("/export", summary="Export opportunity zones as downloadable JSON")
+async def export_zones(
+    zones: ZoneServiceDep,
+    city: Annotated[str | None, Query(max_length=64)] = None,
+    domain: Annotated[str | None, Query(max_length=64)] = None,
+    min_score: Annotated[float, Query(ge=0.0)] = 0.0,
+) -> Response:
+    """Download full filtered opportunity zones dataset as an attachment JSON file."""
+    import json
+    found = await zones.list_zones(city=city, domain=domain, min_score=min_score)
+    data = [ZoneOut.model_validate(zone).model_dump(mode="json") for zone in found]
+    json_bytes = json.dumps(data, indent=2, default=str).encode("utf-8")
+    filename = f"opportunity_zones_export_{city or 'all'}_{domain or 'all'}.json"
+    return Response(
+        content=json_bytes,
+        media_type="application/json",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 @router.get("/{zone_id}", response_model=ZoneOut, summary="Get one zone")

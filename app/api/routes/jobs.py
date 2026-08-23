@@ -2,7 +2,7 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Response
 
 from app.api.deps import JobServiceDep
 from app.schemas.jobs import JobListOut, JobPostingOut
@@ -31,4 +31,30 @@ async def list_jobs(
     return JobListOut(
         items=[JobPostingOut.from_domain(job) for job in items],
         total=total,
+    )
+
+
+@router.get("/export", summary="Export active jobs as downloadable JSON")
+async def export_jobs(
+    jobs: JobServiceDep,
+    city: Annotated[str | None, Query(max_length=64)] = None,
+    domain: Annotated[str | None, Query(max_length=64)] = None,
+    keyword: Annotated[str | None, Query(max_length=128)] = None,
+) -> Response:
+    """Download full filtered jobs dataset as an attachment JSON file."""
+    import json
+    items = await jobs.search(
+        city=city,
+        domain=domain,
+        keyword=keyword,
+        limit=500,
+        offset=0,
+    )
+    data = [JobPostingOut.from_domain(job).model_dump(mode="json") for job in items]
+    json_bytes = json.dumps(data, indent=2, default=str).encode("utf-8")
+    filename = f"jobs_export_{city or 'all'}_{domain or 'all'}.json"
+    return Response(
+        content=json_bytes,
+        media_type="application/json",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
