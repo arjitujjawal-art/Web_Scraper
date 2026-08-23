@@ -11,7 +11,7 @@ import {
   Zap, 
   Terminal,
   ExternalLink,
-  MapPin
+  MapPin,
 } from 'lucide-react';
 
 export interface LocationTarget {
@@ -39,9 +39,10 @@ export function detectLocationFromText(text: string): LocationTarget | null {
 
 interface CopilotChatProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   onSelectCitation?: (citation: CopilotCitation) => void;
   onNavigateLocation?: (loc: LocationTarget) => void;
+  isEmbedded?: boolean;
 }
 
 export const CopilotChat: React.FC<CopilotChatProps> = ({
@@ -49,12 +50,13 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
   onClose,
   onSelectCitation,
   onNavigateLocation,
+  isEmbedded = false,
 }) => {
   const [messages, setMessages] = useState<CopilotMessage[]>([
     {
       id: 'welcome',
       sender: 'assistant',
-      text: "👋 Hello! I am the **Signal Atlas Copilot**.\n\nAsk me anything about:\n- **Emergence scores** & mathematical time-decay models\n- **Active LinkedIn job vacancies** across Delhi NCR and SF\n- **On-demand web scraping** and scraper fleet health!",
+      text: "👋 Hello! I am the **Signal Copilot Intelligence Hub**.\n\nAsk me anything about:\n- **Emergence scores** & mathematical time-decay models\n- **Active tech jobs & fellowships** across Delhi NCR and SF\n- **On-demand web scraping** and live Bright Data fleet health!",
       timestamp: new Date().toLocaleTimeString(),
     },
   ]);
@@ -70,7 +72,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
     if (isOpen) scrollToBottom();
   }, [messages, isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen && !isEmbedded) return null;
 
   const handleSend = async (textToSend?: string) => {
     const query = textToSend || input;
@@ -126,35 +128,41 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
   const quickPrompts = [
     "Why is Delhi emerging in AI/ML?",
     "Show ML Engineer jobs in Noida & Gurugram",
+    "Show Berkeley robotics jobs & BAIR fellowships",
     "Check scraper fleet health",
-    "How does the time-decay math work?",
   ];
 
+  const containerClasses = isEmbedded
+    ? "w-full bg-[#0c0c10] border border-white/10 rounded-2xl shadow-xl flex flex-col overflow-hidden min-h-[380px] max-h-[500px]"
+    : "fixed bottom-6 right-6 w-96 sm:w-[500px] max-w-[calc(100vw-32px)] h-[600px] max-h-[calc(100vh-80px)] z-[10000] bg-[#0c0c10] border border-white/15 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300";
+
   return (
-    <div className="fixed bottom-6 right-6 w-96 sm:w-[500px] max-w-[calc(100vw-32px)] h-[600px] max-h-[calc(100vh-80px)] z-[10000] glass-panel-elevated rounded-3xl border border-cyan-400/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
+    <div className={containerClasses}>
       {/* Chat Header */}
-      <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+      <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-zinc-950/90 flex-shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
-            <Bot className="w-4 h-4 text-slate-950" />
+          <div className="w-8 h-8 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center shadow-md">
+            <Bot className="w-4 h-4 text-blue-400" />
           </div>
           <div>
             <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
               <span>Signal Copilot</span>
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             </h3>
-            <p className="text-[10px] text-cyan-400 font-mono">
-              Groq GPT-OSS 120B · Multi-Tool Engine
+            <p className="text-[10px] text-zinc-400 font-mono">
+              Groq GPT-OSS 120B · Cache-First Multi-Tool Engine
             </p>
           </div>
         </div>
 
-        <button
-          onClick={onClose}
-          className="w-7 h-7 rounded-lg glass-panel flex items-center justify-center text-slate-400 hover:text-white"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        {onClose && !isEmbedded && (
+          <button
+            onClick={onClose}
+            className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition-all"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Messages Feed */}
@@ -170,7 +178,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
                 {m.tools_used.map((tool) => (
                   <span
                     key={tool}
-                    className="flex items-center gap-1 text-[9px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30"
+                    className="flex items-center gap-1 text-[9px] font-mono px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/30"
                   >
                     <Terminal className="w-2.5 h-2.5" />
                     <span>Tool: {tool}</span>
@@ -182,10 +190,10 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
             <div
               className={`p-3.5 rounded-2xl text-xs leading-relaxed max-w-[95%] shadow-md overflow-x-auto ${
                 m.sender === 'user'
-                  ? 'bg-cyan-500 text-slate-950 font-medium rounded-br-none'
+                  ? 'bg-white text-zinc-950 font-semibold rounded-br-none'
                   : m.sender === 'system'
                   ? 'bg-rose-500/10 border border-rose-500/40 text-rose-300'
-                  : 'glass-panel border border-slate-800 text-slate-200 rounded-bl-none'
+                  : 'bg-zinc-900/90 border border-white/10 text-zinc-200 rounded-bl-none'
               }`}
             >
               {m.sender === 'user' ? (
@@ -195,33 +203,33 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
                   remarkPlugins={[remarkGfm]}
                   components={{
                     table: ({ node, ...props }) => (
-                      <div className="my-2.5 overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/80 shadow-inner">
+                      <div className="my-2.5 overflow-x-auto rounded-xl border border-white/10 bg-black/60 shadow-inner">
                         <table className="w-full text-left text-[11px] border-collapse" {...props} />
                       </div>
                     ),
                     thead: ({ node, ...props }) => (
-                      <thead className="bg-slate-900/90 text-cyan-300 font-bold uppercase text-[10px] tracking-wider border-b border-slate-800" {...props} />
+                      <thead className="bg-zinc-900 text-blue-300 font-bold uppercase text-[10px] tracking-wider border-b border-white/10" {...props} />
                     ),
                     th: ({ node, ...props }) => (
-                      <th className="p-2.5 font-semibold text-cyan-300 border-r border-slate-800 last:border-r-0" {...props} />
+                      <th className="p-2.5 font-semibold text-blue-300 border-r border-white/10 last:border-r-0" {...props} />
                     ),
                     td: ({ node, ...props }) => (
-                      <td className="p-2.5 text-slate-300 border-t border-slate-800/60 border-r border-slate-800/40 last:border-r-0" {...props} />
+                      <td className="p-2.5 text-zinc-300 border-t border-white/5 border-r border-white/5 last:border-r-0" {...props} />
                     ),
                     tr: ({ node, ...props }) => (
-                      <tr className="hover:bg-slate-800/30 transition-colors" {...props} />
+                      <tr className="hover:bg-white/5 transition-colors" {...props} />
                     ),
                     strong: ({ node, ...props }) => (
                       <strong className="font-bold text-white" {...props} />
                     ),
                     p: ({ node, ...props }) => (
-                      <p className="my-1.5 leading-relaxed text-slate-300" {...props} />
+                      <p className="my-1.5 leading-relaxed text-zinc-300" {...props} />
                     ),
                     ul: ({ node, ...props }) => (
-                      <ul className="my-2 space-y-1 list-disc list-inside text-slate-300" {...props} />
+                      <ul className="my-2 space-y-1 list-disc list-inside text-zinc-300" {...props} />
                     ),
                     ol: ({ node, ...props }) => (
-                      <ol className="my-2 space-y-1 list-decimal list-inside text-slate-300" {...props} />
+                      <ol className="my-2 space-y-1 list-decimal list-inside text-zinc-300" {...props} />
                     ),
                     li: ({ node, ...props }) => (
                       <li className="leading-relaxed" {...props} />
@@ -231,7 +239,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
                         href={href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-0.5 text-cyan-400 hover:text-cyan-300 underline font-semibold transition-colors"
+                        className="inline-flex items-center gap-0.5 text-blue-400 hover:text-blue-300 underline font-semibold transition-colors"
                         {...props}
                       >
                         <span>{children}</span>
@@ -239,7 +247,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
                       </a>
                     ),
                     code: ({ node, ...props }) => (
-                      <code className="px-1.5 py-0.5 rounded bg-slate-900 text-cyan-300 font-mono text-[10px] border border-slate-800" {...props} />
+                      <code className="px-1.5 py-0.5 rounded bg-black/80 text-cyan-300 font-mono text-[10px] border border-white/10" {...props} />
                     ),
                   }}
                 >
@@ -262,7 +270,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
             {/* Inline Citations */}
             {m.citations && m.citations.length > 0 && (
               <div className="mt-2 space-y-1 w-full max-w-[95%]">
-                <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block">
+                <span className="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider block">
                   Grounding Evidence:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -270,9 +278,9 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
                     <button
                       key={c.signal_id}
                       onClick={() => onSelectCitation && onSelectCitation(c)}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 border border-cyan-500/40 text-[10px] text-cyan-300 hover:border-cyan-400 hover:bg-slate-800 transition-all shadow"
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-900 border border-blue-500/30 text-[10px] text-blue-300 hover:border-blue-400 hover:bg-zinc-800 transition-all shadow"
                     >
-                      <Zap className="w-2.5 h-2.5 fill-cyan-400" />
+                      <Zap className="w-2.5 h-2.5 fill-blue-400" />
                       <span className="truncate max-w-[180px] font-medium">{c.title}</span>
                     </button>
                   ))}
@@ -280,14 +288,14 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
               </div>
             )}
 
-            <span className="text-[9px] text-slate-500 mt-1 px-1">{m.timestamp}</span>
+            <span className="text-[9px] text-zinc-500 mt-1 px-1">{m.timestamp}</span>
           </div>
         ))}
 
         {loading && (
-          <div className="flex items-center gap-2 text-xs text-cyan-400 glass-panel p-3 rounded-2xl w-fit">
+          <div className="flex items-center gap-2 text-xs text-blue-400 bg-zinc-900 border border-blue-500/30 p-3 rounded-2xl w-fit">
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            <span>Copilot analyzing signals & querying tools...</span>
+            <span>Copilot analyzing signals & executing tools...</span>
           </div>
         )}
         <div ref={messagesEndRef} />
@@ -295,12 +303,12 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
 
       {/* Suggested Quick Prompts */}
       {messages.length === 1 && (
-        <div className="px-4 py-2 border-t border-slate-800/80 bg-slate-950/40 flex flex-wrap gap-1.5">
+        <div className="px-4 py-2 border-t border-white/5 bg-zinc-950/50 flex flex-wrap gap-1.5 flex-shrink-0">
           {quickPrompts.map((q) => (
             <button
               key={q}
               onClick={() => handleSend(q)}
-              className="text-[10px] px-2.5 py-1 rounded-lg glass-panel border border-slate-800 hover:border-cyan-500/50 text-slate-300 hover:text-cyan-300 transition-all text-left"
+              className="text-[10px] px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 hover:border-blue-500/40 text-zinc-300 hover:text-white transition-all text-left"
             >
               {q}
             </button>
@@ -309,18 +317,18 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
       )}
 
       {/* Chat Input Bar */}
-      <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 border-t border-slate-800 bg-slate-950 flex items-center gap-2">
+      <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 border-t border-white/10 bg-zinc-950 flex items-center gap-2 flex-shrink-0">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask Copilot (e.g. 'Show ML jobs in Noida')..."
-          className="flex-1 px-3.5 py-2.5 rounded-xl glass-input text-xs text-white placeholder-slate-500 focus:outline-none"
+          placeholder="Ask Copilot (e.g. 'Show ML jobs in Noida', 'What is emergence in Berkeley?')..."
+          className="flex-1 px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/30"
         />
         <button
           type="submit"
           disabled={loading || !input.trim()}
-          className="w-9 h-9 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-40 text-slate-950 flex items-center justify-center transition-all shadow"
+          className="w-9 h-9 rounded-xl bg-white hover:bg-zinc-200 disabled:opacity-30 text-zinc-950 flex items-center justify-center transition-all shadow"
         >
           <Send className="w-4 h-4" />
         </button>
