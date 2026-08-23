@@ -305,36 +305,8 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
   return (
     <div className="relative w-full min-h-screen bg-[#070707] text-[#f9dcda] overflow-hidden flex flex-col justify-between select-none">
       
-      {/* Spiderweb Background Overlays */}
-      <div className={`fixed inset-0 pointer-events-none z-0 overflow-hidden select-none red-web-glowing-mesh transition-opacity duration-700 ${animState !== 'idle' ? 'opacity-5' : 'opacity-25'}`}>
-        <svg className="absolute -top-6 -left-6 w-80 h-80 sm:w-96 sm:h-96 md:w-[460px] md:h-[460px] text-red-600" viewBox="0 0 200 200" fill="none" stroke="currentColor" strokeWidth="0.85">
-          <path d="M0,30 A30,30 0 0,0 30,0" opacity="0.6"/>
-          <path d="M0,60 A60,60 0 0,0 60,0" opacity="0.7"/>
-          <path d="M0,95 A95,95 0 0,0 95,0" opacity="0.8"/>
-          <path d="M0,135 A135,135 0 0,0 135,0" opacity="0.85"/>
-          <path d="M0,180 A180,180 0 0,0 180,0" opacity="0.9"/>
-          <line x1="0" y1="0" x2="200" y2="0" strokeWidth="1.05"/>
-          <line x1="0" y1="0" x2="190" y2="60" strokeWidth="1.0"/>
-          <line x1="0" y1="0" x2="160" y2="120" strokeWidth="1.0"/>
-          <line x1="0" y1="0" x2="120" y2="160" strokeWidth="1.0"/>
-          <line x1="0" y1="0" x2="60" y2="190" strokeWidth="1.0"/>
-          <line x1="0" y1="0" x2="0" y2="200" strokeWidth="1.05"/>
-        </svg>
-
-        <svg className="absolute -top-6 -right-6 w-80 h-80 sm:w-96 sm:h-96 md:w-[460px] md:h-[460px] text-red-600 transform scale-x-[-1]" viewBox="0 0 200 200" fill="none" stroke="currentColor" strokeWidth="0.85">
-          <path d="M0,30 A30,30 0 0,0 30,0" opacity="0.6"/>
-          <path d="M0,60 A60,60 0 0,0 60,0" opacity="0.7"/>
-          <path d="M0,95 A95,95 0 0,0 95,0" opacity="0.8"/>
-          <path d="M0,135 A135,135 0 0,0 135,0" opacity="0.85"/>
-          <path d="M0,180 A180,180 0 0,0 180,0" opacity="0.9"/>
-          <line x1="0" y1="0" x2="200" y2="0" strokeWidth="1.05"/>
-          <line x1="0" y1="0" x2="190" y2="60" strokeWidth="1.0"/>
-          <line x1="0" y1="0" x2="160" y2="120" strokeWidth="1.0"/>
-          <line x1="0" y1="0" x2="120" y2="160" strokeWidth="1.0"/>
-          <line x1="0" y1="0" x2="60" y2="190" strokeWidth="1.0"/>
-          <line x1="0" y1="0" x2="0" y2="200" strokeWidth="1.05"/>
-        </svg>
-      </div>
+      {/* Background Ambience */}
+      <div className="fixed inset-0 pointer-events-none z-0 bg-[#070707]" />
 
       {/* Outward Expanding Radar Shockwave Container */}
       {animState === 'expand' && (
