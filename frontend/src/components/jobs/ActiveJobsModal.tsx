@@ -28,6 +28,8 @@ export const ActiveJobsModal: React.FC<ActiveJobsModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       loadAllCityJobs();
+      const interval = setInterval(loadAllCityJobs, 6000);
+      return () => clearInterval(interval);
     }
   }, [isOpen, activeCity]);
 
@@ -95,6 +97,10 @@ export const ActiveJobsModal: React.FC<ActiveJobsModalProps> = ({
                 </span>
                 <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-white/10 text-white font-bold">
                   {jobs.length} Total Roles
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Live Crawler Sync
                 </span>
               </div>
               <p className="text-xs text-zinc-400">

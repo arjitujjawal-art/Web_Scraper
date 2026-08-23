@@ -74,6 +74,10 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     loadData();
+    const interval = setInterval(() => {
+      loadData();
+    }, 6000);
+    return () => clearInterval(interval);
   }, [activeCity, selectedDomain]);
 
   const loadData = async () => {
