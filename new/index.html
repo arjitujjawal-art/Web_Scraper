@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROJECT / ATLAS — About & Architecture</title>
+
+  <!-- Google Fonts: Bodoni Moda (variable), Inter & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#050505] text-[#F5F5F5] min-h-screen overflow-x-hidden">
+
+  <!-- Custom Lerping Cursor Follower -->
+  <div id="custom-cursor"></div>
+
+  <!-- Quiet Top Navigation Header -->
+  <header class="spider-header">
+    <a href="#scene-01" class="brand-title">PROJECT / ATLAS</a>
+
+    <nav class="nav-links" id="main-nav">
+      <span class="nav-link-item active" data-target="scene-01">01. OVERVIEW</span>
+      <span class="nav-link-item" data-target="scene-02">02. ABOUT US</span>
+    </nav>
+
+    <div class="status-badge">
+      <span class="pulse-red-dot"></span> SYSTEM ONLINE
+    </div>
+  </header>
+
+  <!-- Fixed Right-Side Vertical Indicator (2 Dots) -->
+  <div class="scene-indicator-bar" id="scene-indicator">
+    <div class="indicator-dot active" data-target="scene-01" title="Scene 01: Overview"></div>
+    <div class="indicator-dot" data-target="scene-02" title="Scene 02: About Us & Journey"></div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="scene-container" id="main-scroll-container">
+
+    <!-- ==========================================
+         SCENE 01: 01. OVERVIEW (Clean Hero Web Canvas)
+         ========================================== -->
+    <section class="scene-section" id="scene-01">
+      
+      <!-- Evolving Web Network Canvas -->
+      <div class="absolute inset-0 z-0 w-full h-full">
+        <canvas id="hero-web-canvas"></canvas>
+      </div>
+
+      <!-- Integrated Typography Overlay -->
+      <div class="relative z-10 max-w-5xl mx-auto w-full px-8 flex flex-col items-center justify-center space-y-6 text-center">
+        <div class="font-mono text-xs text-[#E3262E] tracking-[0.25em] uppercase">SCENE 01 / RECONNAISSANCE PROTOCOL</div>
+        <h1 class="hero-integrated-title text-white">
+          AUTONOMOUS<br><span class="text-white/85">INTELLIGENCE.</span>
+        </h1>
+        <p class="text-sm md:text-base text-[#8A8A8A] max-w-2xl font-mono leading-relaxed pt-4">
+          Ingesting unstructured public web records — job postings, patent filings, municipal agendas — synthesizing spatio-temporal convergence clusters with self-healing scraper pipelines.
+        </p>
+      </div>
+
+      <!-- Minimal Scroll Instruction -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 font-mono text-xs text-[#8A8A8A] tracking-[0.2em] uppercase animate-bounce cursor-pointer" onclick="document.getElementById('scene-02').scrollIntoView({behavior:'smooth'})">
+        SCROLL FOR OUR STORY ↓
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SCENE 02: 02. ABOUT US & JOURNEY & TEAM
+         ========================================== -->
+    <section class="scene-section bg-[#070709]" id="scene-02">
+      <div class="max-w-7xl mx-auto w-full px-4 lg:px-8 py-8">
+        <!-- About Mount Container -->
+        <div id="about-section-mount"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer w-full">
+    <div class="footer-giant-title">PROJECT ATLAS</div>
+    <div class="flex flex-col md:flex-row justify-between items-center max-w-5xl mx-auto font-mono text-[10px] text-[#8A8A8A] pt-4 border-t border-[#1F2937] px-8 gap-2">
+      <span>© 2026 AUTONOMOUS WEB INTELLIGENCE</span>
+      <span>SIGNAL ATLAS BACKEND &amp; SPATIAL FRONTEND</span>
+      <span>ALL RIGHTS RESERVED</span>
+    </div>
+  </footer>
+
+  <!-- JS Bundle -->
+  <script src="bundle.js"></script>
+</body>
+</html>
