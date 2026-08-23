@@ -198,8 +198,9 @@ class SignalTools:
             {
                 "name": "search_active_jobs",
                 "description": (
-                    "Search traditional active job board vacancies (LinkedIn, tech boards) "
-                    "for open positions, hiring companies, salary ranges, and required skills."
+                    "Searches for active job vacancies in a specific city/keyword using the "
+                    "Cache-First pattern: returns database listings instantly (<50ms) and "
+                    "triggers a live Bright Data web crawl in the background for fresh postings."
                 ),
                 "input_schema": {
                     "type": "object",
@@ -217,6 +218,10 @@ class SignalTools:
                         "domain": {
                             "type": ["string", "null"],
                             "description": "Domain, e.g. AI/ML, Robotics, GreenTech, Fintech",
+                        },
+                        "trigger_live_crawl": {
+                            "type": ["boolean", "null"],
+                            "description": "Whether to trigger background Bright Data web crawl (default true)",
                         },
                         "limit": {"type": ["integer", "null"], "minimum": 1, "maximum": 50},
                     },
@@ -339,12 +344,13 @@ class SignalTools:
 
     async def _search_jobs(self, arguments: Mapping[str, Any]) -> ToolResult:
         if not self.jobs:
-            return ToolResult(payload={"total_matching": 0, "returned": 0, "jobs": []})
+            return ToolResult(payload={"total_matching": 0, "returned": 0, "jobs": [], "live_crawl_initiated": False})
 
         city_raw = arguments.get("city")
         keyword = _text(arguments.get("keyword"))
         domain = _text(arguments.get("domain"))
-        limit = int(arguments.get("limit") or 10)
+        limit = int(arguments.get("limit") or 15)
+        trigger_live_crawl = bool(arguments.get("trigger_live_crawl", True))
 
         city = None
         if city_raw:
@@ -353,17 +359,21 @@ class SignalTools:
                 return resolved
             city = resolved
 
-        jobs = await self.jobs.search(
+        result = await self.jobs.get_cached_and_trigger_crawl(
             city=city,
             keyword=keyword,
             domain=domain,
             limit=limit,
+            trigger_live_crawl=trigger_live_crawl,
         )
+        jobs = result["cached_jobs"]
         total = await self.jobs.count(city=city, domain=domain)
         return ToolResult(
             payload={
                 "total_matching": max(total, len(jobs)),
                 "returned": len(jobs),
+                "live_crawl_initiated": result["live_crawl_initiated"],
+                "live_crawl_status": result["message"],
                 "jobs": [_project_job(job) for job in jobs],
             },
             grounded=bool(jobs),

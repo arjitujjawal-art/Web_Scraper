@@ -81,7 +81,18 @@ export const apiClient = {
 
     const res = await fetch(`${API_BASE}/jobs?${params.toString()}`);
     if (!res.ok) throw new Error('Failed to fetch jobs');
-    return res.json();
+    const data = await res.json();
+    const items = (data.items || []).map((j: any) => {
+      const coords = getCoordinatesForLocation(j.location || j.city || '', `${j.title} ${j.company} ${j.location || ''}`);
+      const lat = Number(j.lat ?? coords.lat);
+      const lng = Number(j.lng ?? coords.lng);
+      return {
+        ...j,
+        lat,
+        lng,
+      };
+    });
+    return { items, total: data.total || items.length };
   },
 
   async getCollectors(): Promise<{ items: CollectorStatus[]; total: number; needs_attention: number }> {
@@ -159,27 +170,40 @@ export const apiClient = {
 
 // Accurate City & Sub-district Lat/Lng coordinate resolution
 export function getCoordinatesForLocation(city: string, area?: string): { lat: number; lng: number } {
-  const normCity = (city || '').toLowerCase();
-  const normArea = (area || '').toLowerCase();
+  const combined = `${city || ''} ${area || ''}`.toLowerCase();
 
-  // Delhi NCR Hubs
-  if (normCity.includes('delhi') || normCity.includes('noida') || normCity.includes('gurugram') || normCity.includes('gurgaon')) {
-    if (normArea.includes('hauz khas') || normArea.includes('iit')) return { lat: 28.5450, lng: 77.1926 };
-    if (normArea.includes('okhla') || normArea.includes('iiit')) return { lat: 28.5355, lng: 77.2732 };
-    if (normArea.includes('gurugram') || normArea.includes('gurgaon') || normArea.includes('cyber')) return { lat: 28.4595, lng: 77.0266 };
-    if (normArea.includes('noida') || normArea.includes('sector 62')) return { lat: 28.6280, lng: 77.3649 };
-    if (normArea.includes('connaught') || normArea.includes('central')) return { lat: 28.6315, lng: 77.2167 };
-    return { lat: 28.6139 + (Math.random() - 0.5) * 0.05, lng: 77.2090 + (Math.random() - 0.5) * 0.05 };
+  // Specific Noida sectors
+  if (combined.includes('noida')) {
+    if (combined.includes('62') || combined.includes('vision') || combined.includes('indosilicon')) return { lat: 28.6280, lng: 77.3649 };
+    if (combined.includes('125') || combined.includes('greenpower') || combined.includes('expressway')) return { lat: 28.5450, lng: 77.3320 };
+    if (combined.includes('132') || combined.includes('cleangrid')) return { lat: 28.5080, lng: 77.3750 };
+    if (combined.includes('63') || combined.includes('aerorobotics')) return { lat: 28.6210, lng: 77.3810 };
+    return { lat: 28.5355 + (Math.random() - 0.5) * 0.02, lng: 77.3910 + (Math.random() - 0.5) * 0.02 };
+  }
+
+  // Specific Gurugram hubs
+  if (combined.includes('gurugram') || combined.includes('gurgaon')) {
+    if (combined.includes('cyber') || combined.includes('cybertech') || combined.includes('paywave')) return { lat: 28.4950, lng: 77.0890 };
+    if (combined.includes('golf') || combined.includes('alphaquant')) return { lat: 28.4480, lng: 77.1020 };
+    return { lat: 28.4595 + (Math.random() - 0.5) * 0.02, lng: 77.0266 + (Math.random() - 0.5) * 0.02 };
+  }
+
+  // Delhi Core hubs
+  if (combined.includes('delhi') || combined.includes('okhla') || combined.includes('hauz khas')) {
+    if (combined.includes('hauz khas') || combined.includes('iit')) return { lat: 28.5450, lng: 77.1926 };
+    if (combined.includes('okhla') || combined.includes('iiit') || combined.includes('indobotics')) return { lat: 28.5355, lng: 77.2732 };
+    if (combined.includes('connaught') || combined.includes('central')) return { lat: 28.6315, lng: 77.2167 };
+    return { lat: 28.6139 + (Math.random() - 0.5) * 0.03, lng: 77.2090 + (Math.random() - 0.5) * 0.03 };
   }
 
   // San Francisco Bay Area Hubs
-  if (normCity.includes('san francisco') || normCity.includes('berkeley') || normCity.includes('palo alto') || normCity.includes('oakland') || normCity.includes('san jose')) {
-    if (normArea.includes('berkeley') || normArea.includes('uc berkeley')) return { lat: 37.8719, lng: -122.2585 };
-    if (normArea.includes('mission bay') || normArea.includes('soma')) return { lat: 37.7700, lng: -122.3910 };
-    if (normArea.includes('palo alto') || normArea.includes('stanford')) return { lat: 37.4275, lng: -122.1697 };
-    if (normArea.includes('san jose') || normArea.includes('silicon')) return { lat: 37.3382, lng: -121.8863 };
-    if (normArea.includes('oakland')) return { lat: 37.8044, lng: -122.2712 };
-    return { lat: 37.7749 + (Math.random() - 0.5) * 0.05, lng: -122.4194 + (Math.random() - 0.5) * 0.05 };
+  if (combined.includes('san francisco') || combined.includes('berkeley') || combined.includes('palo alto') || combined.includes('santa clara') || combined.includes('bay area')) {
+    if (combined.includes('berkeley') || combined.includes('bair') || combined.includes('helixgen')) return { lat: 37.8719, lng: -122.2585 };
+    if (combined.includes('mission bay') || combined.includes('aura robotics')) return { lat: 37.7690, lng: -122.3910 };
+    if (combined.includes('soma') || combined.includes('nexus ai')) return { lat: 37.7785, lng: -122.3990 };
+    if (combined.includes('palo alto') || combined.includes('stanford')) return { lat: 37.4275, lng: -122.1697 };
+    if (combined.includes('santa clara') || combined.includes('siliconedge')) return { lat: 37.3541, lng: -121.9552 };
+    return { lat: 37.7749 + (Math.random() - 0.5) * 0.03, lng: -122.4194 + (Math.random() - 0.5) * 0.03 };
   }
 
   // Default Delhi Center

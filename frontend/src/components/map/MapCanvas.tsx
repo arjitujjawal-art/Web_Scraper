@@ -116,17 +116,22 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     });
   };
 
-  // Helper to build custom HTML DivIcon for Active Job Pins
+  // Helper to build custom HTML DivIcon for Company / Active Job Pins
   const createJobIcon = (job: JobPosting, isSelected: boolean) => {
-    const bg = isSelected ? '#10b981' : '#090e1c';
-    const text = isSelected ? '#090e1c' : '#6ee7b7';
+    const borderClass = isSelected ? 'border-emerald-400 ring-2 ring-emerald-400/60 scale-110' : 'border-slate-700/80';
+    const glow = isSelected ? 'rgba(16, 185, 129, 0.4)' : 'rgba(16, 185, 129, 0.15)';
 
     const html = `
-      <div class="relative -translate-x-1/2 -translate-y-1/2 cursor-pointer">
-        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold border shadow-lg transition-transform hover:scale-110 whitespace-nowrap"
-             style="background-color: ${bg}; color: ${text}; border-color: #10b98180;">
-          <span>💼</span>
-          <span class="truncate max-w-[100px]">${job.company}</span>
+      <div class="relative -translate-x-1/2 -translate-y-1/2 cursor-pointer group select-none transition-all">
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-panel-elevated border ${borderClass} shadow-xl hover:scale-110 transition-transform"
+             style="box-shadow: 0 0 15px ${glow};">
+          <div class="w-5 h-5 rounded-md bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-[10px] text-slate-950 font-bold shadow">
+            🏢
+          </div>
+          <div class="flex flex-col text-left">
+            <span class="text-[11px] font-bold text-white tracking-tight leading-tight truncate max-w-[120px]">${job.company}</span>
+            <span class="text-[9px] font-medium text-emerald-400 truncate max-w-[120px]">${job.title}</span>
+          </div>
         </div>
       </div>
     `;
@@ -134,8 +139,8 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     return L.divIcon({
       html,
       className: 'custom-div-icon',
-      iconSize: [120, 24],
-      iconAnchor: [60, 12],
+      iconSize: [160, 36],
+      iconAnchor: [80, 18],
     });
   };
 
@@ -256,10 +261,41 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                 }}
               >
                 <Popup>
-                  <div className="p-1">
-                    <span className="text-[9px] font-mono text-emerald-400 font-bold uppercase">{job.company}</span>
-                    <h4 className="text-xs font-bold text-white mt-0.5">{job.title}</h4>
-                    <p className="text-[10px] font-mono text-amber-300 font-bold mt-1">{job.salary_range}</p>
+                  <div className="p-1.5 space-y-1 min-w-[200px]">
+                    <div className="flex items-center justify-between gap-2 border-b border-slate-800 pb-1">
+                      <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                        <span>🏢</span>
+                        <span>{job.company}</span>
+                      </span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-semibold uppercase">
+                        {job.domain}
+                      </span>
+                    </div>
+                    <h4 className="text-xs font-bold text-white mt-1 leading-snug">{job.title}</h4>
+                    <p className="text-[11px] font-mono text-amber-300 font-bold">{job.salary_range}</p>
+                    {job.location && (
+                      <p className="text-[10px] text-slate-400">📍 {job.location}</p>
+                    )}
+                    {job.skills && job.skills.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1 pt-1 border-t border-slate-800/60">
+                        {job.skills.slice(0, 3).map((sk) => (
+                          <span key={sk} className="text-[8px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800">
+                            {sk}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {job.source_url && (
+                      <a
+                        href={job.source_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-300 font-semibold pt-1 underline"
+                      >
+                        <span>View Vacancy</span>
+                        <span>↗</span>
+                      </a>
+                    )}
                   </div>
                 </Popup>
               </Marker>

@@ -60,6 +60,7 @@ export interface JobPosting {
   title: string;
   company: string;
   city: string;
+  location?: string;
   domain: string;
   job_type: string;
   salary_range: string;

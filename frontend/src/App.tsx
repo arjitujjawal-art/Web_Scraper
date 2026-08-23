@@ -167,6 +167,12 @@ export const App: React.FC = () => {
         isOpen={isCopilotOpen}
         onClose={() => setIsCopilotOpen(false)}
         onSelectCitation={handleSelectCitation}
+        onNavigateLocation={(loc) => {
+          if (loc.city !== activeCity) {
+            setActiveCity(loc.city);
+          }
+          setMapCenterTarget({ lat: loc.lat, lng: loc.lng, zoom: loc.zoom || 13 });
+        }}
       />
 
       {/* Floating Copilot Launcher Button when minimized */}

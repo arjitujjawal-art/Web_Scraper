@@ -10,19 +10,45 @@ import {
   Loader2, 
   Zap, 
   Terminal,
-  ExternalLink
+  ExternalLink,
+  MapPin
 } from 'lucide-react';
+
+export interface LocationTarget {
+  lat: number;
+  lng: number;
+  zoom?: number;
+  city: 'delhi' | 'sf';
+  label: string;
+}
+
+export function detectLocationFromText(text: string): LocationTarget | null {
+  const norm = (text || '').toLowerCase();
+  if (norm.includes('noida')) return { lat: 28.5355, lng: 77.3910, zoom: 13, city: 'delhi', label: 'Noida Tech Corridor' };
+  if (norm.includes('gurugram') || norm.includes('gurgaon')) return { lat: 28.4595, lng: 77.0266, zoom: 13, city: 'delhi', label: 'Gurugram Cyber City' };
+  if (norm.includes('okhla')) return { lat: 28.5355, lng: 77.2732, zoom: 14, city: 'delhi', label: 'Okhla R&D Cluster' };
+  if (norm.includes('hauz khas') || norm.includes('iit delhi')) return { lat: 28.5450, lng: 77.1926, zoom: 14, city: 'delhi', label: 'IIT Delhi / Hauz Khas' };
+  if (norm.includes('delhi')) return { lat: 28.6139, lng: 77.2090, zoom: 11, city: 'delhi', label: 'Delhi NCR Hub' };
+  if (norm.includes('berkeley')) return { lat: 37.8719, lng: -122.2585, zoom: 14, city: 'sf', label: 'UC Berkeley / BAIR' };
+  if (norm.includes('soma') || norm.includes('mission bay')) return { lat: 37.7749, lng: -122.4194, zoom: 13, city: 'sf', label: 'San Francisco Tech Core' };
+  if (norm.includes('palo alto') || norm.includes('stanford')) return { lat: 37.4275, lng: -122.1697, zoom: 14, city: 'sf', label: 'Palo Alto / Stanford' };
+  if (norm.includes('santa clara') || norm.includes('silicon valley')) return { lat: 37.3541, lng: -121.9552, zoom: 13, city: 'sf', label: 'Silicon Valley' };
+  if (norm.includes('san francisco')) return { lat: 37.7749, lng: -122.4194, zoom: 12, city: 'sf', label: 'San Francisco Bay Area' };
+  return null;
+}
 
 interface CopilotChatProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectCitation?: (citation: CopilotCitation) => void;
+  onNavigateLocation?: (loc: LocationTarget) => void;
 }
 
 export const CopilotChat: React.FC<CopilotChatProps> = ({
   isOpen,
   onClose,
   onSelectCitation,
+  onNavigateLocation,
 }) => {
   const [messages, setMessages] = useState<CopilotMessage[]>([
     {
@@ -50,6 +76,12 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
     const query = textToSend || input;
     if (!query.trim() || loading) return;
 
+    // Check location in query and fly map immediately
+    const queryLoc = detectLocationFromText(query);
+    if (queryLoc && onNavigateLocation) {
+      onNavigateLocation(queryLoc);
+    }
+
     const userMsg: CopilotMessage = {
       id: `user-${Date.now()}`,
       sender: 'user',
@@ -72,6 +104,12 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
         timestamp: new Date().toLocaleTimeString(),
       };
       setMessages((prev) => [...prev, assistantMsg]);
+
+      // Check location in reply and focus map
+      const replyLoc = detectLocationFromText(res.reply) || queryLoc;
+      if (replyLoc && onNavigateLocation) {
+        onNavigateLocation(replyLoc);
+      }
     } catch (err: any) {
       const errorMsg: CopilotMessage = {
         id: `error-${Date.now()}`,
@@ -209,6 +247,17 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
                 </ReactMarkdown>
               )}
             </div>
+
+            {/* Location Focus Button */}
+            {m.sender === 'assistant' && detectLocationFromText(m.text) && (
+              <button
+                onClick={() => onNavigateLocation && onNavigateLocation(detectLocationFromText(m.text)!)}
+                className="mt-2 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-bold text-emerald-300 hover:bg-emerald-500/20 hover:border-emerald-400 transition-all shadow"
+              >
+                <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                <span>📍 Fly to {detectLocationFromText(m.text)!.label} on Map</span>
+              </button>
+            )}
 
             {/* Inline Citations */}
             {m.citations && m.citations.length > 0 && (
