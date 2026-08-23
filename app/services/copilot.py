@@ -515,11 +515,15 @@ class CopilotService:
         complete = self._completer or self._default_completer()
         definitions = self._tools.definitions()
 
-        conversation: list[dict[str, Any]] = [
-            {"role": turn["role"], "content": turn["content"]}
-            for turn in history
-            if turn.get("role") in {"user", "assistant"} and turn.get("content")
-        ]
+        recent_history = history[-4:] if len(history) > 4 else history
+        conversation: list[dict[str, Any]] = []
+        for turn in recent_history:
+            role = turn.get("role")
+            content = turn.get("content", "")
+            if role in {"user", "assistant"} and content:
+                if role == "assistant" and len(content) > 500:
+                    content = content[:500] + "..."
+                conversation.append({"role": role, "content": content})
         conversation.append({"role": "user", "content": message})
 
         citations: list[NormalizedSignal] = []
@@ -727,16 +731,16 @@ class CopilotService:
                     json=payload,
                 )
                 if res.status_code == 429:
-                    logger.warning("copilot.rate_limit_retrying")
-                    import asyncio
-                    await asyncio.sleep(3.5)
+                    logger.warning("copilot.rate_limit_fallback_to_fast_model")
+                    fallback_payload = dict(payload)
+                    fallback_payload["model"] = "openai/gpt-oss-20b"
                     res = await client.post(
                         f"{base_url.rstrip('/')}/chat/completions",
                         headers={
                             "Authorization": f"Bearer {api_key}",
                             "Content-Type": "application/json",
                         },
-                        json=payload,
+                        json=fallback_payload,
                     )
                 if res.status_code != 200:
                     logger.error(

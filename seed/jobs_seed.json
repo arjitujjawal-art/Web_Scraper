@@ -169,6 +169,97 @@
     "url": "https://www.linkedin.com/jobs/view/39827113"
   },
   {
+    "id": "job_berkeley_ai_001",
+    "source": "Fellowships & Grants",
+    "title": "Berkeley Postdoctoral Fellow in Embodied AI",
+    "company": "Berkeley AI Research (BAIR)",
+    "location": "Berkeley, CA",
+    "domain": "AI/ML",
+    "type": "Fellowship",
+    "salary_range": "$95,000 - $125,000 + Grant",
+    "summary": "Conduct groundbreaking research on vision-language-action models and dextrous robotic manipulation.",
+    "skills_required": ["PyTorch", "Robotics Learning", "Diffusion Models", "Transformers"],
+    "url": "https://www.linkedin.com/jobs/view/39827207"
+  },
+  {
+    "id": "job_berkeley_biotech_001",
+    "source": "LinkedIn Jobs",
+    "title": "Computational Biologist - Gene Editing",
+    "company": "HelixGen Therapeutics",
+    "location": "Berkeley, CA",
+    "domain": "Biotech",
+    "type": "Full-time",
+    "salary_range": "$160,000 - $210,000",
+    "summary": "Analyze high-throughput sequencing data to assess CRISPR off-target editing profiles and guide RNA efficacy.",
+    "skills_required": ["Nextflow", "Python", "R", "CRISPR", "Bioinformatics"],
+    "url": "https://www.linkedin.com/jobs/view/39827204"
+  },
+  {
+    "id": "job_berkeley_robotics_001",
+    "source": "LinkedIn Jobs",
+    "title": "Robotic Manipulation & Grasping Engineer",
+    "company": "AmbiRobotics Labs",
+    "location": "Berkeley, CA",
+    "domain": "Robotics",
+    "type": "Full-time",
+    "salary_range": "$170,000 - $230,000 + Equity",
+    "summary": "Design sim-to-real robotic sorting systems using suction/parallel grippers and deep reinforcement learning.",
+    "skills_required": ["C++", "ROS2", "Python", "PyBullet", "Grasp Planning"],
+    "url": "https://www.linkedin.com/jobs/view/39827209"
+  },
+  {
+    "id": "job_berkeley_ai_002",
+    "source": "LinkedIn Jobs",
+    "title": "Distributed LLM Systems Engineer",
+    "company": "SkyComputing Berkeley Innovations",
+    "location": "Berkeley, CA",
+    "domain": "AI/ML",
+    "type": "Full-time",
+    "salary_range": "$210,000 - $275,000 + Equity",
+    "summary": "Optimize vLLM and Ray distributed inference engines for multi-node GPU clusters.",
+    "skills_required": ["Python", "C++", "CUDA", "vLLM", "Ray", "Distributed Systems"],
+    "url": "https://www.linkedin.com/jobs/view/39827210"
+  },
+  {
+    "id": "job_berkeley_quantum_001",
+    "source": "Fellowships & Grants",
+    "title": "Quantum Simulation Postdoctoral Scientist",
+    "company": "Lawrence Berkeley National Lab (LBNL)",
+    "location": "Berkeley, CA",
+    "domain": "Quantum",
+    "type": "Fellowship",
+    "salary_range": "$105,000 - $135,000 + Grant",
+    "summary": "Simulate strongly correlated quantum chemistry materials on superconducting qutrit hardware.",
+    "skills_required": ["Qiskit", "Cirq", "Python", "Quantum Chemistry", "Hamiltonian Simulation"],
+    "url": "https://www.linkedin.com/jobs/view/39827211"
+  },
+  {
+    "id": "job_berkeley_biotech_002",
+    "source": "Fellowships & Grants",
+    "title": "CRISPR Functional Genomics Fellow",
+    "company": "Innovative Genomics Institute (IGI)",
+    "location": "Berkeley, CA",
+    "domain": "Biotech",
+    "type": "Fellowship",
+    "salary_range": "$90,000 - $115,000 + Research Fund",
+    "summary": "Pioneer base-editing screens for agricultural disease resistance and human epigenetic therapeutic targets.",
+    "skills_required": ["CRISPR Cas9/Cas12", "Cell Culture", "RNA-Seq", "Bioinformatics"],
+    "url": "https://www.linkedin.com/jobs/view/39827212"
+  },
+  {
+    "id": "job_berkeley_climate_001",
+    "source": "LinkedIn Jobs",
+    "title": "Direct Air Capture Systems Engineer",
+    "company": "CalCarbon Solutions",
+    "location": "Berkeley, CA",
+    "domain": "Climate & Energy",
+    "type": "Full-time",
+    "salary_range": "$155,000 - $205,000",
+    "summary": "Scale chemical adsorption reactor columns and thermodynamic regeneration loops for modular DAC.",
+    "skills_required": ["Chemical Engineering", "Aspen Plus", "CO2 Capture", "Thermodynamics"],
+    "url": "https://www.linkedin.com/jobs/view/39827213"
+  },
+  {
     "id": "job_sf_ai_001",
     "source": "LinkedIn Jobs",
     "title": "Staff Foundation Model Engineer",
@@ -195,19 +286,6 @@
     "url": "https://www.linkedin.com/jobs/view/39827202"
   },
   {
-    "id": "job_sf_ai_003",
-    "source": "Fellowships & Grants",
-    "title": "Berkeley Postdoctoral Fellow in Embodied AI",
-    "company": "Berkeley AI Research (BAIR)",
-    "location": "Berkeley, CA",
-    "domain": "AI/ML",
-    "type": "Fellowship",
-    "salary_range": "$95,000 - $120,000 + Grant",
-    "summary": "Conduct groundbreaking research at the intersection of vision-language-action foundation models and manipulation.",
-    "skills_required": ["PyTorch", "Robotics Learning", "Diffusion Models", "Transformers"],
-    "url": "https://www.linkedin.com/jobs/view/39827207"
-  },
-  {
     "id": "job_sf_robotics_001",
     "source": "LinkedIn Jobs",
     "title": "Humanoid Robotics Control Engineer",
@@ -219,19 +297,6 @@
     "summary": "Implement whole-body control, reinforcement learning for locomotion, and tactile sensing feedback for bipedal robots.",
     "skills_required": ["C++20", "Python", "MuJoCo", "Reinforcement Learning", "Control Theory"],
     "url": "https://www.linkedin.com/jobs/view/39827203"
-  },
-  {
-    "id": "job_sf_biotech_001",
-    "source": "LinkedIn Jobs",
-    "title": "Computational Biologist - Gene Editing",
-    "company": "HelixGen Therapeutics",
-    "location": "Berkeley, CA",
-    "domain": "Biotech",
-    "type": "Full-time",
-    "salary_range": "$160,000 - $210,000",
-    "summary": "Analyze high-throughput sequencing data to assess CRISPR off-target editing profiles and guide RNA efficacy.",
-    "skills_required": ["Nextflow", "Python", "R", "CRISPR", "Bioinformatics"],
-    "url": "https://www.linkedin.com/jobs/view/39827204"
   },
   {
     "id": "job_sf_greentech_001",
