@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { GoogleMap, useJsApiLoader, OverlayView } from '@react-google-maps/api';
+import React, { useEffect } from 'react';
+import { MapContainer, TileLayer, Circle, Marker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import type { OpportunityZone, SignalSummary, JobPosting } from '../../api/types';
-import { cyberDarkMapStyle, DOMAIN_COLORS, CITY_CENTERS } from '../../styles/mapTheme';
-import { Sparkles, Building2, GraduationCap, Calendar, Briefcase, Zap, Compass, Layers } from 'lucide-react';
+import { DOMAIN_COLORS, CITY_CENTERS } from '../../styles/mapTheme';
 
 interface MapCanvasProps {
   activeCity: 'delhi' | 'sf';
@@ -19,21 +19,23 @@ interface MapCanvasProps {
   mapCenterTarget?: { lat: number; lng: number; zoom?: number } | null;
 }
 
-const mapContainerStyle = {
-  width: '100%',
-  height: '100%',
-};
+// Controller to smoothly animate the map camera on state changes
+const MapController: React.FC<{
+  center: [number, number];
+  zoom: number;
+  target?: { lat: number; lng: number; zoom?: number } | null;
+}> = ({ center, zoom, target }) => {
+  const map = useMap();
 
-const mapOptions: google.maps.MapOptions = {
-  styles: cyberDarkMapStyle,
-  disableDefaultUI: true,
-  zoomControl: false,
-  mapTypeControl: false,
-  streetViewControl: false,
-  fullscreenControl: false,
-  backgroundColor: '#070b14',
-  minZoom: 4,
-  maxZoom: 18,
+  useEffect(() => {
+    if (target) {
+      map.flyTo([target.lat, target.lng], target.zoom || 13, { duration: 1.2 });
+    } else {
+      map.flyTo(center, zoom, { duration: 1.2 });
+    }
+  }, [center, zoom, target, map]);
+
+  return null;
 };
 
 export const MapCanvas: React.FC<MapCanvasProps> = ({
@@ -50,326 +52,219 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
   onSelectJob,
   mapCenterTarget,
 }) => {
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: apiKey,
-  });
-
-  const [map, setMap] = useState<google.maps.Map | null>(null);
   const cityConfig = CITY_CENTERS[activeCity];
+  const centerPos: [number, number] = [cityConfig.center.lat, cityConfig.center.lng];
 
-  const onLoad = useCallback((mapInstance: google.maps.Map) => {
-    setMap(mapInstance);
-  }, []);
+  // Helper to build custom HTML DivIcon for Opportunity Zone Pins
+  const createZoneIcon = (zone: OpportunityZone, isSelected: boolean) => {
+    const domainStyle = DOMAIN_COLORS[zone.domain] || DOMAIN_COLORS['AI/ML'];
+    const borderClass = isSelected ? 'border-cyan-400 ring-2 ring-cyan-400/50 scale-110' : 'border-slate-700/90';
 
-  const onUnmount = useCallback(() => {
-    setMap(null);
-  }, []);
+    const html = `
+      <div class="relative -translate-x-1/2 -translate-y-1/2 cursor-pointer group select-none">
+        <div class="relative flex items-center gap-2 px-3 py-1.5 rounded-full glass-panel-elevated border ${borderClass} shadow-2xl transition-all"
+             style="box-shadow: 0 0 20px ${domainStyle.glow};">
+          <div class="w-2.5 h-2.5 rounded-full animate-ping" style="background-color: ${domainStyle.hex};"></div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs font-bold tracking-tight text-white whitespace-nowrap">${zone.primary_area || zone.city}</span>
+              <span class="text-[9px] px-1.5 py-0.2 rounded font-semibold uppercase whitespace-nowrap" style="background-color: ${domainStyle.hex}25; color: ${domainStyle.hex};">
+                ${zone.domain}
+              </span>
+            </div>
+            <div class="flex items-center gap-1 text-[10px] text-slate-300">
+              <span class="text-amber-400 font-mono font-bold">⚡ ${zone.emergence_score.toFixed(2)}</span>
+              <span class="text-slate-400">·</span>
+              <span class="text-slate-400">${zone.signal_count} signals</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
 
-  // Pan to target city on switcher change
-  useEffect(() => {
-    if (map) {
-      if (mapCenterTarget) {
-        map.panTo({ lat: mapCenterTarget.lat, lng: mapCenterTarget.lng });
-        if (mapCenterTarget.zoom) map.setZoom(mapCenterTarget.zoom);
-      } else {
-        map.panTo(cityConfig.center);
-        map.setZoom(cityConfig.zoom);
-      }
-    }
-  }, [map, activeCity, mapCenterTarget, cityConfig]);
+    return L.divIcon({
+      html,
+      className: 'custom-div-icon',
+      iconSize: [140, 40],
+      iconAnchor: [70, 20],
+    });
+  };
 
-  // Handle Zoom In / Zoom Out / Center
-  const handleZoomIn = () => map && map.setZoom((map.getZoom() || 11) + 1);
-  const handleZoomOut = () => map && map.setZoom((map.getZoom() || 11) - 1);
-  const handleResetCenter = () => map && map.panTo(cityConfig.center);
+  // Helper to build custom HTML DivIcon for Signal Pins
+  const createSignalIcon = (sig: SignalSummary, isSelected: boolean) => {
+    const domainStyle = DOMAIN_COLORS[sig.domain] || DOMAIN_COLORS['AI/ML'];
+    const bg = isSelected ? '#ffffff' : '#090e1c';
+    const text = isSelected ? '#090e1c' : domainStyle.hex;
 
-  // If Google Maps API is loaded, render the Google Map canvas
+    const html = `
+      <div class="relative -translate-x-1/2 -translate-y-1/2 cursor-pointer">
+        <div class="w-7 h-7 rounded-full flex items-center justify-center border shadow-xl transition-transform hover:scale-125"
+             style="background-color: ${bg}; color: ${text}; border-color: ${domainStyle.hex}80;">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+          </svg>
+        </div>
+      </div>
+    `;
+
+    return L.divIcon({
+      html,
+      className: 'custom-div-icon',
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+    });
+  };
+
+  // Helper to build custom HTML DivIcon for Active Job Pins
+  const createJobIcon = (job: JobPosting, isSelected: boolean) => {
+    const bg = isSelected ? '#10b981' : '#090e1c';
+    const text = isSelected ? '#090e1c' : '#6ee7b7';
+
+    const html = `
+      <div class="relative -translate-x-1/2 -translate-y-1/2 cursor-pointer">
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold border shadow-lg transition-transform hover:scale-110 whitespace-nowrap"
+             style="background-color: ${bg}; color: ${text}; border-color: #10b98180;">
+          <span>💼</span>
+          <span class="truncate max-w-[100px]">${job.company}</span>
+        </div>
+      </div>
+    `;
+
+    return L.divIcon({
+      html,
+      className: 'custom-div-icon',
+      iconSize: [120, 24],
+      iconAnchor: [60, 12],
+    });
+  };
+
   return (
     <div className="relative w-full h-full bg-[#070b14] overflow-hidden">
-      {isLoaded && !loadError ? (
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          center={cityConfig.center}
-          zoom={cityConfig.zoom}
-          options={mapOptions}
-          onLoad={onLoad}
-          onUnmount={onUnmount}
-          onClick={() => {
-            onSelectZone(null);
-            onSelectSignal(null);
-            onSelectJob(null);
-          }}
-        >
-          {/* Layer 1: Opportunity Zones Glowing Radars & Badges */}
-          {zones.map((zone) => {
-            const domainStyle = DOMAIN_COLORS[zone.domain] || DOMAIN_COLORS['AI/ML'];
-            const isSelected = selectedZone?.city === zone.city && selectedZone?.domain === zone.domain;
+      <MapContainer
+        center={centerPos}
+        zoom={cityConfig.zoom}
+        scrollWheelZoom={true}
+        zoomControl={false}
+        attributionControl={true}
+        className="w-full h-full"
+      >
+        {/* Dark Cyber Vector Map Tiles (CartoDB Dark Matter) */}
+        <TileLayer
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          subdomains="abcd"
+          maxZoom={19}
+          attribution='&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        />
 
-            return (
-              <OverlayView
-                key={`zone-${zone.city}-${zone.domain}`}
-                position={{ lat: zone.lat, lng: zone.lng }}
-                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-              >
-                <div
-                  className="relative -translate-x-1/2 -translate-y-1/2 cursor-pointer group select-none"
-                  onClick={(e) => {
-                    e.stopPropagation();
+        {/* Camera Fly Controller */}
+        <MapController
+          center={centerPos}
+          zoom={cityConfig.zoom}
+          target={mapCenterTarget}
+        />
+
+        {/* Layer 1: Opportunity Zones Glowing Radar Circles & Badge Markers */}
+        {zones.map((zone) => {
+          const domainStyle = DOMAIN_COLORS[zone.domain] || DOMAIN_COLORS['AI/ML'];
+          const isSelected = selectedZone?.city === zone.city && selectedZone?.domain === zone.domain;
+
+          return (
+            <React.Fragment key={`zone-frag-${zone.city}-${zone.domain}`}>
+              {/* Glowing Concentric Radar Circles */}
+              <Circle
+                center={[zone.lat, zone.lng]}
+                radius={2500 + zone.emergence_score * 300}
+                pathOptions={{
+                  color: domainStyle.hex,
+                  fillColor: domainStyle.hex,
+                  fillOpacity: isSelected ? 0.25 : 0.12,
+                  weight: isSelected ? 2 : 1,
+                  dashArray: isSelected ? '4, 4' : undefined,
+                }}
+                eventHandlers={{
+                  click: () => {
                     onSelectZone(zone);
                     onSelectSignal(null);
                     onSelectJob(null);
-                  }}
-                >
-                  {/* Glowing Pulsing Radar Rings */}
-                  <div
-                    className="absolute -inset-8 rounded-full pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity"
-                    style={{
-                      background: `radial-gradient(circle, ${domainStyle.glow} 0%, transparent 70%)`,
-                    }}
-                  />
-                  <div
-                    className="absolute -inset-10 rounded-full border border-cyan-400/30 radar-ring pointer-events-none"
-                    style={{ borderColor: domainStyle.hex }}
-                  />
-                  <div
-                    className="absolute -inset-14 rounded-full border border-cyan-400/20 radar-ring-delayed pointer-events-none"
-                    style={{ borderColor: domainStyle.hex }}
-                  />
+                  },
+                }}
+              />
 
-                  {/* Core Badge Pin */}
-                  <div
-                    className={`relative flex items-center gap-2 px-3 py-1.5 rounded-full glass-panel-elevated border transition-all duration-300 transform group-hover:scale-110 shadow-2xl ${
-                      isSelected
-                        ? 'border-cyan-400 ring-2 ring-cyan-400/50 scale-110'
-                        : 'border-slate-700/80'
-                    }`}
-                    style={{
-                      boxShadow: `0 0 20px ${domainStyle.glow}`,
-                    }}
-                  >
-                    <div
-                      className="w-2.5 h-2.5 rounded-full animate-ping"
-                      style={{ backgroundColor: domainStyle.hex }}
-                    />
-                    <div className="flex flex-col">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-bold tracking-tight text-white">
-                          {zone.primary_area || zone.city}
-                        </span>
-                        <span
-                          className="text-[10px] px-1.5 py-0.2 rounded font-semibold uppercase"
-                          style={{
-                            backgroundColor: `${domainStyle.hex}25`,
-                            color: domainStyle.hex,
-                          }}
-                        >
-                          {zone.domain}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-[10px] text-slate-300">
-                        <span className="flex items-center gap-0.5 text-amber-400 font-mono font-bold">
-                          <Zap className="w-3 h-3 fill-amber-400" />
-                          {zone.emergence_score.toFixed(2)}
-                        </span>
-                        <span className="text-slate-400">·</span>
-                        <span className="text-slate-400">
-                          {zone.signal_count} signals
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+              {/* Core Badge Marker */}
+              <Marker
+                position={[zone.lat, zone.lng]}
+                icon={createZoneIcon(zone, isSelected)}
+                eventHandlers={{
+                  click: () => {
+                    onSelectZone(zone);
+                    onSelectSignal(null);
+                    onSelectJob(null);
+                  },
+                }}
+              />
+            </React.Fragment>
+          );
+        })}
+
+        {/* Layer 2: Verified Emerging Signals Markers */}
+        {signals.map((sig) => {
+          if (!sig.lat || !sig.lng) return null;
+          const isSelected = selectedSignal?.signal_id === sig.signal_id;
+
+          return (
+            <Marker
+              key={`sig-${sig.signal_id}`}
+              position={[sig.lat, sig.lng]}
+              icon={createSignalIcon(sig, isSelected)}
+              eventHandlers={{
+                click: () => {
+                  onSelectSignal(sig);
+                  onSelectZone(null);
+                  onSelectJob(null);
+                },
+              }}
+            >
+              <Popup>
+                <div className="p-1">
+                  <span className="text-[9px] font-mono text-cyan-400 uppercase font-bold">{sig.domain} · {sig.signal_type}</span>
+                  <h4 className="text-xs font-bold text-white mt-1 leading-snug">{sig.title}</h4>
+                  <p className="text-[10px] text-slate-300 mt-1 line-clamp-2">{sig.summary}</p>
                 </div>
-              </OverlayView>
-            );
-          })}
+              </Popup>
+            </Marker>
+          );
+        })}
 
-          {/* Layer 2: Verified Emerging Signals Markers */}
-          {signals.map((sig) => {
-            const isSelected = selectedSignal?.signal_id === sig.signal_id;
-            const domainStyle = DOMAIN_COLORS[sig.domain] || DOMAIN_COLORS['AI/ML'];
-            if (!sig.lat || !sig.lng) return null;
+        {/* Layer 3: Active Jobs Secondary Layer Markers */}
+        {showJobsLayer &&
+          jobs.map((job) => {
+            if (!job.lat || !job.lng) return null;
+            const isSelected = selectedJob?.id === job.id;
 
             return (
-              <OverlayView
-                key={`sig-${sig.signal_id}`}
-                position={{ lat: sig.lat, lng: sig.lng }}
-                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-              >
-                <div
-                  className="relative -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSelectSignal(sig);
+              <Marker
+                key={`job-${job.id}`}
+                position={[job.lat, job.lng]}
+                icon={createJobIcon(job, isSelected)}
+                eventHandlers={{
+                  click: () => {
+                    onSelectJob(job);
                     onSelectZone(null);
-                    onSelectJob(null);
-                  }}
-                >
-                  <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center border shadow-lg transition-transform transform group-hover:scale-125 ${
-                      isSelected
-                        ? 'bg-white text-slate-950 border-white ring-2 ring-cyan-400 scale-125'
-                        : 'bg-slate-900/90 hover:scale-110'
-                    }`}
-                    style={{
-                      color: domainStyle.hex,
-                      borderColor: `${domainStyle.hex}60`,
-                    }}
-                  >
-                    {sig.source_type === 'university_research' ? (
-                      <GraduationCap className="w-3.5 h-3.5" />
-                    ) : sig.source_type === 'incubator_cohort' ? (
-                      <Building2 className="w-3.5 h-3.5" />
-                    ) : sig.source_type === 'tech_event' ? (
-                      <Calendar className="w-3.5 h-3.5" />
-                    ) : (
-                      <Sparkles className="w-3.5 h-3.5" />
-                    )}
+                    onSelectSignal(null);
+                  },
+                }}
+              >
+                <Popup>
+                  <div className="p-1">
+                    <span className="text-[9px] font-mono text-emerald-400 font-bold uppercase">{job.company}</span>
+                    <h4 className="text-xs font-bold text-white mt-0.5">{job.title}</h4>
+                    <p className="text-[10px] font-mono text-amber-300 font-bold mt-1">{job.salary_range}</p>
                   </div>
-                </div>
-              </OverlayView>
+                </Popup>
+              </Marker>
             );
           })}
-
-          {/* Layer 3: Active Jobs Overlay Pins */}
-          {showJobsLayer &&
-            jobs.map((job) => {
-              const isSelected = selectedJob?.id === job.id;
-              if (!job.lat || !job.lng) return null;
-
-              return (
-                <OverlayView
-                  key={`job-${job.id}`}
-                  position={{ lat: job.lat, lng: job.lng }}
-                  mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                >
-                  <div
-                    className="relative -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectJob(job);
-                      onSelectZone(null);
-                      onSelectSignal(null);
-                    }}
-                  >
-                    <div
-                      className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-medium border shadow-lg transition-all transform group-hover:scale-110 ${
-                        isSelected
-                          ? 'bg-emerald-500 text-slate-950 border-white ring-2 ring-emerald-400 font-bold scale-110'
-                          : 'bg-slate-900/90 text-emerald-300 border-emerald-500/40 hover:border-emerald-400'
-                      }`}
-                    >
-                      <Briefcase className="w-3 h-3" />
-                      <span className="truncate max-w-[90px]">{job.company}</span>
-                    </div>
-                  </div>
-                </OverlayView>
-              );
-            })}
-        </GoogleMap>
-      ) : (
-        /* Cyber Fallback Map View with Full Interactivity */
-        <div className="relative w-full h-full flex items-center justify-center bg-[#070b14] overflow-hidden">
-          {/* Cyber Grid Background */}
-          <div 
-            className="absolute inset-0 opacity-20 pointer-events-none"
-            style={{
-              backgroundImage: `linear-gradient(to right, #1e2d4d 1px, transparent 1px), linear-gradient(to bottom, #1e2d4d 1px, transparent 1px)`,
-              backgroundSize: '40px 40px',
-            }}
-          />
-          {/* Glowing Center Radial */}
-          <div className="absolute w-[600px] h-[600px] rounded-full bg-cyan-500/5 blur-[120px] pointer-events-none" />
-
-          {/* Interactive Opportunity Zones Overlay Cards */}
-          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-12 max-w-6xl w-full max-h-[85vh] overflow-y-auto">
-            {zones.map((zone) => {
-              const domainStyle = DOMAIN_COLORS[zone.domain] || DOMAIN_COLORS['AI/ML'];
-              const isSelected = selectedZone?.city === zone.city && selectedZone?.domain === zone.domain;
-
-              return (
-                <div
-                  key={`fallback-zone-${zone.city}-${zone.domain}`}
-                  onClick={() => onSelectZone(zone)}
-                  className={`p-6 rounded-2xl glass-panel-elevated border cursor-pointer transition-all duration-300 hover:scale-[1.03] shadow-2xl relative overflow-hidden group ${
-                    isSelected ? 'border-cyan-400 ring-2 ring-cyan-400/50' : 'border-slate-800 hover:border-cyan-500/50'
-                  }`}
-                >
-                  <div
-                    className="absolute top-0 right-0 w-32 h-32 rounded-full blur-2xl opacity-20 pointer-events-none"
-                    style={{ backgroundColor: domainStyle.hex }}
-                  />
-
-                  <div className="flex items-center justify-between mb-4">
-                    <span
-                      className="px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider"
-                      style={{
-                        backgroundColor: `${domainStyle.hex}20`,
-                        color: domainStyle.hex,
-                      }}
-                    >
-                      {zone.domain}
-                    </span>
-                    <span className="flex items-center gap-1 text-sm font-mono font-bold text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full">
-                      <Zap className="w-3.5 h-3.5 fill-amber-400" />
-                      {zone.emergence_score.toFixed(2)}
-                    </span>
-                  </div>
-
-                  <h3 className="text-xl font-bold text-white mb-1">
-                    {zone.primary_area || zone.city}
-                  </h3>
-                  <p className="text-xs text-slate-400 mb-4">
-                    {zone.city} Tech Opportunity Cluster
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-800/80 text-xs">
-                    <div>
-                      <span className="text-slate-500 block">Signals</span>
-                      <span className="text-slate-200 font-semibold">{zone.signal_count} verified</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block">Confidence</span>
-                      <span className="text-cyan-400 font-semibold uppercase">{zone.confidence}</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="absolute bottom-6 left-6 z-20 glass-panel px-4 py-2 rounded-lg text-xs text-slate-400 flex items-center gap-2">
-            <Layers className="w-4 h-4 text-cyan-400" />
-            <span>Interactive Cyber Vector Grid Active (API Key optional)</span>
-          </div>
-        </div>
-      )}
-
-      {/* Floating Map HUD Controls (Zoom In/Out, Reset Center) */}
-      <div className="absolute top-24 right-6 z-20 flex flex-col gap-2">
-        <button
-          onClick={handleZoomIn}
-          className="w-10 h-10 rounded-xl glass-panel-elevated border border-slate-700/70 hover:border-cyan-400/80 text-white flex items-center justify-center transition-all hover:scale-105 shadow-xl"
-          title="Zoom In"
-        >
-          <span className="text-lg font-bold">+</span>
-        </button>
-        <button
-          onClick={handleZoomOut}
-          className="w-10 h-10 rounded-xl glass-panel-elevated border border-slate-700/70 hover:border-cyan-400/80 text-white flex items-center justify-center transition-all hover:scale-105 shadow-xl"
-          title="Zoom Out"
-        >
-          <span className="text-lg font-bold">-</span>
-        </button>
-        <button
-          onClick={handleResetCenter}
-          className="w-10 h-10 rounded-xl glass-panel-elevated border border-slate-700/70 hover:border-cyan-400/80 text-cyan-400 flex items-center justify-center transition-all hover:scale-105 shadow-xl"
-          title="Reset to City Center"
-        >
-          <Compass className="w-5 h-5" />
-        </button>
-      </div>
+      </MapContainer>
     </div>
   );
 };

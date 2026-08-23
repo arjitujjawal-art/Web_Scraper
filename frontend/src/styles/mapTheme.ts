@@ -1,5 +1,5 @@
 // Custom High-Tech Cyber Dark Vector Style for Google Maps
-export const cyberDarkMapStyle: google.maps.MapTypeStyle[] = [
+export const cyberDarkMapStyle: any[] = [
   {
     elementType: 'geometry',
     stylers: [{ color: '#090e1c' }],
