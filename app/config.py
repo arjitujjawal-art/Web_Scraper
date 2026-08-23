@@ -59,7 +59,7 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     anthropic_api_key: str = ""
     copilot_provider: str = "groq"
-    copilot_model: str = "llama-3.3-70b-versatile"
+    copilot_model: str = "openai/gpt-oss-120b"
     copilot_max_tool_iterations: int = 5
 
     # --- Storage -----------------------------------------------------------
