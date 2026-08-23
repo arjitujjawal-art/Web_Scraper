@@ -58,7 +58,7 @@ there is one — the point of steps 1 and 5 is that the map moves.
 ```bash
 export ADMIN_KEY="…the value from your .env…"
 export BASE=http://localhost:8000
-export FIXTURES=https://<your-user>.github.io/signal-atlas/fixtures
+export FIXTURES=https://arjitujjawal-art.github.io/signal-atlas/fixtures
 ```
 
 Every `POST` below returns `202` immediately with a `poll_url`. Poll it until `status` is

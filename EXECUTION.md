@@ -238,11 +238,11 @@ gh api -X POST repos/:owner/signal-atlas/pages -f source.branch=main -f source.p
 Then confirm both files load and put the base URL in `.env`:
 
 ```bash
-curl -sI https://<user>.github.io/signal-atlas/fixtures/newsroom_v1.html | head -1
+curl -sI https://arjitujjawal-art.github.io/signal-atlas/fixtures/newsroom_v1.html | head -1
 ```
 
 ```
-FIXTURE_BASE_URL=https://<user>.github.io/signal-atlas/fixtures
+FIXTURE_BASE_URL=https://arjitujjawal-art.github.io/signal-atlas/fixtures
 ```
 
 `demo_newsroom` must be created **after** that variable is set — its `create` URL is

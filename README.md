@@ -27,7 +27,9 @@ GET /api/zones?city=Delhi
 ```
 
 Every number in that response is decomposable. `contributions` sums to `score`, so a judge with
-a calculator can check the published scoring rule rather than take it on trust.
+a calculator can check the published scoring rule rather than take it on trust. Your own numbers
+will sit slightly above these: the seed data is dated relative to the day you run `app.seed`, and
+the score decays with age, so a freshly seeded corpus scores a little higher than a captured one.
 
 The second half of the product is what happens when a source page changes shape. A layout change
 silently starves a scraper: it keeps returning 200, the rows keep arriving, the fields are empty.
