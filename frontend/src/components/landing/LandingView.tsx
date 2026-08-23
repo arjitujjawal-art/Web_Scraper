@@ -7,12 +7,17 @@ interface LandingViewProps {
 
 export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [isLaunching, setIsLaunching] = useState(false);
+  const [animState, setAnimState] = useState<'idle' | 'focus' | 'lock' | 'expand'>('idle');
+  const [lockedHub, setLockedHub] = useState<'delhi' | 'sf' | null>(null);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const globeCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const starfieldCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const pinSfRef = useRef<HTMLButtonElement | null>(null);
   const pinDelhiRef = useRef<HTMLButtonElement | null>(null);
+  const appCardRef = useRef<HTMLDivElement | null>(null);
+  const heroContentRef = useRef<HTMLDivElement | null>(null);
+  const navRef = useRef<HTMLElement | null>(null);
 
   const toggleAudio = () => {
     if (!audioRef.current) {
@@ -32,10 +37,27 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
   };
 
   const handleStart = (city?: 'delhi' | 'sf') => {
-    setIsLaunching(true);
+    if (animState !== 'idle') return;
+
+    if (city) setLockedHub(city);
+
+    // Step 0: Center Focus
+    setAnimState('focus');
+
+    // Step 1: Radar Lock inside phone screen (after 700ms)
+    setTimeout(() => {
+      setAnimState('lock');
+    }, 700);
+
+    // Step 2: Signal Wave Expansion & Card Morph (after 1300ms)
+    setTimeout(() => {
+      setAnimState('expand');
+    }, 1300);
+
+    // Step 3: Transition to Dashboard (after 1900ms)
     setTimeout(() => {
       onLaunch(city);
-    }, 600);
+    }, 1900);
   };
 
   // 3D Rotating Pixel Earth Engine
@@ -47,7 +69,6 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
 
     if (!canvas) return;
 
-    // 1. Generate High-Res Pixel-Art Equirectangular Earth Texture (512x256)
     const mapW = 512;
     const mapH = 256;
     const texCanvas = document.createElement('canvas');
@@ -266,10 +287,10 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
   }, []);
 
   return (
-    <div className={`relative w-full min-h-screen bg-[#070707] text-[#f9dcda] overflow-hidden flex flex-col justify-between select-none transition-all duration-500 ${isLaunching ? 'scale-105 opacity-0 blur-sm' : 'scale-100 opacity-100'}`}>
+    <div className="relative w-full min-h-screen bg-[#070707] text-[#f9dcda] overflow-hidden flex flex-col justify-between select-none">
       
       {/* Spiderweb Background Overlays */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none red-web-glowing-mesh opacity-25">
+      <div className={`fixed inset-0 pointer-events-none z-0 overflow-hidden select-none red-web-glowing-mesh transition-opacity duration-700 ${animState !== 'idle' ? 'opacity-5' : 'opacity-25'}`}>
         <svg className="absolute -top-6 -left-6 w-80 h-80 sm:w-96 sm:h-96 md:w-[460px] md:h-[460px] text-red-600" viewBox="0 0 200 200" fill="none" stroke="currentColor" strokeWidth="0.85">
           <path d="M0,30 A30,30 0 0,0 30,0" opacity="0.6"/>
           <path d="M0,60 A60,60 0 0,0 60,0" opacity="0.7"/>
@@ -299,8 +320,18 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
         </svg>
       </div>
 
+      {/* Outward Expanding Radar Shockwave Container */}
+      {animState === 'expand' && (
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full border-4 border-red-500 shadow-[0_0_60px_rgba(239,68,68,0.8),inset_0_0_40px_rgba(239,68,68,0.5)] z-[9999] pointer-events-none radar-expand-wave-anim" />
+      )}
+
       {/* Top Header */}
-      <header className="w-full z-40 px-6 lg:px-12 py-4 max-w-7xl mx-auto flex justify-between items-center flex-shrink-0">
+      <header
+        ref={navRef}
+        className={`w-full z-40 px-6 lg:px-12 py-4 max-w-7xl mx-auto flex justify-between items-center flex-shrink-0 transition-all duration-700 ${
+          animState !== 'idle' ? 'opacity-15 blur-[2px]' : 'opacity-100'
+        }`}
+      >
         <div className="flex items-center gap-3">
           <span className="text-2xl sm:text-3xl font-black text-[#ff4d55] uppercase tracking-wider drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]">
             ATLAS
@@ -311,7 +342,6 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Audio toggle button */}
           <button
             onClick={toggleAudio}
             className="p-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 transition-all active:scale-95"
@@ -320,7 +350,6 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
             {isPlayingAudio ? <Volume2 className="w-4 h-4 text-[#ff4d55]" /> : <VolumeX className="w-4 h-4 text-zinc-400" />}
           </button>
 
-          {/* Launch CTA */}
           <button
             onClick={() => handleStart()}
             className="font-bold text-xs tracking-wider text-[#ff4d55] bg-[#ff4d55]/10 border border-[#ff4d55]/30 px-5 py-2.5 rounded-full shadow-[0_0_18px_rgba(239,68,68,0.25)] hover:bg-[#ff4d55] hover:text-white hover:shadow-[0_0_28px_rgba(239,68,68,0.6)] transition-all uppercase flex items-center gap-2 active:scale-95"
@@ -336,7 +365,12 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
         <div className="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-[52%_48%] gap-8 lg:gap-12 items-center my-auto">
           
           {/* Left Hero Column */}
-          <div className="flex flex-col gap-5 items-start text-left max-w-2xl w-full">
+          <div
+            ref={heroContentRef}
+            className={`flex flex-col gap-5 items-start text-left max-w-2xl w-full transition-all duration-700 ${
+              animState !== 'idle' ? 'opacity-15 blur-[2px] scale-95' : 'opacity-100 scale-100'
+            }`}
+          >
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.08]">
               Track opportunities.<br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff4d55] via-[#ff6b72] to-[#98cdf2] drop-shadow-[0_0_25px_rgba(239,68,68,0.35)]">
@@ -396,10 +430,19 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
 
           {/* Right Column: Retro-Cyber Console Device Mockup */}
           <div className="relative w-full flex items-center justify-center p-2">
-            <div className="absolute inset-0 rounded-full blur-[80px] opacity-25 z-0 bg-gradient-to-br from-red-600/40 to-cyan-500/40 pointer-events-none"></div>
+            <div className="absolute inset-0 rounded-full blur-[80px] opacity-25 z-0 bg-gradient-to-br from-red-600/40 to-cyan-500/40 pointer-events-none" />
 
-            <div className="w-[340px] sm:w-[360px] h-[520px] bg-[#3fa4d1] rounded-2xl border-4 border-black relative overflow-hidden group shadow-[8px_8px_0px_0px_rgba(0,0,0,0.7)] flex flex-col p-3 z-10">
-              
+            {/* Mobile Device Mockup Card with Dynamic Centering & Expansion */}
+            <div
+              ref={appCardRef}
+              className={`w-[340px] sm:w-[360px] h-[520px] bg-[#3fa4d1] rounded-2xl border-4 border-black relative overflow-hidden group shadow-[8px_8px_0px_0px_rgba(0,0,0,0.7)] flex flex-col p-3 z-30 transition-all duration-700 ${
+                animState === 'focus' || animState === 'lock'
+                  ? 'scale-110 lg:scale-115 shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_60px_rgba(239,68,68,0.6)] brightness-115'
+                  : animState === 'expand'
+                  ? 'scale-[3] opacity-0 blur-md pointer-events-none'
+                  : 'scale-100'
+              }`}
+            >
               {/* Internal Bezel Screen */}
               <div className="relative w-full flex-grow bg-[#0c182b] overflow-hidden flex flex-col border-2 border-black rounded-xl">
                 
@@ -426,8 +469,12 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
                     <div className="absolute -inset-2 rounded-full pointer-events-none border border-cyan-400/20 shadow-[0_0_40px_rgba(6,182,212,0.45),0_0_15px_rgba(239,68,68,0.2)]" />
                     <div className="absolute inset-0 rounded-full pointer-events-none border-2 border-cyan-400/60 shadow-[inset_0_0_25px_rgba(34,211,238,0.4)] z-20" />
                     
-                    {/* Scanner rotating beam */}
-                    <div className="absolute inset-0 scanner-beam pointer-events-none opacity-25 bg-[conic-gradient(from_0deg,_transparent_0deg,_transparent_300deg,_rgba(56,189,248,0.6)_360deg)] rounded-full z-20" />
+                    {/* Scanner rotating beam with high speed during lock */}
+                    <div className={`absolute inset-0 pointer-events-none z-20 rounded-full ${
+                      animState === 'lock' || animState === 'expand'
+                        ? 'fast-scanner-beam opacity-90 bg-[conic-gradient(from_0deg,_transparent_0deg,_transparent_280deg,_rgba(239,68,68,0.85)_360deg)]'
+                        : 'scanner-beam opacity-25 bg-[conic-gradient(from_0deg,_transparent_0deg,_transparent_300deg,_rgba(56,189,248,0.6)_360deg)]'
+                    }`} />
 
                     {/* Canvas */}
                     <canvas ref={globeCanvasRef} width={160} height={160} className="w-full h-full block rounded-full select-none pointer-events-none z-10" />
@@ -436,7 +483,9 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
                     <button
                       ref={pinSfRef}
                       onClick={() => handleStart('sf')}
-                      className="absolute z-30 cursor-pointer group text-left transition-transform hover:scale-125 active:scale-95 origin-center"
+                      className={`absolute z-30 cursor-pointer group text-left transition-transform origin-center ${
+                        animState === 'lock' ? 'scale-150' : 'hover:scale-125'
+                      }`}
                       style={{ display: 'none' }}
                     >
                       <div className="relative flex items-center justify-center">
@@ -455,7 +504,9 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
                     <button
                       ref={pinDelhiRef}
                       onClick={() => handleStart('delhi')}
-                      className="absolute z-30 cursor-pointer group text-left transition-transform hover:scale-125 active:scale-95 origin-center"
+                      className={`absolute z-30 cursor-pointer group text-left transition-transform origin-center ${
+                        animState === 'lock' ? 'scale-150' : 'hover:scale-125'
+                      }`}
                       style={{ display: 'none' }}
                     >
                       <div className="relative flex items-center justify-center">
@@ -473,15 +524,21 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
                 </div>
 
                 {/* Bottom Status Panel */}
-                <div className="p-2.5 bg-[#fbbf24] border-t-2 border-black flex flex-col justify-center gap-0.5 z-30 text-slate-950">
+                <div className={`p-2.5 border-t-2 border-black flex flex-col justify-center gap-0.5 z-30 transition-colors duration-500 ${
+                  animState === 'lock' || animState === 'expand'
+                    ? 'bg-red-600 text-white'
+                    : 'bg-[#fbbf24] text-slate-950'
+                }`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5 font-extrabold text-[10px] uppercase">
-                      <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
-                      <span>GLOBAL HUBS READY</span>
+                      <span className={`w-2 h-2 rounded-full animate-ping ${animState === 'lock' ? 'bg-white' : 'bg-red-600'}`} />
+                      <span>{animState === 'lock' || animState === 'expand' ? `RADAR LOCKED (${lockedHub ? lockedHub.toUpperCase() : '12 ROLES'})` : 'GLOBAL HUBS READY'}</span>
                     </div>
-                    <span className="text-[9px] bg-black/15 px-1.5 py-0.5 rounded font-mono font-bold">2 HUBS</span>
+                    <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold ${animState === 'lock' ? 'bg-black/30 text-white' : 'bg-black/15 text-slate-950'}`}>
+                      {animState === 'lock' ? 'LOCKED' : '2 HUBS'}
+                    </span>
                   </div>
-                  <div className="text-[9.5px] font-bold text-slate-800 flex items-center justify-between font-mono">
+                  <div className="text-[9.5px] font-bold flex items-center justify-between font-mono opacity-90">
                     <span>DELHI (6)</span>
                     <span>•</span>
                     <span>SAN FRANCISCO (6)</span>

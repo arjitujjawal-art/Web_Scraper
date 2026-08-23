@@ -57,7 +57,7 @@ body {
   transform-origin: center center;
 }
 
-/* Scanner sweep animation */
+/* Scanner sweep animations */
 @keyframes scan-sweep {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -66,6 +66,38 @@ body {
 .scanner-beam {
   transform-origin: center center;
   animation: scan-sweep 6s linear infinite;
+}
+
+@keyframes fast-scan-sweep {
+  0% { transform: rotate(0deg); opacity: 0.9; }
+  100% { transform: rotate(720deg); opacity: 1; }
+}
+
+.fast-scanner-beam {
+  transform-origin: center center;
+  animation: fast-scan-sweep 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Outward Expanding Radar Wave */
+@keyframes expand-wave {
+  0% {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 0.95;
+    border-width: 8px;
+  }
+  60% {
+    opacity: 0.75;
+    border-width: 4px;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3.8);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+.radar-expand-wave-anim {
+  animation: expand-wave 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Spiderweb atmospheric red glow pulse */
@@ -118,41 +150,6 @@ body {
 .glass-input:focus {
   border-color: rgba(255, 255, 255, 0.4);
   box-shadow: 0 0 25px rgba(59, 130, 246, 0.2), inset 0 0 10px rgba(255, 255, 255, 0.05);
-}
-
-/* Radar Pulse */
-@keyframes radar-pulse {
-  0% {
-    transform: scale(0.5);
-    opacity: 1;
-  }
-  60% {
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(2.6);
-    opacity: 0;
-  }
-}
-
-.radar-ring {
-  animation: radar-pulse 3s cubic-bezier(0.1, 0.9, 0.2, 1) infinite;
-}
-
-.radar-ring-delayed {
-  animation: radar-pulse 3s cubic-bezier(0.1, 0.9, 0.2, 1) infinite 1.5s;
-}
-
-/* Scanline Effect */
-.scanline {
-  background: linear-gradient(
-    to bottom,
-    rgba(255,255,255,0),
-    rgba(255,255,255,0) 50%,
-    rgba(255, 255, 255, 0.02) 50%,
-    rgba(255, 255, 255, 0.02)
-  );
-  background-size: 100% 4px;
 }
 
 /* Custom Scrollbars */
