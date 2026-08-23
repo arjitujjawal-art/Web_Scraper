@@ -5,8 +5,7 @@ import {
   Terminal, 
   ShieldCheck, 
   Bot, 
-  LogOut,
-  Radio
+  LogOut
 } from 'lucide-react';
 
 interface SidebarRailProps {
@@ -37,14 +36,18 @@ export const SidebarRail: React.FC<SidebarRailProps> = ({
       
       {/* Top Section: Brand + Main Nav Items */}
       <div className="flex flex-col w-full">
-        {/* Brand Header Tile */}
+        {/* Brand Header Tile with Spider Crawler Icon */}
         <button
           onClick={onExitToLanding}
-          className="w-full h-16 border-b border-white/10 flex flex-col items-center justify-center bg-[#09090d] hover:bg-zinc-900 transition-colors group relative"
+          className="w-full py-2.5 border-b border-white/10 flex flex-col items-center justify-center bg-[#09090d] hover:bg-zinc-900 transition-colors group relative"
           title="Signal Atlas - Click to return to Landing"
         >
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#dc2626] to-[#ff4d55] flex items-center justify-center text-white shadow-[0_0_15px_rgba(239,68,68,0.4)] group-hover:scale-105 transition-transform">
-            <Radio className="w-4 h-4" />
+          <div className="w-9 h-9 rounded-xl bg-black border border-white/15 flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(255,255,255,0.1)] group-hover:border-red-500/50 group-hover:scale-105 transition-all p-1">
+            <img 
+              src="/spider-crawler.jpg" 
+              alt="Spider Crawler" 
+              className="w-full h-full object-contain filter brightness-110 drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]" 
+            />
           </div>
           <span className="text-[9px] font-black uppercase tracking-widest text-[#ff4d55] mt-1 font-mono">ATLAS</span>
         </button>
