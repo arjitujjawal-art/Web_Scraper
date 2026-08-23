@@ -6,12 +6,19 @@ import type {
   AdHocScrapeResult,
 } from './types';
 
-export const API_BASE = (
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, '') ||
-  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? '/api'
-    : 'https://signal-atlas-api.onrender.com/api')
-);
+const normalizeApiBase = (): string => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+  if (envUrl) {
+    const clean = envUrl.replace(/\/+$/, '');
+    return clean.endsWith('/api') ? clean : `${clean}/api`;
+  }
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return '/api';
+  }
+  return 'https://signal-atlas-api.onrender.com/api';
+};
+
+export const API_BASE = normalizeApiBase();
 
 export const apiClient = {
   async getHealth() {

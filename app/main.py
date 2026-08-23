@@ -121,6 +121,23 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     register_exception_handlers(app)
     app.include_router(api_router)
 
+    # Root-level aliases for direct access
+    from app.api.routes import (  # noqa: PLC0415
+        chat,
+        collectors,
+        health,
+        jobs,
+        signals,
+        zones,
+    )
+
+    app.include_router(health.router, include_in_schema=False)
+    app.include_router(signals.router, include_in_schema=False)
+    app.include_router(zones.router, include_in_schema=False)
+    app.include_router(jobs.router, include_in_schema=False)
+    app.include_router(collectors.router, include_in_schema=False)
+    app.include_router(chat.router, include_in_schema=False)
+
     @app.get("/", include_in_schema=False)
     async def root() -> dict[str, str]:
         return {
