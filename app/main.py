@@ -113,6 +113,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=resolved.cors_origins,
+        allow_origin_regex=r"^https://.*\.pages\.dev$",
         allow_methods=["GET", "POST"],
         allow_headers=["Content-Type", "X-Admin-Key"],
     )
