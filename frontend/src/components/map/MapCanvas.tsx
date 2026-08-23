@@ -145,7 +145,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
         center={centerPos}
         zoom={cityConfig.zoom}
         scrollWheelZoom={true}
-        zoomControl={false}
+        zoomControl={true}
         attributionControl={true}
         className="w-full h-full"
       >

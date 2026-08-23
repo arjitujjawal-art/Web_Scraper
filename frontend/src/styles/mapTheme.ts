@@ -143,8 +143,8 @@ export const DOMAIN_COLORS: Record<string, { bg: string; text: string; glow: str
 export const CITY_CENTERS = {
   delhi: {
     name: 'Delhi NCR',
-    center: { lat: 28.5700, lng: 77.2000 },
-    zoom: 11,
+    center: { lat: 28.5800, lng: 77.1500 },
+    zoom: 10,
   },
   sf: {
     name: 'San Francisco Bay Area',

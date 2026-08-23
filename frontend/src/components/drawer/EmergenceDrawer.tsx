@@ -32,7 +32,7 @@ export const EmergenceDrawer: React.FC<EmergenceDrawerProps> = ({
   // 1. Job Details View
   if (job) {
     return (
-      <aside className="fixed top-20 right-4 bottom-4 w-96 z-40 glass-panel-elevated rounded-2xl border border-emerald-500/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-right duration-300">
+      <aside className="fixed top-20 right-4 bottom-4 w-96 z-[9999] glass-panel-elevated rounded-2xl border border-emerald-500/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-right duration-300">
         <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Briefcase className="w-5 h-5 text-emerald-400" />
@@ -117,7 +117,7 @@ export const EmergenceDrawer: React.FC<EmergenceDrawerProps> = ({
   if (signal) {
     const domainStyle = DOMAIN_COLORS[signal.domain] || DOMAIN_COLORS['AI/ML'];
     return (
-      <aside className="fixed top-20 right-4 bottom-4 w-96 z-40 glass-panel-elevated rounded-2xl border border-cyan-500/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-right duration-300">
+      <aside className="fixed top-20 right-4 bottom-4 w-96 z-[9999] glass-panel-elevated rounded-2xl border border-cyan-500/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-right duration-300">
         <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-cyan-400" />
@@ -201,7 +201,7 @@ export const EmergenceDrawer: React.FC<EmergenceDrawerProps> = ({
   const domainStyle = DOMAIN_COLORS[zone.domain] || DOMAIN_COLORS['AI/ML'];
 
   return (
-    <aside className="fixed top-20 right-4 bottom-4 w-[420px] z-40 glass-panel-elevated rounded-2xl border border-cyan-500/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-right duration-300">
+    <aside className="fixed top-20 right-4 bottom-4 w-[420px] z-[9999] glass-panel-elevated rounded-2xl border border-cyan-500/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-right duration-300">
       {/* Header */}
       <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
         <div className="flex items-center gap-2">

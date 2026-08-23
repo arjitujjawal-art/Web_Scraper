@@ -47,7 +47,7 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
   backendHealthy,
 }) => {
   return (
-    <header className="absolute top-4 left-4 right-4 z-30 flex items-center justify-between gap-4 pointer-events-none">
+    <header className="fixed top-4 left-4 right-4 z-[9999] flex items-center justify-between gap-4 pointer-events-none">
       {/* Brand & City Switcher */}
       <div className="flex items-center gap-3 pointer-events-auto">
         <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl glass-panel-elevated border border-slate-700/80 shadow-2xl">
