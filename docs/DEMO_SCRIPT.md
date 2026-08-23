@@ -12,7 +12,7 @@ HEALTHY ──(the page changes)──▶ DEGRADED ──POST /heal──▶ HEA
 ```
 
 The same sequence exists in three places, deliberately: here, in
-[`tests/integration/api/test_healing_cycle.py`](../tests/integration/api/test_healing_cycle.py),
+`tests/integration/api/test_healing_cycle.py`,
 and in `FakeCli.script_healing_demo()`. If one drifts, the test suite fails.
 
 ## Why fixtures and not a live site
