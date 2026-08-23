@@ -44,6 +44,8 @@ _DOMAIN_KEYWORDS: Mapping[str, tuple[str, ...]] = {
         "machine learning",
         "deep learning",
         "generative ai",
+        "ai/ml",
+        "aiml",
         "llm",
         "agentic ai",
         "neural network",
@@ -152,6 +154,9 @@ def classify_domain(*texts: str | None) -> str | None:
     haystack = " ".join(f" {t.casefold()} " for t in texts if t)
     if not haystack.strip():
         return None
+    for domain in _DOMAIN_KEYWORDS:
+        if f" {domain.casefold()} " in haystack or domain.casefold() == haystack.strip():
+            return domain
     best: tuple[int, str] | None = None
     for domain, keywords in _DOMAIN_KEYWORDS.items():
         for keyword in keywords:

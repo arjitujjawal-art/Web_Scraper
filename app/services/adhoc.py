@@ -12,6 +12,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 from urllib.parse import urlparse
 
+from app.config import Settings, get_settings
 from app.domain.enums import SourceType
 from app.domain.models import RawRecord
 from app.domain.normalizer import normalize_batch
@@ -32,11 +33,13 @@ class AdHocScraperService:
         cli: ScraperCli,
         signal_repo: SignalRepository,
         registry: CollectorRegistry,
+        settings: Settings | None = None,
         clock: Clock = utcnow,
     ) -> None:
         self._cli = cli
         self._signal_repo = signal_repo
         self._registry = registry
+        self._settings = settings or get_settings()
         self._clock = clock
 
     def _find_matching_collector(self, target_url: str) -> str | None:
@@ -71,10 +74,23 @@ class AdHocScraperService:
                 "adhoc.fast_path",
                 extra={"target_url": target_url, "collector_id": existing_collector_id},
             )
-            run_outcome = await self._cli.run(existing_collector_id, target_url)
-            return await self._process_extracted_payload(
-                run_outcome.rows, existing_collector_id, target_url
-            )
+            try:
+                import asyncio
+                run_outcome = await asyncio.wait_for(
+                    self._cli.run(existing_collector_id, target_url),
+                    timeout=6.0,
+                )
+                if run_outcome.rows and len(run_outcome.rows) > 0:
+                    payload = await self._process_extracted_payload(
+                        run_outcome.rows, existing_collector_id, target_url
+                    )
+                    if payload.get("signals_saved", 0) > 0:
+                        return payload
+            except Exception as exc:
+                logger.warning(
+                    "adhoc.fast_path_error",
+                    extra={"target_url": target_url, "error": str(exc)},
+                )
 
         logger.info("adhoc.slow_path", extra={"target_url": target_url})
         url_hash = hashlib.sha256(target_url.encode("utf-8")).hexdigest()[:8]
@@ -94,10 +110,16 @@ class AdHocScraperService:
             )
             new_collector_id = create_outcome.collector_id
             if new_collector_id and create_outcome.status.is_success:
-                run_outcome = await self._cli.run(new_collector_id, target_url)
-                return await self._process_extracted_payload(
-                    run_outcome.rows, new_collector_id, target_url
+                run_outcome = await asyncio.wait_for(
+                    self._cli.run(new_collector_id, target_url),
+                    timeout=6.0,
                 )
+                if run_outcome.rows and len(run_outcome.rows) > 0:
+                    payload = await self._process_extracted_payload(
+                        run_outcome.rows, new_collector_id, target_url
+                    )
+                    if payload.get("signals_saved", 0) > 0:
+                        return payload
         except Exception as exc:
             logger.warning(
                 "adhoc.cli_create_fallback_to_llm",
@@ -132,6 +154,7 @@ class AdHocScraperService:
                     )
                 },
                 follow_redirects=True,
+                verify=False,
                 timeout=12.0,
             ) as client:
                 resp = await client.get(target_url)
@@ -146,14 +169,14 @@ class AdHocScraperService:
         cleaned_text = re.sub(r"<[^>]+>", " ", cleaned_text)
         cleaned_text = re.sub(r"\s+", " ", cleaned_text).strip()[:6000]
 
-        groq_key = os.getenv("GROQ_API_KEY", "").strip()
+        groq_key = (self._settings.groq_api_key if self._settings else None) or os.getenv("GROQ_API_KEY", "").strip()
         if not cleaned_text or not groq_key:
             # Fallback heuristic row if no text or no Groq key
             return [
                 {
                     "title": f"Intelligence Signal from {urlparse(target_url).netloc}",
                     "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                    "city": "Delhi" if "delhi" in target_url.lower() or "iitd" in target_url.lower() else "San Francisco",
+                    "city": "Delhi" if any(k in target_url.lower() for k in ("delhi", "iitd", "noida", "gurugram")) else "San Francisco",
                     "domain": "AI/ML",
                     "summary": f"Signal captured from {target_url}",
                     "url": target_url,
@@ -214,7 +237,7 @@ Webpage Content:
             {
                 "title": f"Captured Tech Signal from {urlparse(target_url).netloc}",
                 "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                "city": "Delhi" if "delhi" in target_url.lower() or "iitd" in target_url.lower() else "San Francisco",
+                "city": "Delhi" if any(k in target_url.lower() for k in ("delhi", "iitd", "noida", "gurugram")) else "San Francisco",
                 "domain": "AI/ML",
                 "summary": f"Signal captured from {target_url}",
                 "url": target_url,
@@ -237,10 +260,22 @@ Webpage Content:
             for row in rows
         ]
 
+        city_hint = (
+            "Delhi"
+            if any(k in source_url.lower() for k in ("delhi", "iitd", "noida", "gurugram", "okhla"))
+            else "San Francisco"
+        )
+        source_type = (
+            SourceType.UNIVERSITY_RESEARCH
+            if any(k in source_url.lower() for k in ("iitd", "edu", "research", "univ", "lab", "bair", "stanford", "berkeley"))
+            else SourceType.STARTUP_NEWSROOM
+        )
+
         outcome = normalize_batch(
             records=records,
-            source_type=SourceType.STARTUP_NEWSROOM,
+            source_type=source_type,
             now=self._clock(),
+            city_hint=city_hint,
         )
 
         if outcome.signals:
