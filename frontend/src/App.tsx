@@ -19,6 +19,10 @@ import {
   Download, 
   Code2, 
   Gift, 
+  Maximize2,
+  Minimize2,
+  Expand,
+  X
 } from 'lucide-react';
 
 const DOMAINS: Domain[] = [
@@ -36,6 +40,9 @@ export const App: React.FC = () => {
   // Navigation view state machine: 'landing' -> 'hub-map' -> 'dashboard'
   const [view, setView] = useState<'landing' | 'hub-map' | 'dashboard'>('landing');
   const [activeTab, setActiveTab] = useState<string>('radar');
+
+  // Map Size / Mode state: 'standard' (480px) | 'expanded' (680px) | 'fullscreen' (100vh)
+  const [mapMode, setMapMode] = useState<'standard' | 'expanded' | 'fullscreen'>('standard');
 
   // Filter & City states
   const [activeCity, setActiveCity] = useState<'delhi' | 'sf'>('delhi');
@@ -178,23 +185,7 @@ export const App: React.FC = () => {
   return (
     <div className="relative w-screen h-screen bg-[#000000] text-white flex overflow-hidden select-none font-sans animate-in fade-in zoom-in-95 duration-700">
       
-      {/* Subtle Spiderweb Atmospheric Mesh */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none opacity-10">
-        <svg className="absolute -top-12 -right-12 w-96 h-96 text-red-600" viewBox="0 0 200 200" fill="none" stroke="currentColor" strokeWidth="0.85">
-          <path d="M0,30 A30,30 0 0,0 30,0" opacity="0.6"/>
-          <path d="M0,60 A60,60 0 0,0 60,0" opacity="0.7"/>
-          <path d="M0,95 A95,95 0 0,0 95,0" opacity="0.8"/>
-          <path d="M0,135 A135,135 0 0,0 135,0" opacity="0.85"/>
-          <line x1="0" y1="0" x2="200" y2="0" strokeWidth="1.05"/>
-          <line x1="0" y1="0" x2="190" y2="60" strokeWidth="1.0"/>
-          <line x1="0" y1="0" x2="160" y2="120" strokeWidth="1.0"/>
-          <line x1="0" y1="0" x2="120" y2="160" strokeWidth="1.0"/>
-          <line x1="0" y1="0" x2="60" y2="190" strokeWidth="1.0"/>
-          <line x1="0" y1="0" x2="0" y2="200" strokeWidth="1.05"/>
-        </svg>
-      </div>
-
-      {/* Left Sidebar Navigation Rail */}
+      {/* Left Sidebar Navigation Rail (Clean Full-Width Tiles) */}
       <SidebarRail
         activeTab={activeTab}
         onSelectTab={(tab) => {
@@ -338,10 +329,10 @@ export const App: React.FC = () => {
         </header>
 
         {/* Workspace Central Stage (Scrollable) */}
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 pb-20">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-6 pb-24 w-full">
           
           {/* 1. Hero Prompt & Web Scraper Centerpiece */}
-          <div className="max-w-4xl mx-auto text-center pt-2 pb-1">
+          <div className="w-full max-w-5xl mx-auto text-center pt-1 pb-1">
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
               What website would you like to scrape?
             </h1>
@@ -421,9 +412,54 @@ export const App: React.FC = () => {
             </form>
           </div>
 
-          {/* 2. Upper Center Stage: Interactive Live Radar Map */}
-          <div className="max-w-4xl mx-auto">
-            <div className="relative w-full h-[320px] rounded-2xl bg-[#060608] border border-white/10 overflow-hidden shadow-2xl">
+          {/* 2. Upper Center Stage: Interactive Full-Width Live Radar Map */}
+          <div className="w-full max-w-full">
+            {/* Map Frame Card */}
+            <div className={`relative w-full rounded-2xl bg-[#060608] border border-white/15 overflow-hidden shadow-2xl transition-all duration-300 ${
+              mapMode === 'expanded' 
+                ? 'h-[640px] sm:h-[680px]' 
+                : 'h-[440px] sm:h-[480px]'
+            }`}>
+              
+              {/* Map Size & View Mode Control Bar */}
+              <div className="absolute top-3 right-3 z-[1000] flex items-center gap-1.5 p-1 rounded-xl bg-black/85 backdrop-blur-md border border-white/15 shadow-xl">
+                <button
+                  onClick={() => setMapMode('standard')}
+                  className={`px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all flex items-center gap-1 ${
+                    mapMode === 'standard'
+                      ? 'bg-white text-zinc-950 shadow'
+                      : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  }`}
+                  title="Standard Height (480px)"
+                >
+                  <Minimize2 className="w-3 h-3" />
+                  <span>Standard</span>
+                </button>
+
+                <button
+                  onClick={() => setMapMode('expanded')}
+                  className={`px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all flex items-center gap-1 ${
+                    mapMode === 'expanded'
+                      ? 'bg-white text-zinc-950 shadow'
+                      : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  }`}
+                  title="Expanded Height (680px)"
+                >
+                  <Expand className="w-3 h-3" />
+                  <span>Expanded</span>
+                </button>
+
+                <button
+                  onClick={() => setMapMode('fullscreen')}
+                  className="px-2.5 py-1 text-[10px] font-bold rounded-lg text-[#ff4d55] hover:bg-red-500/10 transition-all flex items-center gap-1"
+                  title="Immersive Fullscreen Map"
+                >
+                  <Maximize2 className="w-3 h-3" />
+                  <span>Fullscreen</span>
+                </button>
+              </div>
+
+              {/* Leaflet Map Canvas */}
               <MapCanvas
                 activeCity={activeCity}
                 zones={zones}
@@ -450,7 +486,7 @@ export const App: React.FC = () => {
           </div>
 
           {/* 3. Lower Center Stage: Signal Copilot Chat Experience */}
-          <div className="max-w-4xl mx-auto">
+          <div className="w-full max-w-full">
             <CopilotChat
               isOpen={isCopilotOpen}
               isEmbedded={true}
@@ -460,6 +496,55 @@ export const App: React.FC = () => {
           </div>
 
         </div>
+
+        {/* 4. Fullscreen Map Mode Overlay */}
+        {mapMode === 'fullscreen' && (
+          <div className="fixed inset-0 z-[10000] w-screen h-screen bg-[#050507] flex flex-col overflow-hidden animate-in fade-in duration-300">
+            {/* Top Floating Action Bar */}
+            <div className="absolute top-4 left-4 right-4 z-[10001] flex items-center justify-between pointer-events-auto">
+              <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-black/90 backdrop-blur-xl border border-white/15 shadow-2xl">
+                <div className="px-3 py-1 text-xs font-black text-[#ff4d55] border-r border-white/10 font-mono">
+                  FULLSCREEN RADAR
+                </div>
+                <div className="flex items-center gap-1 text-xs font-bold text-zinc-300 px-2">
+                  <span>{activeCity === 'delhi' ? '🇮🇳 Delhi NCR' : '🇺🇸 San Francisco'}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setMapMode('standard')}
+                className="px-4 py-2 text-xs font-bold bg-[#ff4d55] hover:bg-red-500 text-white rounded-2xl shadow-2xl flex items-center gap-1.5 transition-all"
+              >
+                <X className="w-4 h-4" />
+                <span>Exit Fullscreen</span>
+              </button>
+            </div>
+
+            {/* Fullscreen Map Canvas */}
+            <div className="w-full h-full relative">
+              <MapCanvas
+                activeCity={activeCity}
+                zones={zones}
+                signals={signals}
+                jobs={jobs}
+                showJobsLayer={showJobsLayer}
+                selectedZone={selectedZone}
+                onSelectZone={setSelectedZone}
+                selectedSignal={selectedSignal}
+                onSelectSignal={setSelectedSignal}
+                selectedJob={selectedJob}
+                onSelectJob={setSelectedJob}
+                mapCenterTarget={mapCenterTarget}
+              />
+              <MapHUDOverlay
+                activeCity={activeCity}
+                signalCount={signals.length}
+                jobCount={jobs.length}
+                zoneCount={zones.length}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Floating Bottom Signal Stream Ticker */}
         <SignalTicker

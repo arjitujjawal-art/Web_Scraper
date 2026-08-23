@@ -1,8 +1,8 @@
 import React from 'react';
 import { 
-  Home, 
+  Compass, 
   Briefcase, 
-  Globe2, 
+  Terminal, 
   ShieldCheck, 
   Bot, 
   LogOut,
@@ -33,94 +33,107 @@ export const SidebarRail: React.FC<SidebarRailProps> = ({
   activeSignalsCount,
 }) => {
   return (
-    <aside className="w-16 sm:w-18 h-screen bg-[#050507] border-r border-white/10 flex flex-col justify-between items-center py-4 z-40 flex-shrink-0 select-none">
+    <aside className="w-18 sm:w-20 h-screen bg-[#050507] border-r border-white/10 flex flex-col justify-between items-stretch z-40 flex-shrink-0 select-none">
       
-      {/* Top Brand Logo */}
-      <div className="flex flex-col items-center gap-6 w-full">
+      {/* Top Section: Brand + Main Nav Items */}
+      <div className="flex flex-col w-full">
+        {/* Brand Header Tile */}
         <button
           onClick={onExitToLanding}
-          className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#dc2626] to-[#ff4d55] flex items-center justify-center text-white shadow-[0_0_20px_rgba(239,68,68,0.45)] hover:scale-105 active:scale-95 transition-all group"
-          title="Return to Landing Page"
+          className="w-full h-16 border-b border-white/10 flex flex-col items-center justify-center bg-[#09090d] hover:bg-zinc-900 transition-colors group relative"
+          title="Signal Atlas - Click to return to Landing"
         >
-          <Radio className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#dc2626] to-[#ff4d55] flex items-center justify-center text-white shadow-[0_0_15px_rgba(239,68,68,0.4)] group-hover:scale-105 transition-transform">
+            <Radio className="w-4 h-4" />
+          </div>
+          <span className="text-[9px] font-black uppercase tracking-widest text-[#ff4d55] mt-1 font-mono">ATLAS</span>
         </button>
 
-        {/* Navigation Item List */}
-        <nav className="flex flex-col items-center gap-2 w-full px-2">
-          {/* Home / Radar Map */}
+        {/* Navigation Item Stack - Occupies Full Width of Sidebar */}
+        <nav className="flex flex-col w-full divide-y divide-white/5">
+          {/* 1. Radar & Live Map */}
           <button
             onClick={() => onSelectTab('radar')}
-            className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center transition-all ${
+            className={`w-full py-3.5 flex flex-col items-center justify-center gap-1 transition-all relative group ${
               activeTab === 'radar' 
-                ? 'bg-white/15 text-white shadow-[0_0_15px_rgba(255,255,255,0.15)] border border-white/20' 
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                ? 'bg-white/10 text-white font-bold' 
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5 font-medium'
             }`}
             title="Radar & Intelligence Map"
           >
-            <Home className="w-4 h-4" />
-            <span className="text-[8.5px] font-medium tracking-tight mt-0.5">Radar</span>
+            {activeTab === 'radar' && (
+              <span className="absolute left-0 top-0 bottom-0 w-1 bg-[#ff4d55]" />
+            )}
+            <Compass className={`w-5 h-5 ${activeTab === 'radar' ? 'text-[#ff4d55]' : 'group-hover:text-white'}`} />
+            <span className="text-[10px] tracking-tight">Radar</span>
           </button>
 
-          {/* Active Jobs */}
+          {/* 2. Active Jobs */}
           <button
             onClick={onOpenJobsModal}
-            className="w-11 h-11 rounded-xl flex flex-col items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 transition-all group relative"
+            className="w-full py-3.5 flex flex-col items-center justify-center gap-1 text-zinc-400 hover:text-white hover:bg-white/5 transition-all relative group font-medium"
             title="Active Jobs & Fellowships"
           >
-            <Briefcase className="w-4 h-4 group-hover:text-[#ff4d55] transition-colors" />
-            <span className="text-[8.5px] font-medium tracking-tight mt-0.5">Jobs</span>
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#ef4444] animate-pulse" />
+            <Briefcase className="w-5 h-5 group-hover:text-[#ff4d55] transition-colors" />
+            <span className="text-[10px] tracking-tight">Jobs</span>
+            <span className="absolute top-2.5 right-3 w-2 h-2 rounded-full bg-[#ef4444] animate-pulse" />
           </button>
 
-          {/* Scrapers / One-Stop Scraper */}
+          {/* 3. Scrapers / Studio */}
           <button
             onClick={onOpenScraperModal}
-            className="w-11 h-11 rounded-xl flex flex-col items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 transition-all group"
-            title="Scraper Studio / On-Demand URL Extraction"
+            className="w-full py-3.5 flex flex-col items-center justify-center gap-1 text-zinc-400 hover:text-white hover:bg-white/5 transition-all relative group font-medium"
+            title="Scraper Studio & Ad-Hoc URL Extraction"
           >
-            <Globe2 className="w-4 h-4 group-hover:text-[#ff4d55] transition-colors" />
-            <span className="text-[8.5px] font-medium tracking-tight mt-0.5">Scrapers</span>
+            <Terminal className="w-5 h-5 group-hover:text-[#ff4d55] transition-colors" />
+            <span className="text-[10px] tracking-tight">Scrapers</span>
           </button>
 
-          {/* Signal Copilot Toggle */}
+          {/* 4. Signal Copilot */}
           <button
             onClick={onToggleCopilot}
-            className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center transition-all group ${
+            className={`w-full py-3.5 flex flex-col items-center justify-center gap-1 transition-all relative group ${
               isCopilotOpen
-                ? 'bg-red-500/15 text-[#ff4d55] border border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.25)]'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                ? 'bg-white/10 text-white font-bold'
+                : 'text-zinc-400 hover:text-white hover:bg-white/5 font-medium'
             }`}
-            title="Signal Copilot AI"
+            title="Signal Copilot Assistant"
           >
-            <Bot className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span className="text-[8.5px] font-medium tracking-tight mt-0.5">Copilot</span>
+            {isCopilotOpen && (
+              <span className="absolute left-0 top-0 bottom-0 w-1 bg-[#ff4d55]" />
+            )}
+            <Bot className={`w-5 h-5 ${isCopilotOpen ? 'text-[#ff4d55]' : 'group-hover:text-white'}`} />
+            <span className="text-[10px] tracking-tight">Copilot</span>
           </button>
 
-          {/* Fleet Health Self-Healing */}
+          {/* 5. Fleet Health */}
           <button
             onClick={onOpenFleetModal}
-            className="w-11 h-11 rounded-xl flex flex-col items-center justify-center text-zinc-400 hover:text-emerald-400 hover:bg-white/5 transition-all group"
+            className="w-full py-3.5 flex flex-col items-center justify-center gap-1 text-zinc-400 hover:text-emerald-400 hover:bg-white/5 transition-all group font-medium"
             title="Bright Data Fleet Health & Self-Healing"
           >
-            <ShieldCheck className="w-4 h-4 group-hover:text-emerald-400 transition-colors" />
-            <span className="text-[8.5px] font-medium tracking-tight mt-0.5">Fleet</span>
+            <ShieldCheck className="w-5 h-5 group-hover:text-emerald-400 transition-colors" />
+            <span className="text-[10px] tracking-tight">Fleet</span>
           </button>
         </nav>
       </div>
 
-      {/* Bottom Actions & Status */}
-      <div className="flex flex-col items-center gap-3 w-full px-2">
-        <div className="w-9 h-9 rounded-lg bg-zinc-900 border border-white/10 flex flex-col items-center justify-center text-zinc-300" title={`${activeSignalsCount} Signals Ingested`}>
-          <span className="text-[9px] font-mono font-bold text-[#ff4d55]">{activeSignalsCount}</span>
-          <span className="text-[6.5px] uppercase text-zinc-500 font-bold">SIG</span>
+      {/* Bottom Section: Signals Badge + Export + Logout */}
+      <div className="flex flex-col w-full divide-y divide-white/5 border-t border-white/10">
+        {/* Signal Ingestion Telemetry Tile */}
+        <div className="w-full py-3 flex flex-col items-center justify-center bg-[#07070a]">
+          <span className="text-[11px] font-mono font-bold text-[#ff4d55]">{activeSignalsCount}</span>
+          <span className="text-[7.5px] uppercase tracking-wider text-zinc-400 font-bold">Signals</span>
         </div>
 
+        {/* Exit to Landing */}
         <button
           onClick={onExitToLanding}
-          className="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-500 hover:text-[#ff4d55] hover:bg-red-500/10 transition-all"
+          className="w-full py-3.5 flex flex-col items-center justify-center gap-1 text-zinc-400 hover:text-[#ff4d55] hover:bg-red-500/10 transition-all font-medium"
           title="Exit to Landing Page"
         >
           <LogOut className="w-4 h-4" />
+          <span className="text-[9px] tracking-tight">Landing</span>
         </button>
       </div>
     </aside>
