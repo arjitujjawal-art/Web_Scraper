@@ -8,7 +8,7 @@
                                 ____) | | (_| | | | | (_| | |    | |____| |_| | (_| \__ \
                                |_____/|_|\__, |_| |_|\__,_|_|     \_____|\__|_|\__,_|___/
                                           __/ |                                          
-                                             |___/   S I G N A L        A T L A S                      
+                                         |___/   S I G N A L        A T L A S                      
 ```
 
 ### We don't scrape opportunities. We scrape the signals that reveal where opportunities are about to emerge.
