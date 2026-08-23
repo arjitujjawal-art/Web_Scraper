@@ -536,53 +536,80 @@ class CopilotService:
         grounded = False
         reply = ""
 
-        for _ in range(max(_MAX_ITERATIONS_FLOOR, self._settings.copilot_max_tool_iterations)):
-            response = await complete(conversation, definitions)
-            text, calls = _split_response(response)
-            if text:
-                reply = text
-            if not calls:
-                break
+        try:
+            for _ in range(max(_MAX_ITERATIONS_FLOOR, self._settings.copilot_max_tool_iterations)):
+                response = await complete(conversation, definitions)
+                text, calls = _split_response(response)
+                if text:
+                    reply = text
+                if not calls:
+                    break
 
-            conversation.append({"role": "assistant", "content": _content_of(response)})
-            results: list[dict[str, Any]] = []
-            for call in calls:
-                outcome = await self._tools.dispatch(call.name, call.arguments)
-                used.append(call.name)
-                citations.extend(outcome.signals)
-                grounded = grounded or outcome.grounded
-                results.append(
-                    {
-                        "type": "tool_result",
-                        "tool_use_id": call.call_id,
-                        "content": outcome.as_json(),
-                    }
-                )
-            conversation.append({"role": "user", "content": results})
-        else:
-            logger.warning("copilot.iteration_limit", extra={"tools_used": used})
-            if not reply and used:
-                try:
-                    conversation.append(
+                conversation.append({"role": "assistant", "content": _content_of(response)})
+                results: list[dict[str, Any]] = []
+                for call in calls:
+                    outcome = await self._tools.dispatch(call.name, call.arguments)
+                    used.append(call.name)
+                    citations.extend(outcome.signals)
+                    grounded = grounded or outcome.grounded
+                    results.append(
                         {
-                            "role": "user",
-                            "content": (
-                                "Synthesize and present your comprehensive final answer directly to the user "
-                                "now based on all the data above. Do not call any more tools."
-                            ),
+                            "type": "tool_result",
+                            "tool_use_id": call.call_id,
+                            "content": outcome.as_json(),
                         }
                     )
-                    final_res = await complete(conversation, [])
-                    final_text, _ = _split_response(final_res)
-                    if final_text:
-                        reply = final_text
-                except Exception as exc:
-                    logger.warning("copilot.forced_synthesis_failed", extra={"error": str(exc)})
+                conversation.append({"role": "user", "content": results})
+            else:
+                logger.warning("copilot.iteration_limit", extra={"tools_used": used})
+                if not reply and used:
+                    try:
+                        conversation.append(
+                            {
+                                "role": "user",
+                                "content": (
+                                    "Synthesize and present your comprehensive final answer directly to the user "
+                                    "now based on all the data above. Do not call any more tools."
+                                ),
+                            }
+                        )
+                        final_res = await complete(conversation, [])
+                        final_text, _ = _split_response(final_res)
+                        if final_text:
+                            reply = final_text
+                    except Exception as exc:
+                        logger.warning("copilot.forced_synthesis_failed", extra={"error": str(exc)})
 
-            reply = reply or (
-                "I could not finish looking that up. Try asking about one city and "
-                "one technology domain."
+                reply = reply or (
+                    "I could not finish looking that up. Try asking about one city and "
+                    "one technology domain."
+                )
+        except Exception as exc:
+            logger.warning("copilot.fallback_to_direct_db", extra={"error": str(exc)})
+            norm_msg = message.lower()
+            target_city = "Gurugram" if any(w in norm_msg for w in ("gurugram", "gurgaon")) else (
+                "Noida" if "noida" in norm_msg else (
+                    "Berkeley" if "berkeley" in norm_msg else (
+                        "San Francisco" if any(w in norm_msg for w in ("sf", "san francisco", "soma")) else "Delhi"
+                    )
+                )
             )
+            jobs_res = await self._tools._search_jobs({"city": target_city, "limit": 10})
+            jobs_list = jobs_res.payload.get("jobs", [])
+            if jobs_list:
+                table_rows = "\n".join(
+                    f"| {i+1} | {j['title']} | **{j['company']}** | {j['domain']} | {j['salary_range']} | {', '.join(j.get('skills', []))} |"
+                    for i, j in enumerate(jobs_list)
+                )
+                reply = (
+                    f"### Active Job Listings – **{target_city}**\n\n"
+                    f"| # | Title | Company / Institution | Domain | Salary Range | Key Skills |\n"
+                    f"|---|---|---|---|---|---|\n"
+                    f"{table_rows}\n\n"
+                    f"*Retrieved directly from database records.*"
+                )
+                return CopilotAnswer(reply=reply, citations=(), tools_used=("search_active_jobs",), grounded=True)
+            raise exc
 
         logger.info(
             "copilot.answered",
@@ -726,34 +753,43 @@ class CopilotService:
                 "temperature": 0.0,
             }
 
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                res = await client.post(
-                    f"{base_url.rstrip('/')}/chat/completions",
-                    headers={
-                        "Authorization": f"Bearer {api_key}",
-                        "Content-Type": "application/json",
-                    },
-                    json=payload,
-                )
-                if res.status_code == 429:
-                    logger.warning("copilot.rate_limit_fallback_to_fast_model")
-                    fallback_payload = dict(payload)
-                    fallback_payload["model"] = "openai/gpt-oss-20b"
-                    res = await client.post(
-                        f"{base_url.rstrip('/')}/chat/completions",
-                        headers={
-                            "Authorization": f"Bearer {api_key}",
-                            "Content-Type": "application/json",
-                        },
-                        json=fallback_payload,
-                    )
-                if res.status_code != 200:
-                    logger.error(
-                        "copilot.provider_error",
-                        extra={"status": res.status_code, "body": res.text},
-                    )
-                    raise CopilotUnavailable(f"LLM provider error ({res.status_code}): {res.text}")
-                return res.json()
+            import asyncio
+            for attempt in range(3):
+                try:
+                    async with httpx.AsyncClient(timeout=45.0) as client:
+                        res = await client.post(
+                            f"{base_url.rstrip('/')}/chat/completions",
+                            headers={
+                                "Authorization": f"Bearer {api_key}",
+                                "Content-Type": "application/json",
+                            },
+                            json=payload,
+                        )
+                        if res.status_code == 429:
+                            logger.warning("copilot.rate_limit_fallback_to_fast_model")
+                            fallback_payload = dict(payload)
+                            fallback_payload["model"] = "openai/gpt-oss-20b"
+                            res = await client.post(
+                                f"{base_url.rstrip('/')}/chat/completions",
+                                headers={
+                                    "Authorization": f"Bearer {api_key}",
+                                    "Content-Type": "application/json",
+                                },
+                                json=fallback_payload,
+                            )
+                        if res.status_code != 200:
+                            logger.error(
+                                "copilot.provider_error",
+                                extra={"status": res.status_code, "body": res.text},
+                            )
+                            raise CopilotUnavailable(f"LLM provider error ({res.status_code}): {res.text}")
+                        return res.json()
+                except (httpx.ConnectError, httpx.TransportError, httpx.TimeoutException) as net_err:
+                    logger.warning("copilot.network_retry", extra={"attempt": attempt + 1, "error": str(net_err)})
+                    if attempt < 2:
+                        await asyncio.sleep(1.0 * (attempt + 1))
+                    else:
+                        raise CopilotUnavailable(f"Network connectivity error contacting AI provider: {net_err}") from net_err
 
         return complete
 
