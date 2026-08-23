@@ -20,6 +20,7 @@ import logging
 import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -63,6 +64,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings.ensure_serving_is_safe()
 
     await create_schema(app.state.engine)
+    if settings.auto_seed_on_startup:
+        await _auto_seed_if_empty(app.state.session_factory, settings, app.state.clock)
+
     logger.info(
         "app.started",
         extra={
@@ -143,6 +147,38 @@ def _registry_env(settings: Settings) -> dict[str, str]:
     return env
 
 
-# Module-level ASGI application instance for standard uvicorn runners
-# (e.g. Dockerfile `app.main:app`)
-app = create_app()
+async def _auto_seed_if_empty(
+    session_factory: Any,
+    settings: Settings,
+    clock: Any,
+) -> None:
+    """Populate default seed signals and job postings if the database is newly created."""
+    from app.infra.db.repositories import JobRepository, SignalRepository  # noqa: PLC0415
+    from app.infra.db.session import session_scope  # noqa: PLC0415
+    from app.seed import (  # noqa: PLC0415
+        DEFAULT_JOBS_SEED_FILE,
+        DEFAULT_SEED_FILE,
+        _load_batches,
+        _load_jobs,
+        _normalize,
+    )
+
+    try:
+        async with session_scope(session_factory) as session:
+            sig_repo = SignalRepository(session)
+            count = await sig_repo.count()
+            if count == 0 and DEFAULT_SEED_FILE.is_file():
+                now = clock()
+                batches = _load_batches(DEFAULT_SEED_FILE)
+                signals, _ = _normalize(batches, now)
+                if signals:
+                    await sig_repo.upsert_many(signals)
+
+            job_repo = JobRepository(session)
+            job_count = await job_repo.count()
+            if job_count == 0 and DEFAULT_JOBS_SEED_FILE.is_file():
+                jobs = _load_jobs(DEFAULT_JOBS_SEED_FILE)
+                if jobs:
+                    await job_repo.upsert_many(jobs)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("app.auto_seed_failed", extra={"error": str(exc)})
