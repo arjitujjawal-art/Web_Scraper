@@ -96,6 +96,8 @@ def settings(tmp_path: Path) -> Settings:
         registry_path=TEST_REGISTRY_PATH,
         fixture_base_url=FIXTURE_BASE_URL,
         frontend_origins="http://localhost:5173",
+        groq_api_key="",
+        openai_api_key="",
         anthropic_api_key="",
         cli_max_concurrency=1,
     )
