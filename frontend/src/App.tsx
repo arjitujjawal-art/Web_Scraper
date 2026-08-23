@@ -7,6 +7,7 @@ import { EmergenceDrawer } from './components/drawer/EmergenceDrawer';
 import { AdHocScraperModal } from './components/scraper/AdHocScraperModal';
 import { SelfHealingModal } from './components/fleet/SelfHealingModal';
 import { CopilotChat } from './components/copilot/CopilotChat';
+import { Bot } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [activeCity, setActiveCity] = useState<'delhi' | 'sf'>('delhi');
@@ -27,7 +28,7 @@ export const App: React.FC = () => {
   // Modals & Chat states
   const [isScraperModalOpen, setIsScraperModalOpen] = useState(false);
   const [isFleetModalOpen, setIsFleetModalOpen] = useState(false);
-  const [isCopilotOpen, setIsCopilotOpen] = useState(false);
+  const [isCopilotOpen, setIsCopilotOpen] = useState(true);
   const [mapCenterTarget, setMapCenterTarget] = useState<{ lat: number; lng: number; zoom?: number } | null>(null);
 
   // Initial Data Fetch
@@ -167,6 +168,21 @@ export const App: React.FC = () => {
         onClose={() => setIsCopilotOpen(false)}
         onSelectCitation={handleSelectCitation}
       />
+
+      {/* Floating Copilot Launcher Button when minimized */}
+      {!isCopilotOpen && (
+        <button
+          onClick={() => setIsCopilotOpen(true)}
+          className="fixed bottom-6 right-6 z-[9995] flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs shadow-2xl hover:scale-105 transition-all border border-cyan-300/40"
+        >
+          <div className="relative flex items-center justify-center">
+            <span className="absolute w-full h-full rounded-full bg-slate-950/20 animate-ping" />
+            <Bot className="w-4 h-4 text-slate-950" />
+          </div>
+          <span>Signal Copilot</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
+        </button>
+      )}
     </div>
   );
 };

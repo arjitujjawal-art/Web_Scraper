@@ -65,7 +65,7 @@ export const AdHocScraperModal: React.FC<AdHocScraperModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
       <div className="w-full max-w-xl glass-panel-elevated rounded-3xl border border-cyan-500/40 shadow-2xl overflow-hidden">
         {/* Modal Header */}
         <div className="p-6 border-b border-slate-800/80 flex items-center justify-between">

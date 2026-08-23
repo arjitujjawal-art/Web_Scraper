@@ -90,7 +90,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 w-96 sm:w-[420px] h-[550px] z-50 glass-panel-elevated rounded-3xl border border-cyan-400/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
+    <div className="fixed bottom-6 right-6 w-96 sm:w-[440px] h-[580px] z-[10000] glass-panel-elevated rounded-3xl border border-cyan-400/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
       {/* Chat Header */}
       <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
         <div className="flex items-center gap-2.5">
