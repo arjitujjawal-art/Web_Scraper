@@ -4,9 +4,10 @@ import {
   Radio, 
   Layers, 
   Bot, 
-  Activity, 
-  Sparkles
+  Sparkles,
+  ShieldCheck
 } from 'lucide-react';
+import { DOMAIN_COLORS } from '../../styles/mapTheme';
 
 interface HeaderHUDProps {
   activeCity: 'delhi' | 'sf';
@@ -47,123 +48,137 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
   backendHealthy,
 }) => {
   return (
-    <header className="fixed top-4 left-4 right-4 z-[9999] flex items-center justify-between gap-4 pointer-events-none">
-      {/* Brand & City Switcher */}
-      <div className="flex items-center gap-3 pointer-events-auto">
-        <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl glass-panel-elevated border border-slate-700/80 shadow-2xl">
-          <div className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-400/40 shadow-inner">
-            <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <h1 className="text-sm font-black tracking-wider uppercase text-white font-mono">
-                Signal Atlas
-              </h1>
-              <span className={`w-2 h-2 rounded-full ${backendHealthy ? 'bg-emerald-400' : 'bg-rose-400'}`} title={backendHealthy ? 'Backend Live' : 'Backend Disconnected'} />
+    <header className="fixed top-4 left-4 right-4 z-[9999] flex flex-col gap-2.5 pointer-events-none">
+      <div className="flex items-center justify-between gap-3 w-full">
+        {/* Brand & City Segmented Switcher */}
+        <div className="flex items-center gap-3 pointer-events-auto">
+          {/* Main Brand Chip */}
+          <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl glass-panel-elevated shadow-2xl group transition-all hover:border-cyan-400/50">
+            <div className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-blue-600/30 border border-cyan-400/50 shadow-inner">
+              <Radio className="w-4 h-4 text-cyan-300 animate-pulse" />
+              <div className="absolute inset-0 rounded-xl bg-cyan-400/20 blur-sm animate-ping" />
             </div>
-            <p className="text-[10px] text-slate-400">
-              Opportunity Zone Intelligence
-            </p>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black tracking-widest uppercase text-white font-mono flex items-center gap-1.5">
+                  SIGNAL ATLAS
+                  <span className="text-[10px] text-cyan-400 font-mono font-normal">v2.4</span>
+                </span>
+                <span className={`w-2 h-2 rounded-full shadow-sm ${backendHealthy ? 'bg-emerald-400 animate-pulse shadow-emerald-400/50' : 'bg-rose-500'}`} />
+              </div>
+              <p className="text-[10px] text-slate-400 font-mono tracking-tight">
+                Emergence Radar & Fleet OS
+              </p>
+            </div>
+          </div>
+
+          {/* City Segmented Slider */}
+          <div className="flex items-center p-1 rounded-2xl glass-pill shadow-xl">
+            <button
+              onClick={() => onSelectCity('delhi')}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                activeCity === 'delhi'
+                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 shadow-lg scale-[1.02]'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
+              }`}
+            >
+              <span>🇮🇳</span>
+              <span>Delhi NCR</span>
+            </button>
+            <button
+              onClick={() => onSelectCity('sf')}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                activeCity === 'sf'
+                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 shadow-lg scale-[1.02]'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
+              }`}
+            >
+              <span>🇺🇸</span>
+              <span>San Francisco</span>
+            </button>
           </div>
         </div>
 
-        {/* City Selector Pill */}
-        <div className="flex items-center p-1 rounded-2xl glass-panel border border-slate-700/80 shadow-xl">
+        {/* Global Action Command Center */}
+        <div className="flex items-center gap-2.5 pointer-events-auto">
+          {/* Jobs & Companies Toggle Layer */}
           <button
-            onClick={() => onSelectCity('delhi')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-              activeCity === 'delhi'
-                ? 'bg-cyan-500 text-slate-950 shadow-lg font-bold'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+            onClick={onToggleJobsLayer}
+            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all glass-pill ${
+              showJobsLayer
+                ? 'border-emerald-500/50 text-emerald-300 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            Delhi NCR
+            <Layers className="w-3.5 h-3.5" />
+            <span>Active Jobs</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
           </button>
+
+          {/* On-Demand Scraper Trigger Button */}
           <button
-            onClick={() => onSelectCity('sf')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-              activeCity === 'sf'
-                ? 'bg-cyan-500 text-slate-950 shadow-lg font-bold'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+            onClick={onOpenScraperModal}
+            className="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-400/40 transition-all shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:scale-105"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
+            <span>One-Stop Scraper</span>
+          </button>
+
+          {/* Scraper Fleet Health Status */}
+          <button
+            onClick={onOpenFleetModal}
+            className="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/40 transition-all shadow-[0_0_20px_rgba(16,185,129,0.15)] hover:scale-105"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Fleet Health</span>
+            <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-[9px] font-mono text-emerald-300">100%</span>
+          </button>
+
+          {/* Copilot Launcher */}
+          <button
+            onClick={onToggleCopilot}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+              isCopilotOpen
+                ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 shadow-[0_0_25px_rgba(0,240,255,0.4)]'
+                : 'glass-pill text-cyan-300 hover:text-white border-cyan-400/40'
             }`}
           >
-            San Francisco
+            <Bot className="w-3.5 h-3.5" />
+            <span>Copilot AI</span>
           </button>
         </div>
       </div>
 
-      {/* Domain Filters Dropdown / Quick Select */}
-      <div className="hidden lg:flex items-center gap-1.5 p-1 rounded-2xl glass-panel border border-slate-700/80 shadow-xl pointer-events-auto overflow-x-auto max-w-xl">
+      {/* Domain Quick Filters Strip */}
+      <div className="flex items-center gap-1.5 p-1 rounded-2xl glass-panel shadow-2xl pointer-events-auto overflow-x-auto max-w-fit mx-auto border border-slate-700/60">
         <button
           onClick={() => onSelectDomain(null)}
-          className={`px-3 py-1.2 rounded-xl text-xs font-medium transition-all ${
+          className={`px-3 py-1 rounded-xl text-[11px] font-bold transition-all ${
             selectedDomain === null
-              ? 'bg-slate-800 text-cyan-400 border border-cyan-500/40 shadow'
+              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/50 shadow'
               : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           All Domains
         </button>
-        {DOMAINS.map((domain) => (
-          <button
-            key={domain}
-            onClick={() => onSelectDomain(selectedDomain === domain ? null : domain)}
-            className={`px-3 py-1.2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
-              selectedDomain === domain
-                ? 'bg-cyan-500 text-slate-950 font-bold shadow'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
-            }`}
-          >
-            {domain}
-          </button>
-        ))}
-      </div>
-
-      {/* Action Buttons (Scraper, Self-Healing Fleet, Jobs Layer, Copilot) */}
-      <div className="flex items-center gap-2 pointer-events-auto">
-        {/* Active Jobs Layer Toggle */}
-        <button
-          onClick={onToggleJobsLayer}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-semibold border transition-all shadow-xl ${
-            showJobsLayer
-              ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 ring-2 ring-emerald-500/30'
-              : 'glass-panel border-slate-700/80 text-slate-300 hover:border-slate-500'
-          }`}
-        >
-          <Layers className="w-3.5 h-3.5 text-emerald-400" />
-          <span className="hidden sm:inline">Active Jobs Layer</span>
-        </button>
-
-        {/* On-Demand Scraper Modal Trigger */}
-        <button
-          onClick={onOpenScraperModal}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-semibold glass-panel-elevated border border-cyan-500/50 hover:border-cyan-400 text-cyan-300 hover:text-white transition-all shadow-xl hover:scale-105"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-          <span className="hidden sm:inline">One-Stop Scraper</span>
-        </button>
-
-        {/* Self-Healing Scraper Fleet Modal Trigger */}
-        <button
-          onClick={onOpenFleetModal}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-semibold glass-panel-elevated border border-purple-500/50 hover:border-purple-400 text-purple-300 hover:text-white transition-all shadow-xl hover:scale-105"
-        >
-          <Activity className="w-3.5 h-3.5 text-purple-400" />
-          <span className="hidden sm:inline">Fleet & Self-Healing</span>
-        </button>
-
-        {/* Signal Copilot Chat Widget Trigger */}
-        <button
-          onClick={onToggleCopilot}
-          className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all shadow-2xl ${
-            isCopilotOpen
-              ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 ring-2 ring-cyan-400 scale-105'
-              : 'glass-panel-elevated border border-cyan-400/80 text-cyan-400 hover:bg-cyan-500/20'
-          }`}
-        >
-          <Bot className="w-4 h-4" />
-          <span>Copilot</span>
-        </button>
+        {DOMAINS.map((domain) => {
+          const style = DOMAIN_COLORS[domain] || DOMAIN_COLORS['AI/ML'];
+          const isSelected = selectedDomain === domain;
+          return (
+            <button
+              key={domain}
+              onClick={() => onSelectDomain(isSelected ? null : domain)}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-[11px] font-semibold whitespace-nowrap transition-all ${
+                isSelected
+                  ? 'bg-white text-slate-950 font-bold shadow-lg scale-105'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: style.hex }} />
+              <span>{domain}</span>
+            </button>
+          );
+        })}
       </div>
     </header>
   );

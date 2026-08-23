@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { apiClient, getCoordinatesForLocation } from './api/client';
 import type { OpportunityZone, SignalSummary, JobPosting, AdHocScrapeResult, CopilotCitation } from './api/types';
 import { MapCanvas } from './components/map/MapCanvas';
+import { MapHUDOverlay } from './components/map/MapHUDOverlay';
 import { HeaderHUD } from './components/header/HeaderHUD';
 import { EmergenceDrawer } from './components/drawer/EmergenceDrawer';
 import { AdHocScraperModal } from './components/scraper/AdHocScraperModal';
 import { SelfHealingModal } from './components/fleet/SelfHealingModal';
 import { CopilotChat } from './components/copilot/CopilotChat';
+import { SignalTicker } from './components/ticker/SignalTicker';
 import { Bot } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -112,7 +114,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Google Maps Vector Canvas */}
-      <main className="w-full h-full">
+      <main className="w-full h-full relative">
         <MapCanvas
           activeCity={activeCity}
           zones={zones}
@@ -127,7 +129,27 @@ export const App: React.FC = () => {
           onSelectJob={setSelectedJob}
           mapCenterTarget={mapCenterTarget}
         />
+        {/* Cyber Satellite & Telemetry HUD Overlay */}
+        <MapHUDOverlay
+          activeCity={activeCity}
+          signalCount={signals.length}
+          jobCount={jobs.length}
+          zoneCount={zones.length}
+        />
       </main>
+
+      {/* Floating Bottom Signal Stream Ticker */}
+      <SignalTicker
+        signals={signals}
+        onSelectSignal={(sig) => {
+          setSelectedSignal(sig);
+          setSelectedZone(null);
+          setSelectedJob(null);
+          if (sig.lat && sig.lng) {
+            setMapCenterTarget({ lat: sig.lat, lng: sig.lng, zoom: 14 });
+          }
+        }}
+      />
 
       {/* Side Slide-In Inspection Drawer */}
       <EmergenceDrawer
