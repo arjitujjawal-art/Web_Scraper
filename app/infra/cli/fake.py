@@ -21,7 +21,7 @@ from pathlib import Path
 
 from app.domain.validator import validate_collector_id, validate_heal_prompt
 from app.infra.cli.parsers import parse_job_output, parse_run_output
-from app.infra.cli.protocol import JobOutcome, RunOutcome
+from app.infra.cli.protocol import CliJobStatus, JobOutcome, RunOutcome
 
 FIXTURE_DIR = Path(__file__).resolve().parents[3] / "tests" / "fixtures" / "cli"
 
@@ -46,6 +46,7 @@ class FakeCli:
     fixture_dir: Path = FIXTURE_DIR
     calls: list[RecordedCall] = field(default_factory=list)
     _runs: deque[_Queued] = field(default_factory=deque, repr=False)
+    _creates: deque[_Queued] = field(default_factory=deque, repr=False)
     _heals: deque[_Queued] = field(default_factory=deque, repr=False)
     _approvals: deque[_Queued] = field(default_factory=deque, repr=False)
 
@@ -61,6 +62,11 @@ class FakeCli:
     def enqueue_run(self, *payloads: _Queued) -> "FakeCli":
         """Queue raw stdout strings, fixture names, or exceptions to raise."""
         self._runs.extend(self._resolve(payload) for payload in payloads)
+        return self
+
+    def enqueue_create(self, *payloads: _Queued) -> "FakeCli":
+        """Queue create responses."""
+        self._creates.extend(self._resolve(payload) for payload in payloads)
         return self
 
     def enqueue_heal(self, *payloads: _Queued) -> "FakeCli":
@@ -106,6 +112,24 @@ class FakeCli:
         stdout = _next(self._runs, "run")
         outcome = parse_run_output(stdout, cid)
         return RunOutcome(collector_id=cid, rows=outcome.rows, argv=("scraper", "run", cid))
+
+    async def create(
+        self,
+        url: str,
+        prompt: str,
+        *,
+        name: str | None = None,
+    ) -> JobOutcome:
+        """Replay the next queued create payload, or return default outcome."""
+        text = validate_heal_prompt(prompt)
+        self.calls.append(RecordedCall("create", "new_collector", url=url, prompt=text, label=name))
+        if not self._creates:
+            return JobOutcome(
+                collector_id="c_adhoc_new",
+                status=CliJobStatus.DONE,
+                argv=("scraper", "create", url),
+            )
+        return self._job(_next(self._creates, "create"), "c_adhoc_new", "create")
 
     async def heal(self, collector_id: str, prompt: str) -> JobOutcome:
         """Replay the next queued heal payload, after the same prompt validation."""

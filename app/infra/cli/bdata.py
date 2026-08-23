@@ -87,6 +87,22 @@ class BdataCli:
             duration_seconds=result.duration_seconds,
         )
 
+    async def create(
+        self,
+        url: str,
+        prompt: str,
+        *,
+        name: str | None = None,
+    ) -> JobOutcome:
+        """Create an on-demand collector on Scraper Studio."""
+        text = validate_heal_prompt(prompt)
+        argv = ["scraper", "create", url, text, "--json"]
+        if name:
+            argv.extend(["--name", name])
+        result = await self._exec(argv, self._heal_timeout)
+        self._raise_for_exit(result, action="create")
+        return self._finish(result, "new_collector", action="create")
+
     async def heal(self, collector_id: str, prompt: str) -> JobOutcome:
         """Request a repair, describing the breakage in plain English.
 

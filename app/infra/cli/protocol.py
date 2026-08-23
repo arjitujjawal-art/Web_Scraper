@@ -177,6 +177,16 @@ class ScraperCli(Protocol):
         """Execute a collector, optionally against a specific URL."""
         ...
 
+    async def create(
+        self,
+        url: str,
+        prompt: str,
+        *,
+        name: str | None = None,
+    ) -> JobOutcome:
+        """Create an on-demand collector on Scraper Studio."""
+        ...
+
     async def heal(self, collector_id: str, prompt: str) -> JobOutcome:
         """Ask Scraper Studio to repair a collector, describing what changed."""
         ...

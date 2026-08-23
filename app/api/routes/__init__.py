@@ -9,11 +9,13 @@ protected by default instead of by remembering.
 from fastapi import APIRouter
 
 from app.api.routes import (
+    adhoc,
     admin,
     chat,
     collector_runs,
     collectors,
     health,
+    jobs,
     signals,
     zones,
 )
@@ -27,6 +29,8 @@ api_router.include_router(signals.router)
 api_router.include_router(zones.router)
 api_router.include_router(collectors.router)
 api_router.include_router(collector_runs.router)
+api_router.include_router(adhoc.router)
+api_router.include_router(jobs.router)
 api_router.include_router(admin.router)
 api_router.include_router(chat.router)
 

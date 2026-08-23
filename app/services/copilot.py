@@ -14,6 +14,7 @@ from typing import Any, cast
 from app.config import Settings
 from app.domain.enums import City, CollectorHealth, SourceType
 from app.domain.models import JobPosting, NormalizedSignal
+from app.services.adhoc import AdHocScraperService
 from app.services.collectors import CollectorService
 from app.services.errors import CopilotUnavailable
 from app.services.job_postings import JobService
@@ -54,7 +55,7 @@ SYSTEM_PROMPT = """\
 You are the Signal Atlas Copilot, an AI assistant for emerging technology ecosystems \
 and web scraping operations.
 
-You have access to 4 specialized tools:
+You have access to 5 specialized tools:
 1. get_emergence_score: Returns exact mathematical emergence scores, confidence levels, \
 velocities, and source contribution breakdowns for a city and technology domain.
 2. search_signals: Finds early predictive signals (university research labs, grant awards, \
@@ -63,6 +64,8 @@ incubator cohorts, startup newsrooms, tech events).
 roles, hiring companies, salary ranges, and skills.
 4. get_scraper_fleet_health: Returns operational health of Bright Data collectors, fill \
 rates, degraded statuses, and self-healing instructions.
+5. scrape_custom_url: Scrapes an arbitrary public web URL on-demand using Bright Data \
+Scraper Studio, extracts structured signals, and updates the atlas database.
 
 Key Guidelines:
 - How to Use the Platform / Website Navigation: If users ask how to use the website or \
@@ -137,6 +140,7 @@ class SignalTools:
     zones: ZoneService
     jobs: JobService | None = None
     collectors: CollectorService | None = None
+    adhoc: AdHocScraperService | None = None
     _known_cities: tuple[str, ...] = field(default=(), init=False, repr=False)
 
     def definitions(self) -> list[dict[str, Any]]:
@@ -224,6 +228,27 @@ class SignalTools:
                     "required": [],
                 },
             },
+            {
+                "name": "scrape_custom_url",
+                "description": (
+                    "Scrapes an arbitrary public web URL provided by the user using Bright Data "
+                    "Scraper Studio, extracts structured signals, and updates the atlas."
+                ),
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "The public HTTP/HTTPS URL to extract from",
+                        },
+                        "intent": {
+                            "type": "string",
+                            "description": "What data fields or signals to look for",
+                        },
+                    },
+                    "required": ["url"],
+                },
+            },
         ]
 
     async def dispatch(self, name: str, arguments: Mapping[str, Any]) -> ToolResult:
@@ -236,6 +261,8 @@ class SignalTools:
             return await self._search_jobs(arguments)
         if name == "get_scraper_fleet_health":
             return await self._fleet_health()
+        if name == "scrape_custom_url":
+            return await self._scrape_url(arguments)
         return ToolResult(payload={"error": f"unknown tool {name!r}"})
 
     # -- tools -------------------------------------------------------------
@@ -376,6 +403,25 @@ class SignalTools:
                 ),
             },
             grounded=True,
+        )
+
+    async def _scrape_url(self, arguments: Mapping[str, Any]) -> ToolResult:
+        if self.adhoc is None:
+            return ToolResult(
+                payload={"success": False, "error": "On-demand scraping service is unavailable"},
+                grounded=False,
+            )
+        url = _text(arguments.get("url"))
+        if not url:
+            return ToolResult(
+                payload={"success": False, "error": "Missing url parameter"},
+                grounded=False,
+            )
+        intent = _text(arguments.get("intent")) or ""
+        outcome = await self.adhoc.scrape_adhoc_url(target_url=url, prompt=intent)
+        return ToolResult(
+            payload=outcome,
+            grounded=bool(outcome.get("success")),
         )
 
     # -- internals ---------------------------------------------------------

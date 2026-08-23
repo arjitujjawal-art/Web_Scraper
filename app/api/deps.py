@@ -19,9 +19,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.config import Settings
 from app.infra.cli.protocol import ScraperCli
-from app.infra.db.repositories import JobRepository
+from app.infra.db.repositories import JobRepository, SignalRepository
 from app.infra.db.session import session_scope
 from app.infra.registry import CollectorRegistry
+from app.services.adhoc import AdHocScraperService
 from app.services.clock import Clock, utcnow
 from app.services.collectors import CollectorService
 from app.services.copilot import CopilotService, SignalTools
@@ -140,11 +141,30 @@ def get_job_service(session: SessionDep) -> JobService:
 JobServiceDep = Annotated[JobService, Depends(get_job_service)]
 
 
+def get_adhoc_service(
+    session: SessionDep,
+    cli: CliDep,
+    registry: RegistryDep,
+    clock: ClockDep,
+) -> AdHocScraperService:
+    """On-demand ad-hoc URL scraping service."""
+    return AdHocScraperService(
+        cli=cli,
+        signal_repo=SignalRepository(session),
+        registry=registry,
+        clock=clock,
+    )
+
+
+AdHocServiceDep = Annotated[AdHocScraperService, Depends(get_adhoc_service)]
+
+
 def get_copilot_service(
     signals: SignalServiceDep,
     zones: ZoneServiceDep,
     jobs: JobServiceDep,
     collectors: CollectorServiceDep,
+    adhoc: AdHocServiceDep,
     settings: SettingsDep,
     request: Request,
 ) -> CopilotService:
@@ -161,6 +181,7 @@ def get_copilot_service(
             zones=zones,
             jobs=jobs,
             collectors=collectors,
+            adhoc=adhoc,
         ),
         settings=settings,
         completer=getattr(request.app.state, "completer", None),
