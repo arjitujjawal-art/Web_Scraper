@@ -1,5 +1,44 @@
 [
   {
+    "id": "job_delhi_swe_001",
+    "source": "LinkedIn Jobs",
+    "title": "Senior Full-Stack Software Engineer",
+    "company": "Startup India Labs",
+    "location": "Connaught Place, New Delhi",
+    "domain": "Software Engineering",
+    "type": "Full-time",
+    "salary_range": "₹16,00,000 - ₹24,00,000 PA",
+    "summary": "Lead full-stack application development using Next.js, TypeScript, PostgreSQL, and Node.js microservices.",
+    "skills_required": ["React", "TypeScript", "Node.js", "PostgreSQL", "Tailwind CSS"],
+    "url": "https://www.linkedin.com/jobs/view/39827101"
+  },
+  {
+    "id": "job_delhi_swe_002",
+    "source": "LinkedIn Jobs",
+    "title": "Backend Systems Engineer (Golang)",
+    "company": "Delhi Scale Systems",
+    "location": "Sector 62, Noida, Delhi NCR",
+    "domain": "Software Engineering",
+    "type": "Full-time",
+    "salary_range": "₹20,00,000 - ₹28,00,000 PA",
+    "summary": "Build high-throughput gRPC services, Redis caching layers, and asynchronous worker queues.",
+    "skills_required": ["Go", "gRPC", "Redis", "Kafka", "Docker"],
+    "url": "https://www.linkedin.com/jobs/view/39827114"
+  },
+  {
+    "id": "job_delhi_swe_003",
+    "source": "LinkedIn Jobs",
+    "title": "DevOps & Cloud Infrastructure Lead",
+    "company": "Noida CloudTech",
+    "location": "Sector 132, Noida, Delhi NCR",
+    "domain": "Software Engineering",
+    "type": "Full-time",
+    "salary_range": "₹22,00,000 - ₹30,00,000 PA",
+    "summary": "Manage multi-region Kubernetes clusters, Terraform infrastructure-as-code, and Prometheus telemetry.",
+    "skills_required": ["Kubernetes", "AWS", "Terraform", "CI/CD", "Prometheus"],
+    "url": "https://www.linkedin.com/jobs/view/39827115"
+  },
+  {
     "id": "job_delhi_ai_001",
     "source": "LinkedIn Jobs",
     "title": "Senior Machine Learning Engineer",
@@ -63,6 +102,32 @@
     "summary": "Funded 2-year research fellowship focused on sparse mixture-of-experts model efficiency.",
     "skills_required": ["PyTorch", "Deep Learning Research", "Mathematical Modeling", "CUDA"],
     "url": "https://www.linkedin.com/jobs/view/39827108"
+  },
+  {
+    "id": "job_delhi_fellow_001",
+    "source": "Fellowships & Grants",
+    "title": "AI & Public Policy Research Fellow",
+    "company": "Delhi Tech Policy Institute",
+    "location": "Saket, New Delhi",
+    "domain": "AI/ML",
+    "type": "Fellowship",
+    "salary_range": "₹6,00,000 - ₹9,00,000 PA",
+    "summary": "Conduct applied AI benchmarking on public transit optimization and smart grid infrastructure datasets for NCR.",
+    "skills_required": ["Python", "LLMs", "Policy Analytics", "Data Analysis"],
+    "url": "https://www.linkedin.com/jobs/view/39827116"
+  },
+  {
+    "id": "job_delhi_intern_001",
+    "source": "LinkedIn Jobs",
+    "title": "Product Experience UI/UX Design Intern",
+    "company": "Creative Network Studio",
+    "location": "Hauz Khas, New Delhi",
+    "domain": "Software Engineering",
+    "type": "Internship",
+    "salary_range": "₹30,000 - ₹45,000 / month",
+    "summary": "Collaborate with lead designers to build interactive wireframes, design tokens, and motion micro-interactions.",
+    "skills_required": ["Figma", "Design Systems", "Prototyping", "UI/UX"],
+    "url": "https://www.linkedin.com/jobs/view/39827117"
   },
   {
     "id": "job_delhi_greentech_001",
@@ -167,6 +232,32 @@
     "summary": "Conduct computational sequence analysis on rare disease variants using high-throughput sequencing pipelines.",
     "skills_required": ["Python", "Nextflow", "R", "Bioinformatics", "Genomics"],
     "url": "https://www.linkedin.com/jobs/view/39827113"
+  },
+  {
+    "id": "job_sf_swe_001",
+    "source": "LinkedIn Jobs",
+    "title": "Senior Distributed Backend Engineer",
+    "company": "San Francisco Cloud Systems",
+    "location": "SoMa, San Francisco",
+    "domain": "Software Engineering",
+    "type": "Full-time",
+    "salary_range": "$185,000 - $245,000 + Equity",
+    "summary": "Architect high-throughput event sourcing backends and real-time state synchronization engines.",
+    "skills_required": ["Rust", "Go", "Distributed Systems", "Kafka", "gRPC"],
+    "url": "https://www.linkedin.com/jobs/view/39827214"
+  },
+  {
+    "id": "job_sf_swe_002",
+    "source": "LinkedIn Jobs",
+    "title": "Lead Frontend Platform Engineer",
+    "company": "Vercel Partner Labs",
+    "location": "Mission Bay, San Francisco",
+    "domain": "Software Engineering",
+    "type": "Full-time",
+    "salary_range": "$175,000 - $230,000 + Equity",
+    "summary": "Build lightning-fast design systems, WebGL telemetry visualizers, and accessible micro-frontend architectures.",
+    "skills_required": ["React", "TypeScript", "Next.js", "Tailwind CSS", "WebGL"],
+    "url": "https://www.linkedin.com/jobs/view/39827215"
   },
   {
     "id": "job_berkeley_ai_001",

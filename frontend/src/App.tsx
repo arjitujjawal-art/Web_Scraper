@@ -583,7 +583,6 @@ export const App: React.FC = () => {
         <ActiveJobsModal
           isOpen={isActiveJobsModalOpen}
           onClose={() => setIsActiveJobsModalOpen(false)}
-          jobs={jobs}
           activeCity={activeCity}
           onSelectJob={(job) => {
             setSelectedJob(job);
