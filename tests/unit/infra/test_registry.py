@@ -200,12 +200,13 @@ class TestTheCommittedRegistry:
     def test_it_loads(self):
         assert len(load_registry(REAL_REGISTRY_PATH, ENVIRONMENT)) >= 4
 
-    def test_every_collector_is_still_unprovisioned(self):
-        # Honest by design: ids arrive from `scraper create`, which has not been run.
-        # When it is, this test is the reminder to update the README's status table.
+    def test_enabled_collectors_are_provisioned(self):
+        # Now that collectors are created in Bright Data Scraper Studio,
+        # every enabled collector holds a valid c_* ID.
         registry = load_registry(REAL_REGISTRY_PATH, ENVIRONMENT)
+        enabled = [c for c in registry.all() if c.enabled]
 
-        assert not any(collector.is_provisioned for collector in registry.all())
+        assert all(collector.is_provisioned for collector in enabled)
 
     def test_every_collector_has_at_least_one_url(self):
         registry = load_registry(REAL_REGISTRY_PATH, ENVIRONMENT)

@@ -30,7 +30,7 @@ collectors:
   # --- university research -------------------------------------------------
   - key: univ_research_delhi
     source_type: university_research
-    collector_id: PENDING
+    collector_id: c_mt5kvisnmlxdtgkjj
     description: IIT Delhi research announcements
     urls:
       - "https://home.iitd.ac.in/research-all.php"
@@ -41,7 +41,7 @@ collectors:
 
   - key: univ_research_sf
     source_type: university_research
-    collector_id: PENDING
+    collector_id: c_mt5kvc3kzgna3dufo
     description: UC Berkeley research news
     urls:
       - "https://news.berkeley.edu/category/research/"
@@ -53,7 +53,7 @@ collectors:
   # --- incubator / accelerator news ---------------------------------------
   - key: incubator_news_delhi
     source_type: incubator_news
-    collector_id: PENDING
+    collector_id: c_mt5l1zk81lk0hm7blr
     description: IIT Delhi startup and incubation news (FITT)
     urls:
       - "https://home.iitd.ac.in/startup-all.php"
@@ -64,7 +64,7 @@ collectors:
 
   - key: incubator_news_sf
     source_type: incubator_news
-    collector_id: PENDING
+    collector_id: c_mt5ky13c1i7hpel1lp
     description: Y Combinator blog
     urls:
       - "https://www.ycombinator.com/blog"
@@ -79,7 +79,7 @@ collectors:
   # rows whose resolved location is not Delhi/NCR or the Bay Area.
   - key: tech_events_delhi
     source_type: tech_event
-    collector_id: PENDING
+    collector_id: c_mt5lbhg21ljb2akvkh
     description: Eventbrite technology events, New Delhi
     urls:
       - "https://www.eventbrite.com/d/india--new-delhi/technology--events/"
@@ -90,7 +90,7 @@ collectors:
 
   - key: tech_events_sf
     source_type: tech_event
-    collector_id: PENDING
+    collector_id: c_mt5l87valk5wx3dt8
     description: Eventbrite technology events, San Francisco
     urls:
       - "https://www.eventbrite.com/d/ca--san-francisco/technology--events/"
@@ -135,7 +135,7 @@ collectors:
 
   - key: startup_news_sf
     source_type: startup_newsroom
-    collector_id: PENDING
+    collector_id: c_mt5ldap81yarswrm0d
     description: The San Francisco Standard, startups tag
     urls:
       - "https://sfstandard.com/tag/startups/"
@@ -156,7 +156,7 @@ collectors:
   # Bright Data infrastructure and cannot reach your machine.
   - key: demo_newsroom
     source_type: startup_newsroom
-    collector_id: PENDING
+    collector_id: c_mt5kuprq16orp7p0b2
     description: Healing demo — baseline and mutated newsroom fixtures
     urls:
       - "${FIXTURE_BASE_URL}/newsroom_v1.html"
