@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { apiClient, getCoordinatesForLocation } from './api/client';
 import type { OpportunityZone, SignalSummary, JobPosting, AdHocScrapeResult, CopilotCitation, Domain } from './api/types';
 import { LandingView } from './components/landing/LandingView';
+import { HubMapView } from './components/landing/HubMapView';
 import { SidebarRail } from './components/sidebar/SidebarRail';
 import { MapCanvas } from './components/map/MapCanvas';
 import { MapHUDOverlay } from './components/map/MapHUDOverlay';
@@ -32,8 +33,8 @@ const DOMAINS: Domain[] = [
 ];
 
 export const App: React.FC = () => {
-  // Navigation view state
-  const [view, setView] = useState<'landing' | 'dashboard'>('landing');
+  // Navigation view state machine: 'landing' -> 'hub-map' -> 'dashboard'
+  const [view, setView] = useState<'landing' | 'hub-map' | 'dashboard'>('landing');
   const [activeTab, setActiveTab] = useState<string>('radar');
 
   // Filter & City states
@@ -146,21 +147,36 @@ export const App: React.FC = () => {
     }
   };
 
-  // Render Landing Page View
+  // 1. Initial Screen: 3D Pixel Globe Landing Page
   if (view === 'landing') {
     return (
       <LandingView
         onLaunch={(city) => {
           if (city) setActiveCity(city);
-          setView('dashboard');
+          setView('hub-map');
         }}
       />
     );
   }
 
-  // Render Dashboard View (Black & Aesthetic White with Subtle Red Highlights)
+  // 2. Intermediate Screen: Full-Screen Interactive Hub World Map (from landing folder)
+  if (view === 'hub-map') {
+    return (
+      <HubMapView
+        initialCity={activeCity}
+        jobs={jobs}
+        onSelectCityAndLaunch={(city) => {
+          setActiveCity(city);
+          setView('dashboard');
+        }}
+        onBackToLanding={() => setView('landing')}
+      />
+    );
+  }
+
+  // 3. Final Destination: Black, Aesthetic White & Subtle Red Cyber Dashboard Workspace
   return (
-    <div className="relative w-screen h-screen bg-[#000000] text-white flex overflow-hidden select-none font-sans animate-in fade-in duration-500">
+    <div className="relative w-screen h-screen bg-[#000000] text-white flex overflow-hidden select-none font-sans animate-in fade-in zoom-in-95 duration-700">
       
       {/* Subtle Spiderweb Atmospheric Mesh */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none opacity-10">
@@ -289,6 +305,15 @@ export const App: React.FC = () => {
               <span className="text-zinc-400">Free credits</span>
               <span className="text-[#ff4d55] font-bold">2,080 / 5,000</span>
             </div>
+
+            {/* View Full-Screen Hub Map Button */}
+            <button
+              onClick={() => setView('hub-map')}
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-zinc-300 hover:text-white transition-all shadow"
+              title="Switch to Full-Screen Hub World Radar"
+            >
+              <span>🌍 Hub Radar</span>
+            </button>
 
             {/* Export JSON Attachment Button */}
             <a
