@@ -1,5 +1,5 @@
-import React from 'react';
-import { API_BASE } from '../../api/client';
+import React, { useState } from 'react';
+import { apiClient } from '../../api/client';
 import type { Domain } from '../../api/types';
 import { 
   Radio, 
@@ -49,6 +49,20 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
   isCopilotOpen,
   backendHealthy,
 }) => {
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const cityName = activeCity === 'delhi' ? 'Delhi' : 'San Francisco';
+      await apiClient.downloadSignalsExport(cityName, selectedDomain || undefined);
+    } catch (err) {
+      console.error('Export failed', err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <header className="fixed top-4 left-4 right-4 z-[9999] flex flex-col gap-2.5 pointer-events-none">
       <div className="flex items-center justify-between gap-3 w-full">
@@ -137,15 +151,15 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
           </button>
 
           {/* Export Structured JSON Dataset */}
-          <a
-            href={`${API_BASE}/signals/export?city=${activeCity === 'delhi' ? 'Delhi' : 'San Francisco'}${selectedDomain ? `&domain=${encodeURIComponent(selectedDomain)}` : ''}`}
-            download
-            className="flex items-center gap-1.5 px-3 py-2.5 rounded-2xl text-xs font-bold text-slate-200 glass-pill hover:text-cyan-300 hover:border-cyan-400/50 transition-all shadow hover:scale-105"
+          <button
+            onClick={handleExport}
+            disabled={isExporting}
+            className="flex items-center gap-1.5 px-3 py-2.5 rounded-2xl text-xs font-bold text-slate-200 glass-pill hover:text-cyan-300 hover:border-cyan-400/50 transition-all shadow hover:scale-105 active:scale-95 disabled:opacity-50"
             title="Download structured JSON dataset for active filters"
           >
-            <Download className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Export JSON</span>
-          </a>
+            <Download className={`w-3.5 h-3.5 text-cyan-400 ${isExporting ? 'animate-bounce' : ''}`} />
+            <span>{isExporting ? 'Exporting...' : 'Export JSON'}</span>
+          </button>
 
           {/* Copilot Launcher */}
           <button

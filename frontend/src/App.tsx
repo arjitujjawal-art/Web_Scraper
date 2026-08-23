@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { apiClient, getCoordinatesForLocation, API_BASE } from './api/client';
+import { apiClient, getCoordinatesForLocation } from './api/client';
 import type { OpportunityZone, SignalSummary, JobPosting, AdHocScrapeResult, CopilotCitation, Domain } from './api/types';
 import { LandingView } from './components/landing/LandingView';
 import { HubMapView } from './components/landing/HubMapView';
@@ -71,6 +71,19 @@ export const App: React.FC = () => {
   const [heroInstructionText, setHeroInstructionText] = useState('');
   const [heroScrapingLoading, setHeroScrapingLoading] = useState(false);
   const [heroScrapeNotification, setHeroScrapeNotification] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportJSON = async () => {
+    setIsExporting(true);
+    try {
+      const cityName = activeCity === 'delhi' ? 'Delhi' : 'San Francisco';
+      await apiClient.downloadSignalsExport(cityName, selectedDomain || undefined);
+    } catch (err) {
+      console.error('Export failed', err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   useEffect(() => {
     loadData();
@@ -302,16 +315,16 @@ export const App: React.FC = () => {
               <span>🌍 Hub Radar</span>
             </button>
 
-            {/* Export JSON Attachment Button */}
-            <a
-              href={`${API_BASE}/signals/export?city=${activeCity === 'delhi' ? 'Delhi' : 'San Francisco'}${selectedDomain ? `&domain=${encodeURIComponent(selectedDomain)}` : ''}`}
-              download
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-zinc-300 hover:text-white transition-all shadow"
+            {/* Export JSON In-App Download Button */}
+            <button
+              onClick={handleExportJSON}
+              disabled={isExporting}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-zinc-300 hover:text-white transition-all shadow active:scale-95 disabled:opacity-50"
               title="Download structured JSON export"
             >
-              <Download className="w-3.5 h-3.5 text-[#ff4d55]" />
-              <span className="hidden md:inline">Export JSON</span>
-            </a>
+              <Download className={`w-3.5 h-3.5 text-[#ff4d55] ${isExporting ? 'animate-bounce' : ''}`} />
+              <span className="hidden md:inline">{isExporting ? 'Exporting...' : 'Export JSON'}</span>
+            </button>
 
             {/* One-Stop Scraper Modal Launcher */}
             <button

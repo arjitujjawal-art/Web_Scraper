@@ -84,6 +84,27 @@ export const apiClient = {
     return { items, total: data.total || items.length };
   },
 
+  async downloadSignalsExport(city?: string, domain?: string): Promise<void> {
+    const params = new URLSearchParams();
+    if (city) params.append('city', city);
+    if (domain) params.append('domain', domain);
+
+    const res = await fetch(`${API_BASE}/signals/export?${params.toString()}`);
+    if (!res.ok) throw new Error('Failed to export signals');
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = `signals_${(city || 'all').toLowerCase()}_${(domain || 'all').toLowerCase().replace(/[^a-z0-9]/g, '_')}.json`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    }, 1000);
+  },
+
   async getJobs(city?: string, domain?: string, keyword?: string, limit = 50): Promise<{ items: JobPosting[]; total: number }> {
     const params = new URLSearchParams();
     if (city) params.append('city', city);
