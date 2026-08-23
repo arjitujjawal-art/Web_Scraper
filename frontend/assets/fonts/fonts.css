@@ -1,0 +1,29 @@
+@font-face { font-family: monumentHeading; src: url("www.runrobrun.com/PPMonumentExtended_Bold-s.3nd20y3e6r2ln-56c1a2ddd1.woff2") format("woff2"); font-display: swap; font-weight: 400; font-style: normal; }
+
+@font-face { font-family: monumentHeading; src: url("www.runrobrun.com/PPMonumentExtended_Bold-s.3nd20y3e6r2ln-56c1a2ddd1.woff2") format("woff2"); font-display: swap; font-weight: 900; font-style: normal; }
+
+@font-face { font-family: "monumentHeading Fallback"; src: local("Arial"); ascent-override: 47.94%; descent-override: 16.72%; line-gap-override: 5.57%; size-adjust: 179.39%; }
+
+@font-face { font-family: neueHeading; src: url("www.runrobrun.com/PPNeueMontreal_Regular-s.0_8jzx7e7pw0o-21c5f66c1d.woff2") format("woff2"); font-display: swap; font-weight: 400; font-style: normal; }
+
+@font-face { font-family: neueHeading; src: url("www.runrobrun.com/PPNeueMontreal_Medium-s.27b42u55evuf--a59b68644b.woff2") format("woff2"); font-display: swap; font-weight: 500; font-style: normal; }
+
+@font-face { font-family: neueHeading; src: url("www.runrobrun.com/PPNeueMontreal_Semibold-s.2cdz_6gochybr-012722f181.woff2") format("woff2"); font-display: swap; font-weight: 600; font-style: normal; }
+
+@font-face { font-family: neueHeading; src: url("www.runrobrun.com/PPNeueMontreal_Extrabold-s.1los7u_81ktzb-8754905e1b.woff2") format("woff2"); font-display: swap; font-weight: 700; font-style: normal; }
+
+@font-face { font-family: "neueHeading Fallback"; src: local("Arial"); ascent-override: 99.89%; descent-override: 25.23%; line-gap-override: 0%; size-adjust: 95.9%; }
+
+@font-face { font-family: neueralBody; src: url("www.runrobrun.com/neueral_regular_webfont-s.0cv9ly5p7mlgj-c637950fea.woff2") format("woff2"); font-display: swap; font-weight: 400; font-style: normal; }
+
+@font-face { font-family: neueralBody; src: url("www.runrobrun.com/neueral_medium_webfont-s.1km3_e76if9a7-c8e89547a5.woff2") format("woff2"); font-display: swap; font-weight: 500; font-style: normal; }
+
+@font-face { font-family: neueralBody; src: url("www.runrobrun.com/neueral_italic_webfont-s.37s291u79rg2s-d3022bd609.woff2") format("woff2"); font-display: swap; font-weight: 400; font-style: italic; }
+
+@font-face { font-family: "neueralBody Fallback"; src: local("Arial"); ascent-override: 97.04%; descent-override: 29.12%; line-gap-override: 0%; size-adjust: 75.12%; }
+
+@font-face { font-family: neueralMono; src: url("www.runrobrun.com/OONeureal_SemiMono-s.1nl5dhp-a-fko-54ea1e0dcd.otf") format("opentype"); font-display: block; font-weight: 400; font-style: normal; }
+
+@font-face { font-family: neueralMono; src: url("www.runrobrun.com/OONeureal_SemiMono-s.1nl5dhp-a-fko-54ea1e0dcd.otf") format("opentype"); font-display: block; font-weight: 500; font-style: normal; }
+
+@font-face { font-family: "neueralMono Fallback"; src: local("Arial"); ascent-override: 78.81%; descent-override: 20.74%; line-gap-override: 0%; size-adjust: 120.54%; }
