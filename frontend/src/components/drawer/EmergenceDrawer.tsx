@@ -254,7 +254,7 @@ export const EmergenceDrawer: React.FC<EmergenceDrawerProps> = ({
             </span>
             <div className="flex items-baseline gap-1.5">
               <span className="text-3xl font-black font-mono text-cyan-300">
-                {zone.emergence_score.toFixed(2)}
+                {(zone.emergence_score ?? 0).toFixed(2)}
               </span>
               <span className="text-xs text-slate-500 font-mono">/ 10.0</span>
             </div>

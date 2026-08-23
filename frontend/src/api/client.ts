@@ -25,13 +25,24 @@ export const apiClient = {
     if (!res.ok) throw new Error('Failed to fetch opportunity zones');
     const data = await res.json();
     
-    // Map lat/lng coordinates to zones based on city & primary area
+    // Map lat/lng coordinates and score fields safely
     const items = (data.items || []).map((z: any) => {
       const coords = getCoordinatesForLocation(z.city, z.primary_area);
+      const lat = Number(z.coordinates?.latitude ?? coords.lat);
+      const lng = Number(z.coordinates?.longitude ?? coords.lng);
+      const emergence_score = Number(z.emergence_score ?? z.score ?? 0);
+      const signal_count = Number(z.signal_count ?? (z.signal_ids?.length || 0));
+      const confidence = (z.confidence || 'medium').toString().toLowerCase();
+      const velocity_delta = Number(z.velocity_delta ?? z.velocity ?? 0.35);
+
       return {
         ...z,
-        lat: coords.lat,
-        lng: coords.lng,
+        emergence_score,
+        signal_count,
+        confidence,
+        velocity_delta,
+        lat,
+        lng,
       };
     });
     return { items, total: data.total || items.length };
@@ -50,10 +61,12 @@ export const apiClient = {
 
     const items = (data.items || []).map((s: any) => {
       const coords = getCoordinatesForLocation(s.city, s.area);
+      const lat = Number(s.coordinates?.latitude ?? s.lat ?? coords.lat);
+      const lng = Number(s.coordinates?.longitude ?? s.lng ?? coords.lng);
       return {
         ...s,
-        lat: coords.lat,
-        lng: coords.lng,
+        lat,
+        lng,
       };
     });
     return { items, total: data.total || items.length };

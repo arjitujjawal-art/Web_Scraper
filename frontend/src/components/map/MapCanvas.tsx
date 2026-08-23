@@ -59,6 +59,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
   const createZoneIcon = (zone: OpportunityZone, isSelected: boolean) => {
     const domainStyle = DOMAIN_COLORS[zone.domain] || DOMAIN_COLORS['AI/ML'];
     const borderClass = isSelected ? 'border-cyan-400 ring-2 ring-cyan-400/50 scale-110' : 'border-slate-700/90';
+    const scoreVal = typeof zone.emergence_score === 'number' ? zone.emergence_score.toFixed(2) : '0.00';
 
     const html = `
       <div class="relative -translate-x-1/2 -translate-y-1/2 cursor-pointer group select-none">
@@ -73,9 +74,9 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
               </span>
             </div>
             <div class="flex items-center gap-1 text-[10px] text-slate-300">
-              <span class="text-amber-400 font-mono font-bold">⚡ ${zone.emergence_score.toFixed(2)}</span>
+              <span class="text-amber-400 font-mono font-bold">⚡ ${scoreVal}</span>
               <span class="text-slate-400">·</span>
-              <span class="text-slate-400">${zone.signal_count} signals</span>
+              <span class="text-slate-400">${zone.signal_count || 0} signals</span>
             </div>
           </div>
         </div>
