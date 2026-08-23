@@ -18,7 +18,6 @@ import {
   Search, 
   Download, 
   Code2, 
-  Gift, 
   Maximize2,
   Minimize2,
   Expand,
@@ -290,13 +289,6 @@ export const App: React.FC = () => {
 
           {/* Right Header Status & Actions */}
           <div className="flex items-center gap-3">
-            {/* Free Credits Badge */}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900 border border-white/10 text-xs font-mono">
-              <Gift className="w-3.5 h-3.5 text-[#ff4d55]" />
-              <span className="text-zinc-400">Free credits</span>
-              <span className="text-[#ff4d55] font-bold">2,080 / 5,000</span>
-            </div>
-
             {/* View Full-Screen Hub Map Button */}
             <button
               onClick={() => setView('hub-map')}

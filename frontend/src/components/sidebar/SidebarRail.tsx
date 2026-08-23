@@ -39,17 +39,18 @@ export const SidebarRail: React.FC<SidebarRailProps> = ({
         {/* Brand Header Tile with Spider Crawler Icon */}
         <button
           onClick={onExitToLanding}
-          className="w-full py-2.5 border-b border-white/10 flex flex-col items-center justify-center bg-[#09090d] hover:bg-zinc-900 transition-colors group relative"
+          className="w-full h-20 border-b border-white/10 flex flex-col items-center justify-center bg-gradient-to-b from-[#0e0e14] to-[#060608] hover:bg-zinc-900 transition-all group relative overflow-hidden"
           title="Signal Atlas - Click to return to Landing"
         >
-          <div className="w-9 h-9 rounded-xl bg-black border border-white/15 flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(255,255,255,0.1)] group-hover:border-red-500/50 group-hover:scale-105 transition-all p-1">
+          <div className="relative w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110">
+            <div className="absolute inset-0 rounded-xl bg-red-500/10 blur-sm group-hover:bg-red-500/25 transition-all" />
             <img 
               src="/spider-crawler.jpg" 
               alt="Spider Crawler" 
-              className="w-full h-full object-contain filter brightness-110 drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]" 
+              className="w-11 h-11 object-contain relative z-10 filter brightness-125 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" 
             />
           </div>
-          <span className="text-[9px] font-black uppercase tracking-widest text-[#ff4d55] mt-1 font-mono">ATLAS</span>
+          <span className="text-[9px] font-black uppercase tracking-widest text-[#ff4d55] mt-0.5 font-mono group-hover:text-white transition-colors">ATLAS</span>
         </button>
 
         {/* Navigation Item Stack - Occupies Full Width of Sidebar */}
