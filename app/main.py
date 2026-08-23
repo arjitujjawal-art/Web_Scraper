@@ -182,3 +182,8 @@ async def _auto_seed_if_empty(
                     await job_repo.upsert_many(jobs)
     except Exception as exc:  # noqa: BLE001
         logger.warning("app.auto_seed_failed", extra={"error": str(exc)})
+
+
+# Module-level ASGI application instance for standard uvicorn runners
+# (e.g. Dockerfile `app.main:app`)
+app = create_app()
