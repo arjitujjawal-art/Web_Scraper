@@ -1,0 +1,8 @@
+Extract every startup, incubation, funding or accelerator item on this page. Keys per item:
+title - headline as printed.
+date - YYYY-MM-DD. If shown only as a day/month pair like "20 / Aug", return it verbatim. Never substitute today.
+city - the locality named, e.g. "Gurugram"; if none, the organisation's city.
+domain - the area in its own words, e.g. "fintech".
+summary - first sentence.
+url - absolute link.
+Include cohorts, demo days, funding rounds, launches; skip jobs. Omit absent keys.

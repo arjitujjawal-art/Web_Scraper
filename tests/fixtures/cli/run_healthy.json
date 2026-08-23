@@ -1,0 +1,50 @@
+[
+  {
+    "title": "Northline opens AI research centre in Gurugram",
+    "date": "2026-08-14",
+    "city": "Gurugram, Delhi NCR",
+    "domain": "Artificial intelligence",
+    "summary": "A 400-seat research centre focused on applied machine learning opens in Gurugram, the company's third India facility.",
+    "url": "https://example.github.io/signal-atlas/fixtures/press/ai-research-centre-gurugram"
+  },
+  {
+    "title": "Edge computing lab expands in Noida",
+    "date": "2026-08-11",
+    "city": "Noida, Delhi NCR",
+    "domain": "Internet of things",
+    "summary": "The Noida edge computing laboratory doubles its floor area to support sensor network deployments across northern India.",
+    "url": "https://example.github.io/signal-atlas/fixtures/press/edge-lab-noida"
+  },
+  {
+    "title": "Northline funds robotics fellowship at Okhla campus",
+    "date": "2026-08-06",
+    "city": "Okhla, New Delhi",
+    "domain": "Robotics",
+    "summary": "A two-year fellowship programme for autonomous systems research begins at the company's Okhla campus.",
+    "url": "https://example.github.io/signal-atlas/fixtures/press/robotics-fellowship-okhla"
+  },
+  {
+    "title": "New semiconductor design office opens in Santa Clara",
+    "date": "2026-08-04",
+    "city": "Santa Clara, California",
+    "domain": "Semiconductors",
+    "summary": "The Santa Clara office will host chip design and verification teams working on photonics interconnects.",
+    "url": "https://example.github.io/signal-atlas/fixtures/press/semiconductor-office-santa-clara"
+  },
+  {
+    "title": "Northline partners with Berkeley on climate modelling grant",
+    "date": "2026-07-30",
+    "city": "Berkeley, California",
+    "domain": "Climate and clean energy",
+    "summary": "A joint research grant will fund climate modelling work on renewable grid integration.",
+    "url": "https://example.github.io/signal-atlas/fixtures/press/berkeley-climate-grant"
+  },
+  {
+    "title": "Quantum software team established in SoMa",
+    "date": "2026-07-24",
+    "city": "SoMa, San Francisco",
+    "domain": "Quantum computing",
+    "summary": "A new team in SoMa will build compiler tooling for superconducting qubit hardware.",
+    "url": "https://example.github.io/signal-atlas/fixtures/press/quantum-team-soma"
+  }
+]

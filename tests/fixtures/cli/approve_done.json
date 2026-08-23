@@ -1,0 +1,11 @@
+{
+  "collector_id": "c_mp3tuab31lswoxvpws",
+  "status": "done",
+  "completed_steps": [
+    "applied_selector_changes",
+    "published_collector_version",
+    "verified_run"
+  ],
+  "view_url": "https://brightdata.com/cp/scrapers/c_mp3tuab31lswoxvpws",
+  "created_at": "2026-08-22T09:46:52.000Z"
+}

@@ -1,0 +1,119 @@
+{
+  "_purpose": "Sample dataset for local development, the frontend teammates, and the demo map. Committed so the API is useful before any Bright Data collector exists.",
+  "_dates": "Dates are relative. `days_ago` is converted to an absolute UTC date when `py -3.12 -m app.seed` runs, so the exponential decay in app/domain/convergence.py keeps producing meaningful scores whenever the seeder is run. Absolute dates would silently rot into a flat, zero-score map.",
+  "_pipeline": "These are RAW collector rows, not signals. The seeder pushes them through app/domain/normalizer.normalize_batch, so the technology domain, the signal type (facility / grant / event) and the coordinates are all inferred by the same code a live run uses. A record that fails normalization aborts the seed instead of being skipped quietly.",
+  "_urls": "Hostnames match each collector's real target so evidence links look like a live run's. The individual pages are illustrative.",
+  "batches": [
+    {
+      "collector_key": "univ_research_delhi",
+      "source_type": "university_research",
+      "city_hint": "Delhi",
+      "records": [
+        {"days_ago": 2, "title": "IIT Delhi opens new Centre for Artificial Intelligence", "city": "Hauz Khas, New Delhi", "technology": "Artificial Intelligence", "summary": "A dedicated centre for artificial intelligence research begins operations on the main campus, with twelve faculty and a shared GPU cluster.", "url": "https://home.iitd.ac.in/show.php?id=4821&in_sections=Research"},
+        {"days_ago": 5, "title": "IIT Delhi receives research grant for semiconductor chip design programme", "city": "Hauz Khas, New Delhi", "summary": "A multi-year grant funds a semiconductor chip design programme covering analogue front-ends and low-power logic.", "url": "https://home.iitd.ac.in/show.php?id=4802&in_sections=Research"},
+        {"days_ago": 9, "title": "IIT Delhi expands quantum computing testbed with fabrication support", "city": "Hauz Khas, New Delhi", "summary": "The quantum computing testbed adds superconducting qubit fabrication support shared with two partner institutes.", "url": "https://home.iitd.ac.in/show.php?id=4788&in_sections=Research"},
+        {"days_ago": 14, "title": "IIT Delhi signs MoU on drone autonomy research", "city": "Hauz Khas, New Delhi", "summary": "An MoU with a defence electronics manufacturer covers drone autonomy, onboard perception and flight-safety certification.", "url": "https://home.iitd.ac.in/show.php?id=4750&in_sections=Research"},
+        {"days_ago": 21, "title": "New machine learning laboratory inaugurated at IIT Delhi", "city": "Hauz Khas, New Delhi", "summary": "A machine learning laboratory opens with an industry-funded cluster for large-model training.", "url": "https://home.iitd.ac.in/show.php?id=4699&in_sections=Research"},
+        {"days_ago": 28, "title": "IIT Delhi study on solar cell efficiency wins national award", "city": "Hauz Khas, New Delhi", "summary": "Work on perovskite solar cell efficiency receives a national research award.", "url": "https://home.iitd.ac.in/show.php?id=4650&in_sections=Research"}
+      ]
+    },
+    {
+      "collector_key": "incubator_news_delhi",
+      "source_type": "incubator_news",
+      "city_hint": "Hauz Khas",
+      "records": [
+        {"days_ago": 1, "title": "FITT announces seed funding for three generative AI startups", "city": "Hauz Khas, New Delhi", "summary": "The IIT Delhi incubator commits seed funding to three generative AI startups working on retrieval, evaluation and agent tooling.", "url": "https://home.iitd.ac.in/show.php?id=3120&in_sections=Startups"},
+        {"days_ago": 4, "title": "FITT incubated robotics startup opens hardware lab in Gurugram", "city": "Gurugram", "summary": "A warehouse robotics company from the incubator opens a hardware lab for arm and gripper testing.", "url": "https://home.iitd.ac.in/show.php?id=3104&in_sections=Startups"},
+        {"days_ago": 8, "title": "IIT Delhi incubated fintech startup raises Series A for digital banking platform", "city": "Nehru Place, New Delhi", "summary": "A digital banking platform for small merchants raises a Series A round led by a domestic fund.", "url": "https://home.iitd.ac.in/show.php?id=3088&in_sections=Startups"},
+        {"days_ago": 12, "title": "Noida incubation centre announces partnership with IIT Delhi on IoT sensor network pilot", "city": "Noida", "summary": "A partnership deploys an IoT sensor network pilot for industrial air quality across three Noida sites.", "url": "https://home.iitd.ac.in/show.php?id=3061&in_sections=Startups"},
+        {"days_ago": 18, "title": "IIT Delhi incubator opens climate technology office in Okhla", "city": "Okhla, New Delhi", "summary": "A climate technology office opens to host early teams working on emissions measurement and recycling.", "url": "https://home.iitd.ac.in/show.php?id=3020&in_sections=Startups"},
+        {"days_ago": 25, "title": "Cybersecurity startup from IIT Delhi incubator wins innovation award", "city": "Hauz Khas, New Delhi", "summary": "A cybersecurity startup building runtime attestation tooling wins a national innovation award.", "url": "https://home.iitd.ac.in/show.php?id=2988&in_sections=Startups"}
+      ]
+    },
+    {
+      "collector_key": "tech_events_delhi",
+      "source_type": "tech_event",
+      "city_hint": "Delhi",
+      "records": [
+        {"days_ago": 0, "title": "Delhi NCR Generative AI Builders Meetup", "venue": "Cyber City, Gurugram", "summary": "Monthly meetup for teams shipping generative AI products, with three build demos.", "url": "https://www.eventbrite.com/e/delhi-ncr-generative-ai-builders-meetup-tickets-901121"},
+        {"days_ago": 2, "title": "Noida IoT and Edge Computing Summit", "venue": "Noida", "summary": "A day on edge computing deployments, industrial gateways and device fleet management.", "url": "https://www.eventbrite.com/e/noida-iot-edge-computing-summit-tickets-901088"},
+        {"days_ago": 3, "title": "Warehouse Robotics Workshop, Dwarka", "venue": "Dwarka, New Delhi", "summary": "Hands-on workshop on warehouse robotics: fleet routing, safety envelopes and pick reliability.", "url": "https://www.eventbrite.com/e/warehouse-robotics-workshop-dwarka-tickets-900934"},
+        {"days_ago": 6, "title": "Delhi Semiconductor and VLSI Design Bootcamp", "venue": "Greater Noida", "summary": "Bootcamp covering semiconductor design flow from RTL to tapeout handoff.", "url": "https://www.eventbrite.com/e/delhi-semiconductor-vlsi-design-bootcamp-tickets-900812"},
+        {"days_ago": 7, "title": "Fintech Payments Innovation Night", "venue": "Cyber City, Gurugram", "summary": "Talks on payments infrastructure, settlement latency and merchant onboarding.", "url": "https://www.eventbrite.com/e/fintech-payments-innovation-night-tickets-900744"},
+        {"days_ago": 11, "title": "Delhi Climate Tech and Battery Recycling Forum", "venue": "Mayur Vihar, New Delhi", "summary": "Forum on battery recycling economics and climate reporting for manufacturers.", "url": "https://www.eventbrite.com/e/delhi-climate-tech-battery-recycling-forum-tickets-900610"},
+        {"days_ago": 15, "title": "Applied Machine Learning Conference Delhi", "venue": "Aerocity, New Delhi", "summary": "Two-track conference on applied machine learning in health, logistics and public services.", "url": "https://www.eventbrite.com/e/applied-machine-learning-conference-delhi-tickets-900488"},
+        {"days_ago": 19, "title": "Quantum Computing Study Group, Hauz Khas", "venue": "Hauz Khas, New Delhi", "summary": "Reading group working through quantum computing error-correction papers.", "url": "https://www.eventbrite.com/e/quantum-computing-study-group-hauz-khas-tickets-900351"},
+        {"days_ago": 24, "title": "Delhi Biotech and Genomics Founders Mixer", "venue": "Okhla, New Delhi", "summary": "Informal mixer for genomics and diagnostics founders and lab leads.", "url": "https://www.eventbrite.com/e/delhi-biotech-genomics-founders-mixer-tickets-900204"}
+      ]
+    },
+    {
+      "collector_key": "startup_news_delhi",
+      "source_type": "startup_newsroom",
+      "city_hint": "Delhi",
+      "_dedup_note": "The first three records are the same announcement carried by three outlets. app/domain/dedup.py merges them into one signal with three evidence URLs, which is what stops one lab opening from tripling a zone's score.",
+      "records": [
+        {"days_ago": 3, "title": "Northbridge AI opens new R&D centre in Gurugram", "city": "Gurugram", "summary": "Northbridge AI opens an R&D centre in Gurugram, its first engineering site in India, hiring for model serving and evaluation.", "url": "https://yourstory.com/2026/northbridge-ai-rd-centre-gurugram"},
+        {"days_ago": 4, "title": "Northbridge AI unveils new R&D centre in Gurugram", "city": "Gurugram", "summary": "The company confirmed the Gurugram R&D centre will focus on inference infrastructure.", "url": "https://inc42.com/buzz/northbridge-ai-gurugram-research-centre"},
+        {"days_ago": 5, "title": "Northbridge AI to open R&D centre in Gurugram", "city": "Gurugram", "summary": "Coverage of the Gurugram R&D centre announcement, with headcount plans for the first year.", "url": "https://economictimes.indiatimes.com/tech/northbridge-ai-gurugram-rd-centre"},
+        {"days_ago": 6, "title": "Delhi based battery startup expands manufacturing in Faridabad", "city": "Faridabad", "summary": "A battery pack manufacturer expands its Faridabad line to serve two-wheeler OEMs.", "url": "https://yourstory.com/2026/faridabad-battery-manufacturing-expansion"},
+        {"days_ago": 10, "title": "Ghaziabad logistics firm opens autonomous vehicle testing facility", "city": "Ghaziabad", "summary": "A logistics operator opens a closed-course autonomous vehicle testing facility for yard trucks.", "url": "https://yourstory.com/2026/ghaziabad-autonomous-vehicle-testing"},
+        {"days_ago": 13, "title": "Delhi healthtech startup raises funding for drug discovery platform", "city": "Nehru Place, New Delhi", "summary": "A drug discovery platform using protein structure prediction raises a pre-Series A round.", "url": "https://yourstory.com/2026/delhi-drug-discovery-platform-funding"},
+        {"days_ago": 20, "title": "Rohini semiconductor design firm announces partnership with foundry", "city": "Rohini, New Delhi", "summary": "A fabless semiconductor design firm announces a partnership with an overseas foundry for pilot wafers.", "url": "https://yourstory.com/2026/rohini-semiconductor-foundry-partnership"}
+      ]
+    },
+    {
+      "collector_key": "univ_research_sf",
+      "source_type": "university_research",
+      "city_hint": "Berkeley",
+      "records": [
+        {"days_ago": 1, "title": "Berkeley researchers open new quantum computing laboratory", "city": "Berkeley, CA", "summary": "A quantum computing laboratory opens with a dilution refrigerator and a shared control-electronics bench.", "url": "https://news.berkeley.edu/research/quantum-computing-laboratory-opens/"},
+        {"days_ago": 3, "title": "Berkeley lab receives federal grant for battery materials research", "city": "Berkeley, CA", "summary": "A federal grant funds battery materials research on sodium-ion cathodes and fast-charge degradation.", "url": "https://news.berkeley.edu/research/battery-materials-federal-grant/"},
+        {"days_ago": 6, "title": "Berkeley announces collaboration on machine learning safety", "city": "Berkeley, CA", "summary": "A cross-institution collaboration on machine learning safety covers evaluation, interpretability and red-teaming.", "url": "https://news.berkeley.edu/research/machine-learning-safety-collaboration/"},
+        {"days_ago": 12, "title": "UC Berkeley opens genomics sequencing facility at Mission Bay", "city": "Mission Bay, San Francisco", "summary": "A genomics sequencing facility opens with long-read platforms available to affiliated labs.", "url": "https://news.berkeley.edu/research/genomics-sequencing-facility-mission-bay/"},
+        {"days_ago": 17, "title": "Berkeley engineers win fellowship for photonics chip design work", "city": "Berkeley, CA", "summary": "A fellowship supports photonics chip design work on integrated optical interconnects.", "url": "https://news.berkeley.edu/research/photonics-chip-design-fellowship/"},
+        {"days_ago": 26, "title": "Berkeley robotics group expands autonomous drone testbed", "city": "Berkeley, CA", "summary": "The robotics group expands its autonomous drone testbed with a netted indoor flight volume.", "url": "https://news.berkeley.edu/research/autonomous-drone-testbed-expansion/"}
+      ]
+    },
+    {
+      "collector_key": "incubator_news_sf",
+      "source_type": "incubator_news",
+      "city_hint": "San Francisco",
+      "records": [
+        {"days_ago": 2, "title": "Y Combinator announces seed funding for agentic AI startups in Summer batch", "city": "SoMa, San Francisco", "summary": "Seed funding goes to several agentic AI startups in the Summer batch, spanning coding agents and back-office automation.", "url": "https://www.ycombinator.com/blog/summer-batch-agentic-ai"},
+        {"days_ago": 5, "title": "YC alumnus opens robotics manufacturing office in Fremont", "city": "Fremont, CA", "summary": "A robotics company opens a manufacturing office in Fremont to bring assembly in house.", "url": "https://www.ycombinator.com/blog/robotics-manufacturing-fremont"},
+        {"days_ago": 9, "title": "Mission Bay biotech accelerator awards fellowships for CRISPR research", "city": "Mission Bay, San Francisco", "summary": "An accelerator awards fellowships for CRISPR research aimed at delivery efficiency.", "url": "https://www.ycombinator.com/blog/mission-bay-crispr-fellowships"},
+        {"days_ago": 16, "title": "Palo Alto accelerator partnership targets semiconductor startups", "city": "Palo Alto, CA", "summary": "A partnership with two fabs gives semiconductor startups shuttle-run access at reduced cost.", "url": "https://www.ycombinator.com/blog/palo-alto-semiconductor-partnership"},
+        {"days_ago": 22, "title": "Oakland climate accelerator opens hardware campus for clean energy teams", "city": "Oakland, CA", "summary": "A hardware campus opens for clean energy teams, with shared machining and test equipment.", "url": "https://www.ycombinator.com/blog/oakland-clean-energy-hardware-campus"}
+      ]
+    },
+    {
+      "collector_key": "tech_events_sf",
+      "source_type": "tech_event",
+      "city_hint": "San Francisco",
+      "records": [
+        {"days_ago": 0, "title": "San Francisco Generative AI Engineering Summit", "venue": "SoMa, San Francisco", "summary": "A single-track summit on generative AI engineering practice: evaluation harnesses, latency budgets and cost control.", "url": "https://www.eventbrite.com/e/sf-generative-ai-engineering-summit-tickets-812004"},
+        {"days_ago": 2, "title": "Mission Bay Biotech and Drug Discovery Symposium", "venue": "Mission Bay, San Francisco", "summary": "Symposium on drug discovery pipelines and translational timelines.", "url": "https://www.eventbrite.com/e/mission-bay-biotech-drug-discovery-symposium-tickets-811922"},
+        {"days_ago": 4, "title": "Santa Clara Semiconductor Photonics Forum", "venue": "Santa Clara, CA", "summary": "Forum on semiconductor photonics packaging and co-packaged optics.", "url": "https://www.eventbrite.com/e/santa-clara-semiconductor-photonics-forum-tickets-811840"},
+        {"days_ago": 5, "title": "Bay Area Humanoid Robotics Demo Night", "venue": "Mountain View, CA", "summary": "Demo night for humanoid robotics teams, with live locomotion and manipulation runs.", "url": "https://www.eventbrite.com/e/bay-area-humanoid-robotics-demo-night-tickets-811766"},
+        {"days_ago": 8, "title": "Quantum Computing Hardware Meetup", "venue": "Berkeley, CA", "summary": "Meetup on quantum computing hardware: control stacks, cryogenics and qubit yield.", "url": "https://www.eventbrite.com/e/quantum-computing-hardware-meetup-tickets-811690"},
+        {"days_ago": 10, "title": "San Jose Electric Vehicle Battery Expo", "venue": "San Jose, CA", "summary": "Expo on electric vehicle battery supply chains, pack design and second-life reuse.", "url": "https://www.eventbrite.com/e/san-jose-electric-vehicle-battery-expo-tickets-811588"},
+        {"days_ago": 14, "title": "Sunnyvale Edge Computing and IoT Developer Day", "venue": "Sunnyvale, CA", "summary": "Developer day on edge computing runtimes and device provisioning at fleet scale.", "url": "https://www.eventbrite.com/e/sunnyvale-edge-computing-iot-developer-day-tickets-811470"},
+        {"days_ago": 20, "title": "Zero Trust Cybersecurity Workshop", "venue": "Financial District, San Francisco", "summary": "Workshop on cybersecurity architecture for zero trust rollouts in regulated environments.", "url": "https://www.eventbrite.com/e/zero-trust-cybersecurity-workshop-tickets-811332"},
+        {"days_ago": 23, "title": "Menlo Park Fintech Payments Roundtable", "venue": "Menlo Park, CA", "summary": "Roundtable on payments orchestration, fraud rates and cross-border settlement.", "url": "https://www.eventbrite.com/e/menlo-park-fintech-payments-roundtable-tickets-811204"}
+      ]
+    },
+    {
+      "collector_key": "startup_news_sf",
+      "source_type": "startup_newsroom",
+      "city_hint": "San Francisco",
+      "records": [
+        {"days_ago": 1, "title": "Robotics firm opens new headquarters in Mission Bay", "city": "Mission Bay, San Francisco", "summary": "A robotics company opens its headquarters in Mission Bay with an integration floor for pilot units.", "url": "https://techcrunch.com/2026/robotics-headquarters-mission-bay/"},
+        {"days_ago": 3, "title": "SoMa AI infrastructure startup raises Series A", "city": "SoMa, San Francisco", "summary": "An AI infrastructure startup raises a Series A round for its inference scheduling product.", "url": "https://techcrunch.com/2026/soma-ai-infrastructure-series-a/"},
+        {"days_ago": 7, "title": "Redwood City quantum computing startup opens fabrication lab", "city": "Redwood City, CA", "summary": "A quantum computing startup opens a fabrication lab for in-house qubit device runs.", "url": "https://techcrunch.com/2026/redwood-city-quantum-fabrication-lab/"},
+        {"days_ago": 11, "title": "Fremont battery recycling firm expands manufacturing capacity", "city": "Fremont, CA", "summary": "A battery recycling firm expands manufacturing capacity for black-mass processing.", "url": "https://techcrunch.com/2026/fremont-battery-recycling-expansion/"},
+        {"days_ago": 15, "title": "Mountain View cybersecurity firm announces zero trust partnership", "city": "Mountain View, CA", "summary": "A cybersecurity firm announces a zero trust partnership with a major identity provider.", "url": "https://techcrunch.com/2026/mountain-view-zero-trust-partnership/"},
+        {"days_ago": 27, "title": "Oakland IoT sensor network startup opens new office", "city": "Oakland, CA", "summary": "An IoT sensor network startup for cold-chain monitoring opens a larger office.", "url": "https://techcrunch.com/2026/oakland-iot-sensor-network-office/"}
+      ]
+    }
+  ]
+}

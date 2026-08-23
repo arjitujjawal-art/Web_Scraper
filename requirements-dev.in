@@ -1,0 +1,14 @@
+# Dev / CI tooling. Lock with:
+#   py -3.12 -m piptools compile requirements-dev.in -o requirements-dev.txt
+-r requirements.in
+
+pytest
+pytest-asyncio
+pytest-cov
+httpx
+ruff
+mypy
+types-PyYAML
+import-linter
+pip-tools
+pre-commit

@@ -1,0 +1,15 @@
+# Direct dependencies only. Lock exact versions with:
+#   py -3.12 -m piptools compile requirements.in -o requirements.txt
+#   py -3.12 -m piptools compile requirements-dev.in -o requirements-dev.txt
+# Commit both .in and .txt. The .txt is what CI installs.
+
+fastapi
+uvicorn[standard]
+sqlalchemy[asyncio]
+aiosqlite
+pydantic
+pydantic-settings
+pyyaml
+
+# Copilot (partner track). Safe to install everywhere; only imported by app/services/copilot.py.
+anthropic

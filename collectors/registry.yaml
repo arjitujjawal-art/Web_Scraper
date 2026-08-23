@@ -1,0 +1,167 @@
+# Collector registry — the source of truth for what this backend may scrape.
+#
+# Why this file exists
+# --------------------
+# Clients name a `key`. Collector ids and URLs are resolved here, server-side.
+# Nothing a caller sends ever becomes a fetched address, which removes SSRF by
+# construction instead of by allowlist.
+#
+# How to fill in `collector_id`
+# ----------------------------
+# Ids are assigned by Bright Data; you cannot choose them. Create a collector,
+# then copy the `collector_id` out of the envelope:
+#
+#   brightdata scraper create "<url>" "$(cat collectors/prompts/univ_research.txt)" \
+#     --name univ-research-sf --json -o .tmp/create_univ_sf.json
+#
+# Creation takes 5-25 minutes and AI-Flow allows 3 concurrent jobs per account,
+# so start these first and run them in small batches.
+#
+# The description argument is capped at 500 characters by the CLI
+# (`brightdata scraper create --help`, 0.3.5), which is why every file in
+# prompts/ is terse. `tests/unit/infra/test_registry.py` fails if one grows past
+# the cap, so the limit is caught locally rather than 5 minutes into a job.
+#
+# `PENDING` means "entry designed, collector not created yet". Those collectors
+# appear on the dashboard as unprovisioned and refuse to run, rather than failing
+# with an obscure CLI error.
+
+collectors:
+  # --- university research -------------------------------------------------
+  - key: univ_research_delhi
+    source_type: university_research
+    collector_id: PENDING
+    description: IIT Delhi research announcements
+    urls:
+      - "https://home.iitd.ac.in/research-all.php"
+    city_hint: "Delhi"
+    required_fields: [title, date, city, domain]
+    prompt_file: prompts/univ_research.txt
+    tags: [delhi, verified-target]
+
+  - key: univ_research_sf
+    source_type: university_research
+    collector_id: PENDING
+    description: UC Berkeley research news
+    urls:
+      - "https://news.berkeley.edu/category/research/"
+    city_hint: "Berkeley"
+    required_fields: [title, date, city, domain]
+    prompt_file: prompts/univ_research.txt
+    tags: [bay-area, verified-target, date-in-url]
+
+  # --- incubator / accelerator news ---------------------------------------
+  - key: incubator_news_delhi
+    source_type: incubator_news
+    collector_id: PENDING
+    description: IIT Delhi startup and incubation news (FITT)
+    urls:
+      - "https://home.iitd.ac.in/startup-all.php"
+    city_hint: "Hauz Khas"
+    required_fields: [title, date, city, domain]
+    prompt_file: prompts/incubator_news.txt
+    tags: [delhi, verified-target]
+
+  - key: incubator_news_sf
+    source_type: incubator_news
+    collector_id: PENDING
+    description: Y Combinator blog
+    urls:
+      - "https://www.ycombinator.com/blog"
+    city_hint: "San Francisco"
+    required_fields: [title, date, city, domain]
+    prompt_file: prompts/incubator_news.txt
+    tags: [bay-area, verified-target]
+
+  # --- tech events ---------------------------------------------------------
+  # Eventbrite returns venue localities, which is what turns a two-pin map into a
+  # real one. It also bleeds outside the filtered city, so the normalizer rejects
+  # rows whose resolved location is not Delhi/NCR or the Bay Area.
+  - key: tech_events_delhi
+    source_type: tech_event
+    collector_id: PENDING
+    description: Eventbrite technology events, New Delhi
+    urls:
+      - "https://www.eventbrite.com/d/india--new-delhi/technology--events/"
+    city_hint: "Delhi"
+    required_fields: [title, date, city, domain]
+    prompt_file: prompts/tech_events.txt
+    tags: [delhi, verified-target, locality-bearing]
+
+  - key: tech_events_sf
+    source_type: tech_event
+    collector_id: PENDING
+    description: Eventbrite technology events, San Francisco
+    urls:
+      - "https://www.eventbrite.com/d/ca--san-francisco/technology--events/"
+    city_hint: "San Francisco"
+    required_fields: [title, date, city, domain]
+    prompt_file: prompts/tech_events.txt
+    tags: [bay-area, verified-target, locality-bearing]
+
+  # --- startup newsroom ----------------------------------------------------
+  # The category that had to be verified rather than assumed. Bar: loads without
+  # login, >= 10 dated items, something location-bearing per item.
+  #
+  # Checked 2026-08-23:
+  #   yourstory.com/category/startups   403 to a plain fetch — rejected
+  #   inc42.com/buzz                    12 dated items, a city named in 0 — rejected
+  #   entrackr.com                      27 dated items, a city named in 0 — rejected
+  #   techcrunch.com/category/startups  30 dated items, but a global feed: most
+  #                                     items are neither Delhi nor Bay Area, and
+  #                                     `city` is absent from most rows. Requiring
+  #                                     it holds the collector at DEGRADED forever;
+  #                                     a city_hint fallback would relabel a Tokyo
+  #                                     funding round as San Francisco. Rejected
+  #                                     for being the wrong data, not a broken page.
+  #   sfstandard.com/tag/startups       10 dated items, /YYYY/MM/DD/ in every URL,
+  #                                     single-city outlet — ACCEPTED
+  #
+  # So SF gets a fourth source type and Delhi keeps three. Indian startup listings
+  # print funding amounts, not localities; the choice was three types in Delhi or a
+  # hint that invents a city, and the hint is the one that corrupts the map.
+  # README's limitations name the asymmetry.
+  - key: startup_news_delhi
+    source_type: startup_newsroom
+    collector_id: PENDING
+    description: "No candidate cleared the bar — see the note above"
+    enabled: false
+    urls:
+      - "https://yourstory.com/category/startups"
+    city_hint: "Delhi"
+    required_fields: [title, date, city, domain]
+    prompt_file: prompts/startup_news.txt
+    tags: [delhi, unverified]
+
+  - key: startup_news_sf
+    source_type: startup_newsroom
+    collector_id: PENDING
+    description: The San Francisco Standard, startups tag
+    urls:
+      - "https://sfstandard.com/tag/startups/"
+    city_hint: "San Francisco"
+    # `city` is deliberately not required here. The listing prints a headline and
+    # a date, nothing else, and the outlet covers one city — so the city comes
+    # from the hint above. Requiring a field the page never prints would hold the
+    # collector at DEGRADED permanently and make the health signal meaningless.
+    required_fields: [title, date, domain]
+    prompt_file: prompts/startup_news.txt
+    tags: [bay-area, verified-target, date-in-url]
+
+  # --- self-healing demo ---------------------------------------------------
+  # One collector, two URLs. The second is the same page with moved selectors;
+  # running it is what makes the fill rate drop in front of a judge.
+  #
+  # Fixtures are hosted on GitHub Pages, not localhost: collectors execute on
+  # Bright Data infrastructure and cannot reach your machine.
+  - key: demo_newsroom
+    source_type: startup_newsroom
+    collector_id: PENDING
+    description: Healing demo — baseline and mutated newsroom fixtures
+    urls:
+      - "${FIXTURE_BASE_URL}/newsroom_v1.html"
+      - "${FIXTURE_BASE_URL}/newsroom_v2_mutated.html"
+    city_hint: "Delhi"
+    required_fields: [title, date, city, domain]
+    prompt_file: prompts/demo_newsroom.txt
+    tags: [demo, fixture]

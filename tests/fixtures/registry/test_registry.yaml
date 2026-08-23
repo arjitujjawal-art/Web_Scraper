@@ -1,0 +1,51 @@
+# Registry used by the test suite only.
+#
+# The committed `collectors/registry.yaml` is honest about reality: every id is
+# still `PENDING`, so every collector there refuses to run. The integration suite
+# needs the opposite — provisioned collectors it can drive end to end — plus one
+# disabled and one unprovisioned entry so the 409 paths are covered.
+#
+# The ids below are shaped like real ones (`^c_[a-z0-9]{6,40}$`) and are fake.
+# `demo_newsroom` reuses the id that appears in the recorded CLI envelopes so the
+# fixtures and this file agree about which collector was healed.
+
+collectors:
+  - key: demo_newsroom
+    source_type: startup_newsroom
+    collector_id: c_mp3tuab31lswoxvpws
+    description: Healing demo — baseline and mutated newsroom fixtures
+    urls:
+      - "${FIXTURE_BASE_URL}/newsroom_v1.html"
+      - "${FIXTURE_BASE_URL}/newsroom_v2_mutated.html"
+    city_hint: "Delhi"
+    required_fields: [title, date, city, domain]
+    tags: [demo, fixture]
+
+  - key: univ_research_sf
+    source_type: university_research
+    collector_id: c_tstunivsf0000001
+    description: UC Berkeley research news
+    urls:
+      - "https://news.berkeley.edu/category/research/"
+    city_hint: "Berkeley"
+    required_fields: [title, date, city, domain]
+    tags: [bay-area]
+
+  # Switched off in configuration: POST /run must refuse with a 409 rather than
+  # spend a job slot finding out.
+  - key: startup_news_delhi
+    source_type: startup_newsroom
+    collector_id: c_tstdisabled00001
+    description: Disabled collector, for the 409 path
+    enabled: false
+    urls:
+      - "https://example.test/startups"
+
+  # Designed but never created. The dashboard shows it; running it is refused.
+  - key: tech_events_delhi
+    source_type: tech_event
+    collector_id: PENDING
+    description: Unprovisioned collector, for the 409 path
+    urls:
+      - "https://example.test/events"
+    city_hint: "Delhi"

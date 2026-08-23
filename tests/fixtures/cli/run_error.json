@@ -1,0 +1,6 @@
+{
+  "collector_id": "c_mp3tuab31lswoxvpws",
+  "status": "failed",
+  "completed_steps": ["resolved_target"],
+  "error": "target returned HTTP 403 through zone cli_unlocker after 3 attempts"
+}

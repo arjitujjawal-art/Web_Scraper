@@ -1,0 +1,8 @@
+Extract every research or lab announcement on this page. Keys per item:
+title - headline as printed.
+date - YYYY-MM-DD. If no date sits beside the item, read it from its URL path /YYYY/MM/DD/. Never substitute today.
+city - the city, campus or locality named; if none, the university's city.
+domain - the technology area in the page's own words, e.g. "quantum computing".
+summary - first sentence or standfirst.
+url - absolute link.
+Skip nav and pagination. Keep page order. Omit absent keys.

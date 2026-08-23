@@ -1,0 +1,40 @@
+{
+  "collector_id": "c_mp3tuab31lswoxvpws",
+  "status": "awaiting_approval",
+  "completed_steps": [
+    "analysed_page_structure",
+    "regenerated_selectors",
+    "validated_against_live_page",
+    "produced_preview"
+  ],
+  "diff_summary": "title: article.news-card h2.news-card__title -> div.press-wrapper h3.press-wrapper__heading; date: time.news-card__date[datetime] -> span.release-date; city: p.news-card__location -> div.press-meta > span:nth-of-type(1); domain: p.news-card__domain -> div.press-meta > span:nth-of-type(2)",
+  "next_step": "Run `brightdata scraper approve c_mp3tuab31lswoxvpws` to apply these changes, or `--reject` to discard them.",
+  "preview_result": [
+    {
+      "title": "Northline opens AI research centre in Gurugram",
+      "date": "2026-08-14",
+      "city": "Gurugram, Delhi NCR",
+      "domain": "Artificial intelligence",
+      "summary": "A 400-seat research centre focused on applied machine learning opens in Gurugram, the company's third India facility.",
+      "url": "https://example.github.io/signal-atlas/fixtures/press/ai-research-centre-gurugram"
+    },
+    {
+      "title": "Edge computing lab expands in Noida",
+      "date": "2026-08-11",
+      "city": "Noida, Delhi NCR",
+      "domain": "Internet of things",
+      "summary": "The Noida edge computing laboratory doubles its floor area to support sensor network deployments across northern India.",
+      "url": "https://example.github.io/signal-atlas/fixtures/press/edge-lab-noida"
+    },
+    {
+      "title": "Northline funds robotics fellowship at Okhla campus",
+      "date": "2026-08-06",
+      "city": "Okhla, New Delhi",
+      "domain": "Robotics",
+      "summary": "A two-year fellowship programme for autonomous systems research begins at the company's Okhla campus.",
+      "url": "https://example.github.io/signal-atlas/fixtures/press/robotics-fellowship-okhla"
+    }
+  ],
+  "view_url": "https://brightdata.com/cp/scrapers/c_mp3tuab31lswoxvpws",
+  "created_at": "2026-08-22T09:41:07.000Z"
+}

@@ -1,0 +1,8 @@
+Extract every press release listed on this newsroom page. Keys per release:
+title - headline as printed.
+date - release date as YYYY-MM-DD. Never substitute today.
+city - the city or locality named, e.g. "Gurugram", "Noida", "SoMa", "Mission Bay".
+domain - the technology area in the release's own words, e.g. "robotics".
+summary - summary line or first sentence.
+url - absolute link.
+Every release here has all six. Omit a key rather than guess, so a layout change stays detectable. Keep page order.

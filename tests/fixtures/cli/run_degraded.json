@@ -1,0 +1,38 @@
+[
+  {
+    "date": "2026-08-14",
+    "domain": "Artificial intelligence",
+    "summary": "A 400-seat research centre focused on applied machine learning opens in Gurugram, the company's third India facility.",
+    "url": "https://example.github.io/signal-atlas/fixtures/press/ai-research-centre-gurugram"
+  },
+  {
+    "date": "2026-08-11",
+    "domain": "Internet of things",
+    "summary": "The Noida edge computing laboratory doubles its floor area to support sensor network deployments across northern India.",
+    "url": "https://example.github.io/signal-atlas/fixtures/press/edge-lab-noida"
+  },
+  {
+    "date": "2026-08-06",
+    "domain": "Robotics",
+    "summary": "A two-year fellowship programme for autonomous systems research begins at the company's Okhla campus.",
+    "url": "https://example.github.io/signal-atlas/fixtures/press/robotics-fellowship-okhla"
+  },
+  {
+    "date": "2026-08-04",
+    "domain": "Semiconductors",
+    "summary": "The Santa Clara office will host chip design and verification teams working on photonics interconnects.",
+    "url": "https://example.github.io/signal-atlas/fixtures/press/semiconductor-office-santa-clara"
+  },
+  {
+    "date": "2026-07-30",
+    "domain": "Climate and clean energy",
+    "summary": "A joint research grant will fund climate modelling work on renewable grid integration.",
+    "url": "https://example.github.io/signal-atlas/fixtures/press/berkeley-climate-grant"
+  },
+  {
+    "date": "2026-07-24",
+    "domain": "Quantum computing",
+    "summary": "A new team in SoMa will build compiler tooling for superconducting qubit hardware.",
+    "url": "https://example.github.io/signal-atlas/fixtures/press/quantum-team-soma"
+  }
+]

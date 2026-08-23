@@ -1,0 +1,142 @@
+[project]
+name = "signal-atlas"
+version = "0.1.0"
+description = "Early public signal convergence detection over Bright Data Scraper Studio collectors"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["app", "tests"]
+# Scratch space for one-off generators (e.g. the examples/ builder). Gitignored, never
+# shipped, and excluded here so the lint gate does not depend on git being initialised —
+# ruff only honours .gitignore inside a repository.
+extend-exclude = [".tmp"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "N",        # pep8-naming
+    "UP",       # pyupgrade
+    "B",        # bugbear
+    "A",        # builtin shadowing
+    "C4",       # comprehensions
+    "DTZ",      # naive-datetime misuse
+    "T20",      # no print()
+    "SIM",      # simplify
+    "PTH",      # use pathlib
+    "RUF",
+    "S",        # bandit — security
+    "ANN",      # require annotations
+    "D",        # docstrings
+    "BLE",      # no blind `except Exception` outside a task boundary
+    "PLC0415",  # imports at module level, unless breaking a cycle
+]
+ignore = [
+    "D203",   # conflicts with D211
+    "D213",   # conflicts with D212
+    "ANN401", # allow typing.Any where genuinely needed
+    # A class docstring already says what the object is, and every constructor
+    # parameter is named and typed. A separate __init__ docstring would restate
+    # the signature, which is the kind of comment that goes stale.
+    "D107",
+    "D105",   # __repr__/__len__ and friends are self-describing
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests may assert, use magic values, and skip docstrings.
+"tests/**" = ["S101", "D100", "D101", "D102", "D103", "ANN201", "ANN001"]
+# The seed script prints progress by design.
+"app/seed.py" = ["T201"]
+# These two modules are the error taxonomy. The names read as the condition
+# ("RunNotFound", "CliTimeout") and every one inherits from a base that does end
+# in Error, so an -Error suffix on each would only add noise at the raise site.
+"app/services/errors.py" = ["N818"]
+"app/infra/cli/protocol.py" = ["N818"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+# Ruff formats fenced Python blocks inside Markdown. The snippets in docs/ are
+# illustrative and hand-aligned for reading (an aligned trailing comment, a call kept
+# on two lines instead of six), so the formatter is scoped to real source files.
+exclude = ["*.md"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-q --strict-markers --strict-config"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+# Set explicitly: pytest-asyncio deprecates leaving it unset, and
+# `filterwarnings = ["error"]` would turn that deprecation into a collection failure.
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+# Python 3.12's sys.monitoring tracer. The default C tracer loses line events
+# across the greenlet switch SQLAlchemy's async layer performs, so every service
+# method looked as though it stopped executing at its first `await` — 62% reported
+# on app/services/zones.py against 80% actual. Set here as well as in CI so a local
+# run and a CI run report the same number.
+core = "sysmon"
+
+[tool.coverage.report]
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "@overload"]
+
+# --- Architecture enforcement -------------------------------------------------
+# The clean-code contract is checked by a tool, not by discipline.
+# Run with:  lint-imports
+[tool.importlinter]
+root_package = "app"
+# Required because the purity contract below names third-party modules
+# (sqlalchemy, fastapi, …) and not just `app.*` ones.
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Layers are strictly ordered: api -> services -> infra -> domain"
+type = "layers"
+layers = [
+    "app.api",
+    "app.services",
+    "app.infra",
+    "app.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "Domain is pure: it touches no I/O library"
+type = "forbidden"
+source_modules = ["app.domain"]
+forbidden_modules = [
+    "app.infra",
+    "app.services",
+    "app.api",
+    "app.config",
+    "sqlalchemy",
+    "fastapi",
+    "pydantic",
+    "asyncio",
+    "subprocess",
+    "httpx",
+    "anthropic",
+    "pathlib",
+    "yaml",
+]
+
+[[tool.importlinter.contracts]]
+name = "Schemas are transport-only and never import infra or services"
+type = "forbidden"
+source_modules = ["app.schemas"]
+forbidden_modules = ["app.infra", "app.services", "app.api"]

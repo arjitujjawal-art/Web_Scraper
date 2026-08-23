@@ -1,0 +1,28 @@
+# Secrets — never commit
+.env
+*.pem
+*.key
+
+# Local database + raw scraper payloads
+signals.db
+signals.db-journal
+data/raw/
+.tmp/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.import_linter_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

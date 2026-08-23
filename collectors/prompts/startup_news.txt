@@ -1,0 +1,8 @@
+Extract every company or startup news item on this page. Keys per item:
+title - headline as printed.
+date - YYYY-MM-DD; if not printed beside the item, read it from its URL path /YYYY/MM/DD/. Never substitute today.
+city - where the office, lab, factory or team is; prefer a place in the headline over the publication's city.
+domain - the area in its own words.
+summary - first sentence.
+url - absolute link.
+Prefer new office, lab, campus, expansion, funding and grant items. Omit absent keys.

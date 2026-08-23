@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Northline Technologies — Newsroom</title>
+  <meta name="description" content="Press releases from Northline Technologies." />
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; }
+    .press-wrapper { border-bottom: 1px solid #ddd; padding: 1rem 0; }
+    .press-wrapper__heading { margin: 0 0 .25rem; font-size: 1.1rem; }
+    .press-meta { color: #555; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <!--
+    Mutated fixture for the self-healing demo.
+
+    Same six releases as newsroom_v1.html, same wording, same order. Only the
+    markup moved:
+
+      article.news-card          -> div.press-wrapper
+      h2.news-card__title        -> h3.press-wrapper__heading
+      time.news-card__date       -> span.release-date  (and a shorter format)
+      p.news-card__location      -> merged into an unlabelled span inside .press-meta
+      p.news-card__domain        -> merged into an unlabelled span inside .press-meta
+
+    A collector built against version 1 finds no title and no city here, so the
+    fill rate falls below 0.8 and the collector reads DEGRADED. That is the
+    failure a judge watches happen, and the one `scraper heal` then repairs.
+  -->
+  <h1>Northline Technologies — Newsroom</h1>
+
+  <div class="press-wrapper">
+    <h3 class="press-wrapper__heading">Northline opens AI research centre in Gurugram</h3>
+    <span class="release-date">14 Aug 2026</span>
+    <div class="press-meta"><span>Gurugram, Delhi NCR</span> &middot; <span>Artificial intelligence</span></div>
+    <p class="press-wrapper__body">A 400-seat research centre focused on applied machine
+      learning opens in Gurugram, the company's third India facility.</p>
+    <a class="press-wrapper__more" href="/press/ai-research-centre-gurugram">Read the release</a>
+  </div>
+
+  <div class="press-wrapper">
+    <h3 class="press-wrapper__heading">Edge computing lab expands in Noida</h3>
+    <span class="release-date">11 Aug 2026</span>
+    <div class="press-meta"><span>Noida, Delhi NCR</span> &middot; <span>Internet of things</span></div>
+    <p class="press-wrapper__body">The Noida edge computing laboratory doubles its floor
+      area to support sensor network deployments across northern India.</p>
+    <a class="press-wrapper__more" href="/press/edge-lab-noida">Read the release</a>
+  </div>
+
+  <div class="press-wrapper">
+    <h3 class="press-wrapper__heading">Northline funds robotics fellowship at Okhla campus</h3>
+    <span class="release-date">6 Aug 2026</span>
+    <div class="press-meta"><span>Okhla, New Delhi</span> &middot; <span>Robotics</span></div>
+    <p class="press-wrapper__body">A two-year fellowship programme for autonomous systems
+      research begins at the company's Okhla campus.</p>
+    <a class="press-wrapper__more" href="/press/robotics-fellowship-okhla">Read the release</a>
+  </div>
+
+  <div class="press-wrapper">
+    <h3 class="press-wrapper__heading">New semiconductor design office opens in Santa Clara</h3>
+    <span class="release-date">4 Aug 2026</span>
+    <div class="press-meta"><span>Santa Clara, California</span> &middot; <span>Semiconductors</span></div>
+    <p class="press-wrapper__body">The Santa Clara office will host chip design and
+      verification teams working on photonics interconnects.</p>
+    <a class="press-wrapper__more" href="/press/semiconductor-office-santa-clara">Read the release</a>
+  </div>
+
+  <div class="press-wrapper">
+    <h3 class="press-wrapper__heading">Northline partners with Berkeley on climate modelling grant</h3>
+    <span class="release-date">30 Jul 2026</span>
+    <div class="press-meta"><span>Berkeley, California</span> &middot; <span>Climate and clean energy</span></div>
+    <p class="press-wrapper__body">A joint research grant will fund climate modelling work
+      on renewable grid integration.</p>
+    <a class="press-wrapper__more" href="/press/berkeley-climate-grant">Read the release</a>
+  </div>
+
+  <div class="press-wrapper">
+    <h3 class="press-wrapper__heading">Quantum software team established in SoMa</h3>
+    <span class="release-date">24 Jul 2026</span>
+    <div class="press-meta"><span>SoMa, San Francisco</span> &middot; <span>Quantum computing</span></div>
+    <p class="press-wrapper__body">A new team in SoMa will build compiler tooling for
+      superconducting qubit hardware.</p>
+    <a class="press-wrapper__more" href="/press/quantum-team-soma">Read the release</a>
+  </div>
+</body>
+</html>

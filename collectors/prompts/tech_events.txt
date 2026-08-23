@@ -1,0 +1,9 @@
+Extract every technology event on this page. Keys per event:
+title - event name.
+date - start date as YYYY-MM-DD. Never substitute today.
+city - venue locality and city as printed, e.g. "Soma, San Francisco", "Gurugram". Keep the locality; it is the most valuable field here.
+venue - venue name if shown.
+domain - the topic in its own words, e.g. "AI".
+summary - short description if shown.
+url - absolute link.
+Tech and startup events only. Keep localities outside the filtered city.
