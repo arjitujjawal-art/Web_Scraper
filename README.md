@@ -582,14 +582,6 @@ mindmap
 
 📣 **Read our hackathon journey:** [LinkedIn post](https://lnkd.in/p/dceu4rDr)
 
-| Criterion | Where to look |
-|---|---|
-| **Potential Impact** | Predictive, not reactive — see [Why This Exists](#-why-this-exists) |
-| **Creativity & Innovation** | Convergence scoring over raw listings; ad-hoc paste-a-URL scraping folded into the same pipeline as the standing fleet |
-| **Technical Excellence** | Pure domain core, `import-linter`-enforced layering, `Protocol`-backed CLI with offline `FakeCli` testing, 391 tests, corrected math with property-based proofs |
-| **Use of Scraper Studio** | Four integration points: standing fleet, self-healing, ad-hoc creation, GitHub-Pages-hosted reproducible demo — every collector ID in `registry.yaml` is real and checkable |
-| **Reliability & Self-Healing** | The full 8-step degrade → heal → approve → recover loop, gated by human approval, reproducible by anyone with the repo |
-| **Presentation Clarity** | This document, the honesty section above, and a demo script a judge can run themselves |
 
 <div align="center">
 
