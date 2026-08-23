@@ -141,3 +141,8 @@ def _registry_env(settings: Settings) -> dict[str, str]:
     if settings.fixture_base_url:
         env["FIXTURE_BASE_URL"] = settings.fixture_base_url
     return env
+
+
+# Module-level ASGI application instance for standard uvicorn runners
+# (e.g. Dockerfile `app.main:app`)
+app = create_app()

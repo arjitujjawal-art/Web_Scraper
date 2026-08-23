@@ -26,3 +26,9 @@ htmlcov/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Frontend / Landing & Node
+node_modules/
+frontend/
+landing/
+

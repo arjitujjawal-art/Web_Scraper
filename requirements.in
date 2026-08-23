@@ -10,6 +10,8 @@ aiosqlite
 pydantic
 pydantic-settings
 pyyaml
+httpx
 
 # Copilot (partner track). Safe to install everywhere; only imported by app/services/copilot.py.
 anthropic
+

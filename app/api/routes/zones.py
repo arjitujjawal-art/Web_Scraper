@@ -5,6 +5,7 @@ but never defined what a mode changes, and shipping an undefined parameter is wo
 than shipping none. Noted in the README alongside the other dropped field.
 """
 
+import json
 from typing import Annotated
 
 from fastapi import APIRouter, Query, Response
@@ -41,7 +42,6 @@ async def export_zones(
     min_score: Annotated[float, Query(ge=0.0)] = 0.0,
 ) -> Response:
     """Download full filtered opportunity zones dataset as an attachment JSON file."""
-    import json
     found = await zones.list_zones(city=city, domain=domain, min_score=min_score)
     data = [ZoneOut.model_validate(zone).model_dump(mode="json") for zone in found]
     json_bytes = json.dumps(data, indent=2, default=str).encode("utf-8")

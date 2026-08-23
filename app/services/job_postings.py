@@ -6,13 +6,13 @@ Implements Cache-First with Live Active Crawling pattern:
 """
 
 import asyncio
+import logging
 from collections.abc import Sequence
 from typing import Any
-import logging
 
 from app.domain.models import JobPosting
-from app.infra.db.repositories import JobRepository
 from app.infra.cli.protocol import ScraperCli
+from app.infra.db.repositories import JobRepository
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +23,7 @@ class JobService:
     def __init__(self, repository: JobRepository, cli: ScraperCli | None = None) -> None:
         self._repository = repository
         self._cli = cli
+        self._background_tasks: set[asyncio.Task[None]] = set()
 
     async def search(
         self,
@@ -52,7 +53,7 @@ class JobService:
         trigger_live_crawl: bool = True,
     ) -> dict[str, Any]:
         """Cache-First with Live Active Crawling.
-        
+
         1. Instant DB retrieval (<50ms).
         2. Spawns asynchronous background crawler task for live discovery.
         """
@@ -65,9 +66,9 @@ class JobService:
 
         crawl_initiated = False
         if trigger_live_crawl and city:
-            asyncio.create_task(
-                self._run_background_crawl(city, keyword, domain)
-            )
+            task = asyncio.create_task(self._run_background_crawl(city, keyword, domain))
+            self._background_tasks.add(task)
+            task.add_done_callback(self._background_tasks.discard)
             crawl_initiated = True
 
         return {
@@ -77,7 +78,9 @@ class JobService:
             "message": (
                 f"Retrieved {len(cached_jobs)} cached vacancies from database. "
                 f"Live Bright Data web crawler active in background for fresh {city} listings."
-            ) if crawl_initiated else f"Retrieved {len(cached_jobs)} cached vacancies.",
+            )
+            if crawl_initiated
+            else f"Retrieved {len(cached_jobs)} cached vacancies.",
         }
 
     async def _run_background_crawl(
@@ -89,16 +92,14 @@ class JobService:
         """Background worker that crawls live listings for the city/keyword."""
         logger.info(
             "job_service.live_crawl_started",
-            city=city,
-            keyword=keyword,
-            domain=domain,
+            extra={"city": city, "keyword": keyword, "domain": domain},
         )
         try:
             if self._cli:
                 await asyncio.sleep(0.5)
-            logger.info("job_service.live_crawl_completed", city=city)
-        except Exception as exc:
-            logger.warning("job_service.live_crawl_error", error=str(exc))
+            logger.info("job_service.live_crawl_completed", extra={"city": city})
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("job_service.live_crawl_error", extra={"error": str(exc)})
 
     async def count(self, *, city: str | None = None, domain: str | None = None) -> int:
         """Count jobs matching the filter."""

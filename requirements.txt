@@ -15,7 +15,7 @@ anthropic==1.0.0
 anyio==4.14.2
     # via
     #   anthropic
-    #   httpx2
+    #   httpx
     #   starlette
     #   watchfiles
 click==8.4.2
@@ -30,18 +30,20 @@ greenlet==3.5.5
     # via sqlalchemy
 h11==0.16.0
     # via
-    #   httpcore2
+    #   httpcore
     #   uvicorn
-httpcore2==2.12.0
-    # via httpx2
+httpcore==1.0.9
+    # via httpx
 httptools==0.8.0
     # via uvicorn
-httpx2==2.12.0
-    # via anthropic
+httpx==0.28.1
+    # via
+    #   -r requirements.in
+    #   anthropic
 idna==3.19
     # via
     #   anyio
-    #   httpx2
+    #   httpx
 jiter==0.16.0
     # via anthropic
 pydantic==2.13.4
@@ -70,14 +72,14 @@ starlette==1.6.0
     # via fastapi
 truststore==0.10.4
     # via
-    #   httpcore2
-    #   httpx2
+    #   httpcore
+    #   httpx
 typing-extensions==4.16.0
     # via
     #   anthropic
     #   anyio
     #   fastapi
-    #   httpx2
+    #   httpx
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
