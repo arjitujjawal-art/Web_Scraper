@@ -69,6 +69,42 @@ WEBSCRAPER_USER_GUIDE = [
 ]
 
 # ==========================================
+# 2.5 KNOWLEDGE BASE: CIVIC & INFRASTRUCTURE ISSUES
+# ==========================================
+CIVIC_ISSUES_DB = [
+    {
+        "id": "civic-001",
+        "title": "South End Drainage & Flood Resilience Shift",
+        "city": "Austin, TX",
+        "domain": "Infrastructure & Climate",
+        "type": "civic_infrastructure",
+        "date": "2026-08-22",
+        "summary": "Austin City Council authorized a $14M emergency storm drain bond. The 311 system recorded 184 localized flooding tickets, and FEMA revised its watershed draft.",
+        "url": "https://example.austin.gov/agenda"
+    },
+    {
+        "id": "civic-002",
+        "title": "Downtown Transit Priority Corridor Re-zoning",
+        "city": "San Jose, CA",
+        "domain": "Zoning & Transit",
+        "type": "civic_transit",
+        "date": "2026-08-21",
+        "summary": "San Jose planning commission proposed parking minimum elimination in transit zones, while VTA submitted a federal bus rapid transit lane reservation grant.",
+        "url": "https://example.sanjose.gov/transit-corridors"
+    },
+    {
+        "id": "civic-003",
+        "title": "Waterfront Industrial Noise & Air Quality Overlay",
+        "city": "Seattle, WA",
+        "domain": "Regulatory & Health",
+        "type": "civic_regulatory",
+        "date": "2026-08-22",
+        "summary": "Puget Sound Clean Air Agency issued a compliance order for maritime diesel exhaust. Citizen petition with 310 verified signatures was submitted to Seattle Port Commissioners.",
+        "url": "https://example.seattle.gov/clean-air"
+    }
+]
+
+# ==========================================
 # 3. LIGHTWEIGHT RAG RETRIEVAL ENGINE
 # ==========================================
 class RAGRetriever:
@@ -378,18 +414,29 @@ class SignalCopilot:
                 "- Executing Scraper Self-Healing: Run `bdata scraper heal <collector_id> \"<feedback_on_selectors>\"` to prompt Scraper Studio AI to repair selectors, verify, and run `bdata scraper approve <collector_id>` to redeploy.\n"
             )
 
+            # Static Civic Issues (Non-RAG source)
+            civic_knowledge = (
+                "STATIC CIVIC & INFRASTRUCTURE ISSUES:\n"
+                "- Austin, TX: 'South End Drainage & Flood Resilience Shift' (announced 2026-08-22). Austin City Council authorized a $14M emergency storm drain bond. The 311 system recorded 184 localized flooding tickets, and FEMA revised its watershed draft. Source URL: https://example.austin.gov/agenda\n"
+                "- San Jose, CA: 'Downtown Transit Priority Corridor Re-zoning' (announced 2026-08-21). San Jose planning commission proposed parking minimum elimination in transit zones, while VTA submitted a federal bus rapid transit lane reservation grant. Source URL: https://example.sanjose.gov/transit-corridors\n"
+                "- Seattle, WA: 'Waterfront Industrial Noise & Air Quality Overlay' (announced 2026-08-22). Puget Sound Clean Air Agency issued a compliance order for maritime diesel exhaust. Citizen petition with 310 verified signatures was submitted to Seattle Port Commissioners. Source URL: https://example.seattle.gov/clean-air\n"
+            )
+
             # RAG System Prompt
             system_prompt = (
                 "You are Signal Copilot, the AI assistant for Signal Atlas.\n\n"
                 "CRITICAL INSTRUCTIONS:\n"
                 "1. If the user asks about how to use the website, how Scraper Studio works, or how to run/heal scrapers, "
                 "answer statically using the WEBSCRAPER USER GUIDE provided below. You do not need the RAG context to answer these guide-specific questions.\n"
-                "2. For all queries about LinkedIn jobs, companies, salaries, or skills, you must strictly and ONLY answer using the provided RAG Context chunks. "
+                "2. If the user asks about civic issues, public infrastructure problems, transit or zoning updates in Austin, San Jose, or Seattle, "
+                "answer statically using the STATIC CIVIC & INFRASTRUCTURE ISSUES database provided below. Do not use RAG context for this.\n"
+                "3. For all queries about LinkedIn jobs, companies, salaries, or skills, you must strictly and ONLY answer using the provided RAG Context chunks. "
                 "Do NOT invent, assume, or extrapolate any details. If the RAG context does not contain the answer, you must respond with: "
                 "'I cannot find this information in the scraped LinkedIn database.'\n"
-                "3. When listing jobs, always include the Company, Location, Salary Range, and a direct URL if available.\n"
-                "4. Keep responses concise, helpful, and formatted in clean Markdown.\n\n"
-                f"{guide_knowledge}"
+                "4. When listing jobs, always include the Company, Location, Salary Range, and a direct URL if available.\n"
+                "5. Keep responses concise, helpful, and formatted in clean Markdown.\n\n"
+                f"{guide_knowledge}\n"
+                f"{civic_knowledge}"
             )
 
             # Combined prompt
@@ -402,6 +449,22 @@ class SignalCopilot:
                 raise Exception("Empty completion response or API failure.")
 
             map_action = self._deduce_map_action(retrieved)
+            
+            # If no map action from jobs (RAG), check if we can deduce a civic map action
+            if not map_action:
+                msg_lower = user_message.lower()
+                for issue in CIVIC_ISSUES_DB:
+                    if issue["city"].lower() in msg_lower:
+                        map_action = {
+                            "action": "FOCUS_MAP",
+                            "params": {
+                                "city": issue["city"],
+                                "zoom": 12,
+                                "domain": issue["domain"],
+                                "mode": "civic"
+                            }
+                        }
+                        break
 
             return {
                 "answer": text_answer,
@@ -417,10 +480,55 @@ class SignalCopilot:
         """A rule-based local synthesizer if the API key or network is unavailable."""
         map_action = self._deduce_map_action(retrieved)
         
-        if not retrieved:
+        # If no map action from jobs, check for civic issues fallback
+        if not map_action:
+            msg_lower = user_message.lower()
+            for issue in CIVIC_ISSUES_DB:
+                if issue["city"].lower() in msg_lower:
+                    map_action = {
+                        "action": "FOCUS_MAP",
+                        "params": {
+                            "city": issue["city"],
+                            "zoom": 12,
+                            "domain": issue["domain"],
+                            "mode": "civic"
+                        }
+                    }
+                    break
+
+        msg_lower = user_message.lower()
+        # Fallback local router for offline mode
+        if "austin" in msg_lower:
+            issue = CIVIC_ISSUES_DB[0]
+            answer = (
+                f"### Civic Issue in Austin: {issue['title']} 🏛️\n"
+                f"* **Date:** {issue['date']}\n"
+                f"* **Domain:** {issue['domain']}\n"
+                f"* **Summary:** {issue['summary']}\n"
+                f"* **Source:** [Austin Public Portal]({issue['url']})"
+            )
+        elif "jose" in msg_lower:
+            issue = CIVIC_ISSUES_DB[1]
+            answer = (
+                f"### Civic Issue in San Jose: {issue['title']} 🏛️\n"
+                f"* **Date:** {issue['date']}\n"
+                f"* **Domain:** {issue['domain']}\n"
+                f"* **Summary:** {issue['summary']}\n"
+                f"* **Source:** [San Jose Zoning & Transit Portal]({issue['url']})"
+            )
+        elif "seattle" in msg_lower:
+            issue = CIVIC_ISSUES_DB[2]
+            answer = (
+                f"### Civic Issue in Seattle: {issue['title']} 🏛️\n"
+                f"* **Date:** {issue['date']}\n"
+                f"* **Domain:** {issue['domain']}\n"
+                f"* **Summary:** {issue['summary']}\n"
+                f"* **Source:** [Puget Sound Clean Air Agency]({issue['url']})"
+            )
+        elif not retrieved:
             answer = "I cannot find this information in the scraped LinkedIn database or user guide."
         else:
-            # Synthesize static local output based on retrieved text
+            # Synthesize static local output based on retrieved text (jobs)
             answer = "### Signal Copilot (Offline Fallback Mode) 🗺️\n"
             if error:
                 answer += f"*(Note: API connection failed: {error})*\n\n"
@@ -429,10 +537,7 @@ class SignalCopilot:
             
             answer += "Based on local data matches:\n\n"
             for doc in retrieved:
-                if doc["type"] == "linkedin_job":
-                    answer += f"**Job Found:**\n{doc['text']}\n"
-                else:
-                    answer += f"**User Guide Info:**\n{doc['text']}\n"
+                answer += f"**Job Found:**\n{doc['text']}\n"
                     
         return {
             "answer": answer,
