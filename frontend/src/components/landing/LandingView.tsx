@@ -9,6 +9,7 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [animState, setAnimState] = useState<'idle' | 'focus' | 'lock' | 'expand'>('idle');
   const [lockedHub, setLockedHub] = useState<'delhi' | 'sf' | null>(null);
+  const [cardTransform, setCardTransform] = useState<string>('');
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const globeCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -41,23 +42,38 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
 
     if (city) setLockedHub(city);
 
+    // Calculate delta to center the phone card smoothly in viewport
+    if (appCardRef.current) {
+      const rect = appCardRef.current.getBoundingClientRect();
+      const cardCenterX = rect.left + rect.width / 2;
+      const cardCenterY = rect.top + rect.height / 2;
+      const screenCenterX = window.innerWidth / 2;
+      const screenCenterY = window.innerHeight / 2;
+      const deltaX = screenCenterX - cardCenterX;
+      const deltaY = screenCenterY - cardCenterY;
+      const availableH = window.innerHeight * 0.88;
+      const targetScale = Math.max(0.95, Math.min(1.15, availableH / rect.height));
+
+      setCardTransform(`translate(${deltaX}px, ${deltaY}px) scale(${targetScale})`);
+    }
+
     // Step 0: Center Focus
     setAnimState('focus');
 
-    // Step 1: Radar Lock inside phone screen (after 700ms)
+    // Step 1: Radar Lock inside phone screen + Globe Zoom (after 600ms)
     setTimeout(() => {
       setAnimState('lock');
-    }, 700);
+    }, 600);
 
-    // Step 2: Signal Wave Expansion & Card Morph (after 1300ms)
+    // Step 2: Signal Wave Expansion & Card Morph (after 1250ms)
     setTimeout(() => {
       setAnimState('expand');
-    }, 1300);
+    }, 1250);
 
-    // Step 3: Transition to Dashboard (after 1900ms)
+    // Step 3: Transition to Dashboard (after 1850ms)
     setTimeout(() => {
       onLaunch(city);
-    }, 1900);
+    }, 1850);
   };
 
   // 3D Rotating Pixel Earth Engine
@@ -435,12 +451,20 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
             {/* Mobile Device Mockup Card with Dynamic Centering & Expansion */}
             <div
               ref={appCardRef}
-              className={`w-[340px] sm:w-[360px] h-[520px] bg-[#3fa4d1] rounded-2xl border-4 border-black relative overflow-hidden group shadow-[8px_8px_0px_0px_rgba(0,0,0,0.7)] flex flex-col p-3 z-30 transition-all duration-700 ${
+              style={{
+                transform:
+                  animState === 'focus' || animState === 'lock'
+                    ? cardTransform
+                    : animState === 'expand'
+                    ? 'scale(3.5)'
+                    : 'none',
+              }}
+              className={`w-[340px] sm:w-[360px] h-[520px] bg-[#3fa4d1] rounded-2xl border-4 border-black relative overflow-hidden group shadow-[8px_8px_0px_0px_rgba(0,0,0,0.7)] flex flex-col p-3 z-30 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 animState === 'focus' || animState === 'lock'
-                  ? 'scale-110 lg:scale-115 shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_60px_rgba(239,68,68,0.6)] brightness-115'
+                  ? 'shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_60px_rgba(239,68,68,0.6)] brightness-115'
                   : animState === 'expand'
-                  ? 'scale-[3] opacity-0 blur-md pointer-events-none'
-                  : 'scale-100'
+                  ? 'opacity-0 blur-md pointer-events-none'
+                  : ''
               }`}
             >
               {/* Internal Bezel Screen */}
@@ -459,13 +483,15 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLaunch }) => {
                   </div>
                 </div>
 
-                {/* 3D Rotating Pixel Earth Container */}
+                {/* 3D Rotating Pixel Earth Container (Zooms on Lock) */}
                 <div className="relative flex-1 bg-[#040a16] overflow-hidden flex items-center justify-center">
                   <canvas ref={starfieldCanvasRef} className="absolute inset-0 w-full h-full pointer-events-none opacity-80" />
                   <div className="absolute inset-0 w-full h-full bg-[linear-gradient(rgba(56,189,248,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(56,189,248,0.05)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
 
-                  {/* Globe Orb */}
-                  <div className="relative w-56 h-56 rounded-full flex items-center justify-center">
+                  {/* Globe Orb Container with Zoom Animation */}
+                  <div className={`relative w-56 h-56 rounded-full flex items-center justify-center transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                    animState === 'lock' || animState === 'expand' ? 'scale-[1.65]' : 'scale-100'
+                  }`}>
                     <div className="absolute -inset-2 rounded-full pointer-events-none border border-cyan-400/20 shadow-[0_0_40px_rgba(6,182,212,0.45),0_0_15px_rgba(239,68,68,0.2)]" />
                     <div className="absolute inset-0 rounded-full pointer-events-none border-2 border-cyan-400/60 shadow-[inset_0_0_25px_rgba(34,211,238,0.4)] z-20" />
                     

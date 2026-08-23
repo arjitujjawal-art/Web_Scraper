@@ -158,10 +158,26 @@ export const App: React.FC = () => {
     );
   }
 
-  // Render Dashboard View
+  // Render Dashboard View (Black & Aesthetic White with Subtle Red Highlights)
   return (
-    <div className="relative w-screen h-screen bg-[#000000] text-white flex overflow-hidden select-none font-sans">
+    <div className="relative w-screen h-screen bg-[#000000] text-white flex overflow-hidden select-none font-sans animate-in fade-in duration-500">
       
+      {/* Subtle Spiderweb Atmospheric Mesh */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none opacity-10">
+        <svg className="absolute -top-12 -right-12 w-96 h-96 text-red-600" viewBox="0 0 200 200" fill="none" stroke="currentColor" strokeWidth="0.85">
+          <path d="M0,30 A30,30 0 0,0 30,0" opacity="0.6"/>
+          <path d="M0,60 A60,60 0 0,0 60,0" opacity="0.7"/>
+          <path d="M0,95 A95,95 0 0,0 95,0" opacity="0.8"/>
+          <path d="M0,135 A135,135 0 0,0 135,0" opacity="0.85"/>
+          <line x1="0" y1="0" x2="200" y2="0" strokeWidth="1.05"/>
+          <line x1="0" y1="0" x2="190" y2="60" strokeWidth="1.0"/>
+          <line x1="0" y1="0" x2="160" y2="120" strokeWidth="1.0"/>
+          <line x1="0" y1="0" x2="120" y2="160" strokeWidth="1.0"/>
+          <line x1="0" y1="0" x2="60" y2="190" strokeWidth="1.0"/>
+          <line x1="0" y1="0" x2="0" y2="200" strokeWidth="1.05"/>
+        </svg>
+      </div>
+
       {/* Left Sidebar Navigation Rail */}
       <SidebarRail
         activeTab={activeTab}
@@ -181,21 +197,21 @@ export const App: React.FC = () => {
       />
 
       {/* Main Workspace Column */}
-      <div className="flex-1 h-screen flex flex-col overflow-hidden relative">
+      <div className="flex-1 h-screen flex flex-col overflow-hidden relative z-10">
         
         {/* Top Header Bar */}
-        <header className="h-16 border-b border-white/10 px-6 flex items-center justify-between bg-[#08080b] flex-shrink-0 z-30">
+        <header className="h-16 border-b border-white/10 px-6 flex items-center justify-between bg-[#060608] flex-shrink-0 z-30">
           {/* City Segmented Slider & Brand */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-black tracking-wider text-white">ATLAS</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-zinc-300 font-semibold">
-                v2.4
+              <span className="text-sm font-black tracking-wider text-[#ff4d55]">ATLAS</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-950/40 border border-red-500/25 text-red-300 font-semibold">
+                v2.4 Live
               </span>
             </div>
 
             {/* City Switcher */}
-            <div className="flex items-center p-1 rounded-xl bg-zinc-900 border border-white/10">
+            <div className="flex items-center p-1 rounded-xl bg-zinc-900/90 border border-white/10">
               <button
                 onClick={() => {
                   setActiveCity('delhi');
@@ -238,7 +254,7 @@ export const App: React.FC = () => {
                 onClick={() => setSelectedDomain(null)}
                 className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
                   selectedDomain === null
-                    ? 'bg-blue-600/20 border border-blue-500/40 text-blue-300'
+                    ? 'bg-white text-zinc-950 font-bold shadow'
                     : 'text-zinc-400 hover:text-white'
                 }`}
               >
@@ -269,9 +285,9 @@ export const App: React.FC = () => {
           <div className="flex items-center gap-3">
             {/* Free Credits Badge */}
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900 border border-white/10 text-xs font-mono">
-              <Gift className="w-3.5 h-3.5 text-blue-400" />
+              <Gift className="w-3.5 h-3.5 text-[#ff4d55]" />
               <span className="text-zinc-400">Free credits</span>
-              <span className="text-blue-400 font-bold">2,080 / 5,000</span>
+              <span className="text-[#ff4d55] font-bold">2,080 / 5,000</span>
             </div>
 
             {/* Export JSON Attachment Button */}
@@ -281,14 +297,14 @@ export const App: React.FC = () => {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-zinc-300 hover:text-white transition-all shadow"
               title="Download structured JSON export"
             >
-              <Download className="w-3.5 h-3.5 text-blue-400" />
+              <Download className="w-3.5 h-3.5 text-[#ff4d55]" />
               <span className="hidden md:inline">Export JSON</span>
             </a>
 
             {/* One-Stop Scraper Modal Launcher */}
             <button
               onClick={() => setIsScraperModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:scale-105"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#dc2626] to-[#ff4d55] text-white transition-all shadow-[0_0_15px_rgba(239,68,68,0.35)] hover:brightness-110 active:scale-95"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Scraper Studio</span>
@@ -310,7 +326,7 @@ export const App: React.FC = () => {
 
             {/* URL / Prompt Input Box */}
             <form onSubmit={handleHeroScrapeSubmit} className="mt-4 max-w-2xl mx-auto">
-              <div className="p-1 rounded-2xl bg-[#0c0c10] border border-white/15 shadow-2xl flex items-center gap-2">
+              <div className="p-1 rounded-2xl bg-[#0a0a0e] border border-white/15 shadow-2xl flex items-center gap-2 focus-within:border-red-500/50 focus-within:shadow-[0_0_20px_rgba(239,68,68,0.15)] transition-all">
                 <div className="flex items-center gap-2 pl-3 flex-1">
                   <Search className="w-4 h-4 text-zinc-500" />
                   <input
@@ -325,7 +341,7 @@ export const App: React.FC = () => {
                 <button
                   type="submit"
                   disabled={heroScrapingLoading || !heroPromptInput.trim()}
-                  className="px-4 py-2.5 rounded-xl bg-white hover:bg-zinc-200 disabled:opacity-30 text-zinc-950 font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 shadow"
+                  className="px-4 py-2.5 rounded-xl bg-[#ff4d55] hover:bg-red-500 disabled:opacity-30 text-white font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(239,68,68,0.3)] active:scale-95"
                 >
                   {heroScrapingLoading ? (
                     <span>Scraping...</span>
@@ -344,7 +360,7 @@ export const App: React.FC = () => {
                     type="checkbox"
                     checked={heroInstructionsEnabled}
                     onChange={(e) => setHeroInstructionsEnabled(e.target.checked)}
-                    className="rounded border-white/20 bg-zinc-900 text-blue-600 focus:ring-0"
+                    className="rounded border-white/20 bg-zinc-900 text-red-600 focus:ring-0"
                   />
                   <span>Add additional instructions</span>
                 </label>
@@ -353,7 +369,7 @@ export const App: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsScraperModalOpen(true)}
-                  className="flex items-center gap-1 text-zinc-400 hover:text-blue-400 transition-colors"
+                  className="flex items-center gap-1 text-zinc-400 hover:text-[#ff4d55] transition-colors"
                 >
                   <Code2 className="w-3.5 h-3.5" />
                   <span>Want to configure collectors manually? <strong className="text-white underline ml-1">Open Studio</strong></span>
@@ -367,7 +383,7 @@ export const App: React.FC = () => {
                     value={heroInstructionText}
                     onChange={(e) => setHeroInstructionText(e.target.value)}
                     placeholder="e.g. Extract research grants, lab inaugurations, dates, and technology domain..."
-                    className="w-full p-2.5 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500"
+                    className="w-full p-2.5 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-red-500/50"
                   />
                 </div>
               )}
@@ -382,7 +398,7 @@ export const App: React.FC = () => {
 
           {/* 2. Upper Center Stage: Interactive Live Radar Map */}
           <div className="max-w-4xl mx-auto">
-            <div className="relative w-full h-[320px] rounded-2xl bg-[#09090b] border border-white/10 overflow-hidden shadow-2xl">
+            <div className="relative w-full h-[320px] rounded-2xl bg-[#060608] border border-white/10 overflow-hidden shadow-2xl">
               <MapCanvas
                 activeCity={activeCity}
                 zones={zones}

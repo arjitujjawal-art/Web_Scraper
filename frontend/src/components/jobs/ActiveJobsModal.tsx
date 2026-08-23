@@ -40,19 +40,19 @@ export const ActiveJobsModal: React.FC<ActiveJobsModalProps> = ({
   });
 
   return (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in select-none">
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in select-none">
       <div className="relative w-full max-w-4xl max-h-[85vh] bg-[#0c0c10] border border-white/15 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-zinc-950/80 flex-shrink-0">
+        <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-zinc-950 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400">
+            <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-[#ff4d55]">
               <Briefcase className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-white tracking-wide">Active Opportunities & Tech Jobs</h2>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-blue-950/60 border border-blue-500/30 text-blue-300 font-bold">
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-red-950/60 border border-red-500/30 text-red-300 font-bold">
                   {cityName}
                 </span>
               </div>
@@ -71,7 +71,7 @@ export const ActiveJobsModal: React.FC<ActiveJobsModalProps> = ({
         </div>
 
         {/* Filters Bar */}
-        <div className="px-6 py-3 border-b border-white/5 bg-zinc-900/40 flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
+        <div className="px-6 py-3 border-b border-white/5 bg-[#121217] flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
           <div className="relative flex-1 min-w-[220px]">
             <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
@@ -79,7 +79,7 @@ export const ActiveJobsModal: React.FC<ActiveJobsModalProps> = ({
               placeholder="Filter by title, company, skills, or domain..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-black/60 border border-white/10 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500/60"
+              className="w-full pl-9 pr-4 py-2 bg-black/60 border border-white/10 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-red-500/50"
             />
           </div>
 
@@ -120,19 +120,19 @@ export const ActiveJobsModal: React.FC<ActiveJobsModalProps> = ({
                 onSelectJob(job);
                 onClose();
               }}
-              className="p-4 rounded-xl bg-zinc-900/60 hover:bg-zinc-800/80 border border-white/10 hover:border-blue-500/50 transition-all cursor-pointer group flex flex-col justify-between gap-3 shadow-lg"
+              className="p-4 rounded-xl bg-zinc-900/70 hover:bg-zinc-800/90 border border-white/10 hover:border-red-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3 shadow-lg"
             >
               <div>
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h3 className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors leading-snug">
+                    <h3 className="text-sm font-bold text-white group-hover:text-[#ff4d55] transition-colors leading-snug">
                       {job.title}
                     </h3>
                     <div className="flex items-center gap-2 mt-1 text-xs text-zinc-400">
                       <Building2 className="w-3.5 h-3.5 text-zinc-500" />
                       <span className="font-semibold text-zinc-200">{job.company}</span>
                       <span>•</span>
-                      <span className="text-blue-400 font-medium">{job.domain}</span>
+                      <span className="text-red-400 font-medium">{job.domain}</span>
                     </div>
                   </div>
 
@@ -168,7 +168,7 @@ export const ActiveJobsModal: React.FC<ActiveJobsModalProps> = ({
                     target="_blank"
                     rel="noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 font-semibold hover:underline"
+                    className="inline-flex items-center gap-1 text-[#ff4d55] hover:text-red-300 font-semibold hover:underline"
                   >
                     <span>Apply Vacancy</span>
                     <ExternalLink className="w-3 h-3" />

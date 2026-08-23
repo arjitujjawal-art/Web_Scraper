@@ -133,16 +133,16 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
   ];
 
   const containerClasses = isEmbedded
-    ? "w-full bg-[#0c0c10] border border-white/10 rounded-2xl shadow-xl flex flex-col overflow-hidden min-h-[380px] max-h-[500px]"
-    : "fixed bottom-6 right-6 w-96 sm:w-[500px] max-w-[calc(100vw-32px)] h-[600px] max-h-[calc(100vh-80px)] z-[10000] bg-[#0c0c10] border border-white/15 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300";
+    ? "w-full bg-[#08080b] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden min-h-[380px] max-h-[520px]"
+    : "fixed bottom-6 right-6 w-96 sm:w-[500px] max-w-[calc(100vw-32px)] h-[600px] max-h-[calc(100vh-80px)] z-[10000] bg-[#08080b] border border-white/15 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300";
 
   return (
     <div className={containerClasses}>
       {/* Chat Header */}
-      <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-zinc-950/90 flex-shrink-0">
+      <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-[#0d0d12] flex-shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center shadow-md">
-            <Bot className="w-4 h-4 text-blue-400" />
+          <div className="w-8 h-8 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center shadow-md">
+            <Bot className="w-4 h-4 text-[#ff4d55]" />
           </div>
           <div>
             <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
@@ -178,7 +178,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
                 {m.tools_used.map((tool) => (
                   <span
                     key={tool}
-                    className="flex items-center gap-1 text-[9px] font-mono px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/30"
+                    className="flex items-center gap-1 text-[9px] font-mono px-2 py-0.5 rounded-full bg-red-500/10 text-red-300 border border-red-500/30"
                   >
                     <Terminal className="w-2.5 h-2.5" />
                     <span>Tool: {tool}</span>
@@ -193,7 +193,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
                   ? 'bg-white text-zinc-950 font-semibold rounded-br-none'
                   : m.sender === 'system'
                   ? 'bg-rose-500/10 border border-rose-500/40 text-rose-300'
-                  : 'bg-zinc-900/90 border border-white/10 text-zinc-200 rounded-bl-none'
+                  : 'bg-[#121217] border border-white/10 text-zinc-200 rounded-bl-none'
               }`}
             >
               {m.sender === 'user' ? (
@@ -203,15 +203,15 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
                   remarkPlugins={[remarkGfm]}
                   components={{
                     table: ({ node, ...props }) => (
-                      <div className="my-2.5 overflow-x-auto rounded-xl border border-white/10 bg-black/60 shadow-inner">
+                      <div className="my-2.5 overflow-x-auto rounded-xl border border-white/10 bg-black/70 shadow-inner">
                         <table className="w-full text-left text-[11px] border-collapse" {...props} />
                       </div>
                     ),
                     thead: ({ node, ...props }) => (
-                      <thead className="bg-zinc-900 text-blue-300 font-bold uppercase text-[10px] tracking-wider border-b border-white/10" {...props} />
+                      <thead className="bg-[#18181f] text-[#ff4d55] font-bold uppercase text-[10px] tracking-wider border-b border-white/10" {...props} />
                     ),
                     th: ({ node, ...props }) => (
-                      <th className="p-2.5 font-semibold text-blue-300 border-r border-white/10 last:border-r-0" {...props} />
+                      <th className="p-2.5 font-semibold text-[#ff4d55] border-r border-white/10 last:border-r-0" {...props} />
                     ),
                     td: ({ node, ...props }) => (
                       <td className="p-2.5 text-zinc-300 border-t border-white/5 border-r border-white/5 last:border-r-0" {...props} />
@@ -239,7 +239,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
                         href={href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-0.5 text-blue-400 hover:text-blue-300 underline font-semibold transition-colors"
+                        className="inline-flex items-center gap-0.5 text-[#ff4d55] hover:text-red-400 underline font-semibold transition-colors"
                         {...props}
                       >
                         <span>{children}</span>
@@ -247,7 +247,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
                       </a>
                     ),
                     code: ({ node, ...props }) => (
-                      <code className="px-1.5 py-0.5 rounded bg-black/80 text-cyan-300 font-mono text-[10px] border border-white/10" {...props} />
+                      <code className="px-1.5 py-0.5 rounded bg-black/80 text-red-300 font-mono text-[10px] border border-white/10" {...props} />
                     ),
                   }}
                 >
@@ -260,9 +260,9 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
             {m.sender === 'assistant' && detectLocationFromText(m.text) && (
               <button
                 onClick={() => onNavigateLocation && onNavigateLocation(detectLocationFromText(m.text)!)}
-                className="mt-2 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-bold text-emerald-300 hover:bg-emerald-500/20 hover:border-emerald-400 transition-all shadow"
+                className="mt-2 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/30 text-[11px] font-bold text-red-300 hover:bg-red-500/20 hover:border-red-400 transition-all shadow"
               >
-                <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                <MapPin className="w-3.5 h-3.5 text-red-400" />
                 <span>📍 Fly to {detectLocationFromText(m.text)!.label} on Map</span>
               </button>
             )}
@@ -278,9 +278,9 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
                     <button
                       key={c.signal_id}
                       onClick={() => onSelectCitation && onSelectCitation(c)}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-900 border border-blue-500/30 text-[10px] text-blue-300 hover:border-blue-400 hover:bg-zinc-800 transition-all shadow"
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-900 border border-red-500/30 text-[10px] text-red-300 hover:border-red-400 hover:bg-zinc-800 transition-all shadow"
                     >
-                      <Zap className="w-2.5 h-2.5 fill-blue-400" />
+                      <Zap className="w-2.5 h-2.5 fill-red-400" />
                       <span className="truncate max-w-[180px] font-medium">{c.title}</span>
                     </button>
                   ))}
@@ -293,7 +293,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
         ))}
 
         {loading && (
-          <div className="flex items-center gap-2 text-xs text-blue-400 bg-zinc-900 border border-blue-500/30 p-3 rounded-2xl w-fit">
+          <div className="flex items-center gap-2 text-xs text-red-400 bg-zinc-900 border border-red-500/30 p-3 rounded-2xl w-fit">
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
             <span>Copilot analyzing signals & executing tools...</span>
           </div>
@@ -303,12 +303,12 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
 
       {/* Suggested Quick Prompts */}
       {messages.length === 1 && (
-        <div className="px-4 py-2 border-t border-white/5 bg-zinc-950/50 flex flex-wrap gap-1.5 flex-shrink-0">
+        <div className="px-4 py-2 border-t border-white/5 bg-zinc-950/60 flex flex-wrap gap-1.5 flex-shrink-0">
           {quickPrompts.map((q) => (
             <button
               key={q}
               onClick={() => handleSend(q)}
-              className="text-[10px] px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 hover:border-blue-500/40 text-zinc-300 hover:text-white transition-all text-left"
+              className="text-[10px] px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 hover:border-red-500/40 text-zinc-300 hover:text-white transition-all text-left"
             >
               {q}
             </button>
@@ -317,18 +317,18 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
       )}
 
       {/* Chat Input Bar */}
-      <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 border-t border-white/10 bg-zinc-950 flex items-center gap-2 flex-shrink-0">
+      <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 border-t border-white/10 bg-[#0d0d12] flex items-center gap-2 flex-shrink-0">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask Copilot (e.g. 'Show ML jobs in Noida', 'What is emergence in Berkeley?')..."
-          className="flex-1 px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/30"
+          className="flex-1 px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-red-500/50"
         />
         <button
           type="submit"
           disabled={loading || !input.trim()}
-          className="w-9 h-9 rounded-xl bg-white hover:bg-zinc-200 disabled:opacity-30 text-zinc-950 flex items-center justify-center transition-all shadow"
+          className="w-9 h-9 rounded-xl bg-gradient-to-r from-[#dc2626] to-[#ff4d55] hover:brightness-110 disabled:opacity-30 text-white flex items-center justify-center transition-all shadow"
         >
           <Send className="w-4 h-4" />
         </button>
