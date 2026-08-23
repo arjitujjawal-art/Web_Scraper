@@ -59,9 +59,9 @@ export const AdHocScraperModal: React.FC<AdHocScraperModalProps> = ({
   };
 
   const exampleUrls = [
+    { label: 'Live Test Newsroom', url: 'https://arjitujjawal-art.github.io/Web_Scraper/fixtures/newsroom_v1.html' },
     { label: 'IIT Delhi Research', url: 'https://home.iitd.ac.in/research-all.php' },
-    { label: 'Startup India Hub', url: 'https://www.startupindia.gov.in/content/sih/en/recherche.html' },
-    { label: 'Eventbrite Tech', url: 'https://www.eventbrite.com/d/india--delhi/science-and-tech--events/' },
+    { label: 'Mutated Newsroom', url: 'https://arjitujjawal-art.github.io/Web_Scraper/fixtures/newsroom_v2_mutated.html' },
   ];
 
   return (
