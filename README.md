@@ -95,11 +95,9 @@ And because the web that feeds this pipeline changes its layout constantly, the 
 
 ## 🔍 What It Actually Does (and Doesn't)
 
-> This section exists because we'd rather tell you exactly what we built than let a slide deck imply something bigger.
 
 | ✅ It does | 🚫 It does not |
 |---|---|
-| Ingests early, pre-hiring signals (labs, grants, incubator news, tech events) across **Delhi/NCR** and **SF/Bay Area** | Pretend to cover every city on Earth |
 | Computes a defensible, source-capped, time-decayed **Emergence Score** per `(city, domain)` | Invent a score when there's no data — unknown cities get an honest "not monitored" answer |
 | Runs a real, reproducible **self-heal loop** against Bright Data Scraper Studio, gated by human approval | Auto-heal silently — the approval step is a deliberate product decision, not a missing feature |
 | Lets a user paste **any public URL** and get it scraped, normalized, and folded into the map on the spot | Require you to wait for a scheduled crawl to see new data |
@@ -243,10 +241,10 @@ The CLI's real behavior — not the version every early spec draft got wrong:
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Judge as 🧑‍⚖️ You / A Judge
-    participant API as 🖥️ Signal Atlas API
-    participant CLI as ⚙️ Bright Data CLI
-    participant SS as ☁️ Scraper Studio
+    actor Judge as  You 
+    participant API as  Signal Atlas API
+    participant CLI as  Bright Data CLI
+    participant SS as  Scraper Studio
 
     Judge->>CLI: run demo_collector → newsroom_v1.html
     CLI->>SS: fetch + extract
