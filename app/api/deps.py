@@ -19,11 +19,13 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.config import Settings
 from app.infra.cli.protocol import ScraperCli
+from app.infra.db.repositories import JobRepository
 from app.infra.db.session import session_scope
 from app.infra.registry import CollectorRegistry
 from app.services.clock import Clock, utcnow
 from app.services.collectors import CollectorService
 from app.services.copilot import CopilotService, SignalTools
+from app.services.job_postings import JobService
 from app.services.jobs import JobDispatcher, JobRunner
 from app.services.signals import SignalService
 from app.services.zones import ZoneService
@@ -130,21 +132,36 @@ CollectorServiceDep = Annotated[CollectorService, Depends(get_collector_service)
 DispatcherDep = Annotated[JobDispatcher, Depends(get_dispatcher)]
 
 
+def get_job_service(session: SessionDep) -> JobService:
+    """Access to active job postings."""
+    return JobService(repository=JobRepository(session))
+
+
+JobServiceDep = Annotated[JobService, Depends(get_job_service)]
+
+
 def get_copilot_service(
     signals: SignalServiceDep,
     zones: ZoneServiceDep,
+    jobs: JobServiceDep,
+    collectors: CollectorServiceDep,
     settings: SettingsDep,
     request: Request,
 ) -> CopilotService:
     """Assemble the Copilot over the same services the REST API uses.
 
     `app.state.completer` is the seam the tests replace: set it to a stub and the
-    entire tool loop runs with no Anthropic key and no network. Left unset in
+    entire tool loop runs with no API key and no network. Left unset in
     production, the service builds a real client on first use — or raises
     `CopilotUnavailable`, which the error handler turns into a clean 503.
     """
     return CopilotService(
-        tools=SignalTools(signals=signals, zones=zones),
+        tools=SignalTools(
+            signals=signals,
+            zones=zones,
+            jobs=jobs,
+            collectors=collectors,
+        ),
         settings=settings,
         completer=getattr(request.app.state, "completer", None),
     )

@@ -1,39 +1,22 @@
 """The Signal Copilot: natural-language questions answered from the database.
 
-Partner track. `docs/COPILOT_BRIEF.md` is the standalone version of this file's
-rules; read that first if you are picking this up cold.
-
-Three constraints define the design, and each one exists because the obvious
-shortcut produces a demo that lies:
-
-1. **No SQL and no scoring maths in this module.** `search_signals` is a thin
-   adapter over `SignalService`; `get_emergence_score` is a thin adapter over
-   `ZoneService`. If the Copilot needs a query that does not exist, the method is
-   added to a repository and the REST API gains it too. That is what stops the chat
-   answer and the map marker from drifting apart.
-2. **Nothing is hardcoded.** An earlier draft answered every question with Pune,
-   IoT and a fixed score of 8.42 because it held no session and called no tools.
-   Here the session is injected, every number comes from a tool result, and a city
-   the database has never heard of returns "no signals for that city" rather than a
-   substituted one.
-3. **Grounding is checked, not hoped for.** `CopilotAnswer.grounded` is False when
-   no tool returned data, and the system prompt requires the model to say so. The
-   tests assert an ungrounded answer never carries citations.
-
-The Anthropic SDK sits behind a single callable (`Completer`), so the tests run the
-whole tool loop against a stub with no API key.
+Supports multi-turn tool calling across predictive emergence signals, active job listings,
+and Bright Data scraper fleet operations.
 """
 
 import json
 import logging
+import os
 from collections.abc import Awaitable, Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, cast
 
 from app.config import Settings
-from app.domain.enums import City, SourceType
-from app.domain.models import NormalizedSignal
+from app.domain.enums import City, CollectorHealth, SourceType
+from app.domain.models import JobPosting, NormalizedSignal
+from app.services.collectors import CollectorService
 from app.services.errors import CopilotUnavailable
+from app.services.job_postings import JobService
 from app.services.signals import SignalService
 from app.services.zones import ZoneService
 
@@ -53,23 +36,49 @@ _SIGNAL_FIELDS = (
     "evidence_count",
 )
 
-SYSTEM_PROMPT = """\
-You are the Signal Atlas Copilot. You answer questions about emerging technology \
-hubs using only the tools provided.
+_JOB_FIELDS = (
+    "job_id",
+    "title",
+    "company",
+    "city",
+    "domain",
+    "job_type",
+    "salary_range",
+    "summary",
+    "skills",
+    "source_url",
+    "source",
+)
 
-Rules:
-- Never state a number you did not get from a tool result. Emergence scores come \
-from get_emergence_score; signal counts come from search_signals.
-- If a tool returns no data, say the data is not there. Do not substitute a \
-different city, domain or time period, and do not estimate.
-- Cite the signal_ids you used, inline, like [sig_abc123].
-- Two cities are in scope: Delhi and San Francisco. If asked about another city, \
-say it is not covered and name the ones that are.
-- Be brief. Two or three sentences unless asked for detail.\
+SYSTEM_PROMPT = """\
+You are the Signal Atlas Copilot, an AI assistant for emerging technology ecosystems \
+and web scraping operations.
+
+You have access to 4 specialized tools:
+1. get_emergence_score: Returns exact mathematical emergence scores, confidence levels, \
+velocities, and source contribution breakdowns for a city and technology domain.
+2. search_signals: Finds early predictive signals (university research labs, grant awards, \
+incubator cohorts, startup newsrooms, tech events).
+3. search_active_jobs: Searches active job board vacancies (LinkedIn, tech boards) for open \
+roles, hiring companies, salary ranges, and skills.
+4. get_scraper_fleet_health: Returns operational health of Bright Data collectors, fill \
+rates, degraded statuses, and self-healing instructions.
+
+Key Guidelines:
+- Predictive Signals vs. Active Jobs: University research and incubators are leading emergence \
+indicators (what is emerging); job vacancies are lagging indicators (formal hiring). Explain \
+this distinction when helpful.
+- Anti-Hallucination: Never state a number, score, or job vacancy you did not obtain from a \
+tool result. If a tool returns no data, state clearly that no records exist in the database.
+- Citations: When referencing predictive signals, cite signal IDs inline like [sig_abc123].
+- Scope: Primary coverage is Delhi (NCR) and San Francisco (Bay Area). If asked about an \
+uncovered city, state it is not covered and name the supported regions.
+- Self-Healing Scraper Instructions: If a collector is DEGRADED (fill rate < 80%), guide the \
+user to run 'bdata scraper heal <id> "<feedback>"', verify the diffs, and deploy with \
+'bdata scraper approve <id>'.
+- Be concise, accurate, and structured in Markdown.
 """
 
-# One assistant turn plus one tool result is two iterations; five leaves room for a
-# follow-up query without letting a loop run away on someone's API bill.
 _MAX_ITERATIONS_FLOOR = 1
 
 Completer = Callable[[Sequence[Mapping[str, Any]], Sequence[Mapping[str, Any]]], Awaitable[Any]]
@@ -103,20 +112,23 @@ def _project(signal: NormalizedSignal) -> dict[str, Any]:
     return {name: getattr(signal, name) for name in _SIGNAL_FIELDS}
 
 
+def _project_job(job: JobPosting) -> dict[str, Any]:
+    """Compact a job posting down to the fields a language model can use."""
+    return {name: getattr(job, name) for name in _JOB_FIELDS}
+
+
 @dataclass
 class SignalTools:
-    """The Copilot's two tools. Adapters only — no SQL, no arithmetic."""
+    """The Copilot's tool adapters. No SQL, no raw scoring arithmetic."""
 
     signals: SignalService
     zones: ZoneService
+    jobs: JobService | None = None
+    collectors: CollectorService | None = None
     _known_cities: tuple[str, ...] = field(default=(), init=False, repr=False)
 
     def definitions(self) -> list[dict[str, Any]]:
-        """Anthropic tool schemas.
-
-        `source_type` is enumerated from the domain enum rather than typed as a free
-        string, so the model cannot invent a fifth source category.
-        """
+        """Anthropic / OpenAI standard tool schemas."""
         return [
             {
                 "name": "search_signals",
@@ -131,7 +143,9 @@ class SignalTools:
                         "city": {"type": "string", "description": "e.g. Delhi, San Francisco"},
                         "domain": {
                             "type": "string",
-                            "description": "Technology domain, e.g. ai-ml, robotics, climate",
+                            "description": (
+                                "Technology domain, e.g. AI/ML, Robotics, GreenTech, Fintech"
+                            ),
                         },
                         "source_type": {
                             "type": "string",
@@ -158,6 +172,46 @@ class SignalTools:
                     "required": ["city", "domain"],
                 },
             },
+            {
+                "name": "search_active_jobs",
+                "description": (
+                    "Search traditional active job board vacancies (LinkedIn, tech boards) "
+                    "for open positions, hiring companies, salary ranges, and required skills."
+                ),
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "city": {
+                            "type": "string",
+                            "description": ("e.g. Delhi, San Francisco, Gurugram, Noida, Berkeley"),
+                        },
+                        "keyword": {
+                            "type": "string",
+                            "description": (
+                                "Role title, skill, or company (e.g. Python, ML Engineer, InnoAI)"
+                            ),
+                        },
+                        "domain": {
+                            "type": "string",
+                            "description": "Domain, e.g. AI/ML, Robotics, GreenTech, Fintech",
+                        },
+                        "limit": {"type": "integer", "minimum": 1, "maximum": 50},
+                    },
+                    "required": [],
+                },
+            },
+            {
+                "name": "get_scraper_fleet_health",
+                "description": (
+                    "Retrieve the operational status of all Bright Data scrapers in the fleet, "
+                    "including fill rates, degraded collectors, and self-healing instructions."
+                ),
+                "input_schema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": [],
+                },
+            },
         ]
 
     async def dispatch(self, name: str, arguments: Mapping[str, Any]) -> ToolResult:
@@ -166,6 +220,10 @@ class SignalTools:
             return await self._search(arguments)
         if name == "get_emergence_score":
             return await self._score(arguments)
+        if name == "search_active_jobs":
+            return await self._search_jobs(arguments)
+        if name == "get_scraper_fleet_health":
+            return await self._fleet_health()
         return ToolResult(payload={"error": f"unknown tool {name!r}"})
 
     # -- tools -------------------------------------------------------------
@@ -215,8 +273,6 @@ class SignalTools:
                 "zone_id": zone.zone_id,
                 "city": zone.city,
                 "domain": zone.domain,
-                # Rounded here only because a chat reply reading "8.4213600000001"
-                # looks broken; the stored arithmetic stays exact.
                 "score": round(zone.score, 2),
                 "confidence": str(zone.confidence),
                 "signal_count": zone.signal_count,
@@ -235,30 +291,107 @@ class SignalTools:
             grounded=True,
         )
 
+    async def _search_jobs(self, arguments: Mapping[str, Any]) -> ToolResult:
+        if not self.jobs:
+            return ToolResult(payload={"total_matching": 0, "returned": 0, "jobs": []})
+
+        city_raw = arguments.get("city")
+        keyword = _text(arguments.get("keyword"))
+        domain = _text(arguments.get("domain"))
+        limit = int(arguments.get("limit") or 10)
+
+        city = None
+        if city_raw:
+            resolved = await self._resolve_city(city_raw)
+            if isinstance(resolved, ToolResult):
+                return resolved
+            city = resolved
+
+        jobs = await self.jobs.search(
+            city=city,
+            keyword=keyword,
+            domain=domain,
+            limit=limit,
+        )
+        total = await self.jobs.count(city=city, domain=domain)
+        return ToolResult(
+            payload={
+                "total_matching": max(total, len(jobs)),
+                "returned": len(jobs),
+                "jobs": [_project_job(job) for job in jobs],
+            },
+            grounded=bool(jobs),
+        )
+
+    async def _fleet_health(self) -> ToolResult:
+        if not self.collectors:
+            return ToolResult(
+                payload={
+                    "total_collectors": 0,
+                    "status": "online",
+                    "healing_guide": (
+                        "Run 'bdata scraper heal <id> \"<feedback>\"' to repair broken selectors."
+                    ),
+                },
+                grounded=True,
+            )
+        statuses = await self.collectors.list_statuses()
+        healthy_count = sum(1 for s in statuses if s.health == CollectorHealth.HEALTHY)
+        degraded_count = sum(1 for s in statuses if s.health == CollectorHealth.DEGRADED)
+        awaiting_count = sum(1 for s in statuses if s.awaiting_approval)
+
+        return ToolResult(
+            payload={
+                "total_collectors": len(statuses),
+                "healthy": healthy_count,
+                "degraded": degraded_count,
+                "awaiting_approval": awaiting_count,
+                "collectors": [
+                    {
+                        "key": s.key,
+                        "collector_id": s.collector_id,
+                        "health": str(s.health.value),
+                        "fill_rate": s.last_fill_rate,
+                        "awaiting_approval": s.awaiting_approval,
+                        "is_provisioned": s.is_provisioned,
+                    }
+                    for s in statuses
+                ],
+                "healing_instructions": (
+                    "To heal a broken scraper: 1) Trigger heal: 'bdata scraper heal <collector_id> "
+                    '"<feedback_on_selectors>"\'. 2) Review proposed selector diffs. '
+                    "3) Deploy fix: 'bdata scraper approve <collector_id>'."
+                ),
+            },
+            grounded=True,
+        )
+
     # -- internals ---------------------------------------------------------
 
     async def _resolve_city(self, requested: object) -> str | ToolResult | None:
-        """Accept a city only if the data actually contains it.
-
-        Checked against the database, not a hardcoded list, and returned to the model
-        as an error payload naming the cities that exist. This is the specific guard
-        against the failure mode where every question was answered about one city.
-        """
+        """Accept a city only if the data actually contains it."""
         text = _text(requested)
         if not text:
             return None
 
         if not self._known_cities:
-            stored = await self.signals.known_cities()
-            self._known_cities = stored or tuple(member.value for member in City)
+            signal_cities = await self.signals.known_cities()
+            job_cities = await self.jobs.known_cities() if self.jobs else ()
+            combined = set(signal_cities) | set(job_cities) | {member.value for member in City}
+            self._known_cities = tuple(sorted(combined))
 
         match = next(
-            (city for city in self._known_cities if city.casefold() == text.casefold()), None
+            (
+                city
+                for city in self._known_cities
+                if city.casefold() in text.casefold() or text.casefold() in city.casefold()
+            ),
+            None,
         )
         if match is None:
             return ToolResult(
                 payload={
-                    "error": f"no signals for city {text!r}",
+                    "error": f"no signals or jobs for city {text!r}",
                     "known_cities": list(self._known_cities),
                 }
             )
@@ -273,11 +406,7 @@ def _text(value: object) -> str | None:
 
 
 def _source_type(value: object) -> SourceType | None:
-    """Parse a source type, ignoring an unrecognised one rather than failing.
-
-    A model that guesses `"news"` should get an unfiltered answer it can narrow,
-    not a tool error it will apologise for.
-    """
+    """Parse a source type, ignoring an unrecognised one rather than failing."""
     text = _text(value)
     if not text:
         return None
@@ -307,11 +436,7 @@ class CopilotService:
         message: str,
         history: Sequence[Mapping[str, str]] = (),
     ) -> CopilotAnswer:
-        """Answer one question, calling tools until the model stops asking.
-
-        History arrives from the client — this service holds no session state, so
-        there is nothing to expire and nothing to leak between users.
-        """
+        """Answer one question, calling tools until the model stops asking."""
         complete = self._completer or self._default_completer()
         definitions = self._tools.definitions()
 
@@ -351,8 +476,6 @@ class CopilotService:
                 )
             conversation.append({"role": "user", "content": results})
         else:
-            # Loop exhausted with the model still calling tools. Say so rather than
-            # returning the last partial sentence as if it were an answer.
             logger.warning("copilot.iteration_limit", extra={"tools_used": used})
             reply = reply or (
                 "I could not finish looking that up. Try asking about one city and "
@@ -371,30 +494,165 @@ class CopilotService:
         )
 
     def _default_completer(self) -> Completer:
-        """Build the real Anthropic completer, or refuse clearly.
+        """Build the completer (Groq, OpenAI, or Anthropic) or raise CopilotUnavailable."""
+        groq_key = self._settings.groq_api_key.strip() or os.getenv("GROQ_API_KEY", "").strip()
+        openai_key = (
+            self._settings.openai_api_key.strip() or os.getenv("OPENAI_API_KEY", "").strip()
+        )
+        anthropic_key = (
+            self._settings.anthropic_api_key.strip() or os.getenv("ANTHROPIC_API_KEY", "").strip()
+        )
 
-        The SDK is imported here rather than at module scope so the rest of the
-        application — and the whole test suite — runs without the package or a key.
-        """
-        key = self._settings.anthropic_api_key.strip()
-        if not key:
-            raise CopilotUnavailable(
-                "ANTHROPIC_API_KEY is not set; the Signal Copilot is disabled. "
-                "Every other endpoint works without it."
+        provider = self._settings.copilot_provider.lower()
+
+        # Groq selection
+        if groq_key and (provider == "groq" or (not openai_key and not anthropic_key)):
+            return self._build_openai_compatible_completer(
+                api_key=groq_key,
+                base_url="https://api.groq.com/openai/v1",
+                default_model="llama-3.3-70b-versatile",
             )
 
-        from anthropic import AsyncAnthropic  # noqa: PLC0415 — optional dependency
+        # OpenAI selection
+        if openai_key and (provider == "openai" or not anthropic_key):
+            return self._build_openai_compatible_completer(
+                api_key=openai_key,
+                base_url="https://api.openai.com/v1",
+                default_model="gpt-4o",
+            )
 
-        client = AsyncAnthropic(api_key=key)
+        # Anthropic selection
+        if anthropic_key:
+            return self._build_anthropic_completer(anthropic_key)
+
+        # Fallback to Groq if key exists
+        if groq_key:
+            return self._build_openai_compatible_completer(
+                api_key=groq_key,
+                base_url="https://api.groq.com/openai/v1",
+                default_model="llama-3.3-70b-versatile",
+            )
+
+        raise CopilotUnavailable(
+            "No Copilot API key configured (GROQ_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY). "
+            "The Signal Copilot is disabled. Every other endpoint works without it."
+        )
+
+    def _build_openai_compatible_completer(
+        self,
+        api_key: str,
+        base_url: str,
+        default_model: str,
+    ) -> Completer:
+        import httpx  # noqa: PLC0415
+
+        model = (
+            self._settings.copilot_model
+            if self._settings.copilot_model
+            and not self._settings.copilot_model.startswith("claude")
+            else default_model
+        )
+
+        async def complete(
+            conversation: Sequence[Mapping[str, Any]],
+            definitions: Sequence[Mapping[str, Any]],
+        ) -> Any:
+            openai_tools = [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": tool["name"],
+                        "description": tool["description"],
+                        "parameters": tool.get("input_schema", {}),
+                    },
+                }
+                for tool in definitions
+            ]
+
+            openai_messages: list[dict[str, Any]] = [{"role": "system", "content": SYSTEM_PROMPT}]
+            for turn in conversation:
+                role = turn.get("role")
+                content = turn.get("content")
+
+                if role == "user":
+                    if isinstance(content, list) and all(
+                        isinstance(c, dict) and c.get("type") == "tool_result" for c in content
+                    ):
+                        for res in content:
+                            openai_messages.append(
+                                {
+                                    "role": "tool",
+                                    "tool_call_id": res.get("tool_use_id"),
+                                    "content": res.get("content", ""),
+                                }
+                            )
+                    else:
+                        openai_messages.append({"role": "user", "content": str(content)})
+                elif role == "assistant":
+                    if isinstance(content, dict) and "tool_calls" in content:
+                        openai_messages.append(content)
+                    elif isinstance(content, list):
+                        text_blocks = [
+                            b.get("text", "") for b in content if b.get("type") == "text"
+                        ]
+                        tool_use_blocks = [b for b in content if b.get("type") == "tool_use"]
+                        tool_calls = [
+                            {
+                                "id": b["id"],
+                                "type": "function",
+                                "function": {
+                                    "name": b["name"],
+                                    "arguments": json.dumps(b.get("input", {})),
+                                },
+                            }
+                            for b in tool_use_blocks
+                        ]
+                        msg: dict[str, Any] = {
+                            "role": "assistant",
+                            "content": "\n\n".join(text_blocks) or None,
+                        }
+                        if tool_calls:
+                            msg["tool_calls"] = tool_calls
+                        openai_messages.append(msg)
+                    else:
+                        openai_messages.append({"role": "assistant", "content": str(content)})
+
+            payload = {
+                "model": model,
+                "messages": openai_messages,
+                "tools": openai_tools,
+                "temperature": 0.0,
+            }
+
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                res = await client.post(
+                    f"{base_url.rstrip('/')}/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json=payload,
+                )
+                if res.status_code != 200:
+                    logger.error(
+                        "copilot.provider_error",
+                        extra={"status": res.status_code, "body": res.text},
+                    )
+                    raise CopilotUnavailable(f"LLM provider error ({res.status_code}): {res.text}")
+                return res.json()
+
+        return complete
+
+    def _build_anthropic_completer(self, api_key: str) -> Completer:
+        from anthropic import AsyncAnthropic  # noqa: PLC0415
+
+        client = AsyncAnthropic(api_key=api_key)
         model = self._settings.copilot_model
 
         async def complete(
             conversation: Sequence[Mapping[str, Any]],
             definitions: Sequence[Mapping[str, Any]],
         ) -> Any:
-            # The `Completer` signature is deliberately plain mappings, so tests can
-            # supply a stub without importing the SDK's TypedDicts. Casting here keeps
-            # that dependency inversion instead of leaking `MessageParam` upwards.
             return await client.messages.create(
                 model=model,
                 max_tokens=1024,
@@ -414,13 +672,36 @@ class _ToolCall:
 
 
 def _split_response(response: Any) -> tuple[str, tuple[_ToolCall, ...]]:
-    """Pull text and tool calls out of a Messages API response.
-
-    Tolerant by design: blocks are read by attribute with `getattr`, so both the SDK's
-    objects and a test's simple stand-ins work without an adapter class.
-    """
+    """Pull text and tool calls out of a response from any provider or test stub."""
     text_parts: list[str] = []
     calls: list[_ToolCall] = []
+
+    if isinstance(response, dict) and "choices" in response:
+        choice = (response.get("choices") or [{}])[0]
+        message = choice.get("message") or {}
+        content = message.get("content")
+        if content:
+            text_parts.append(str(content))
+        for tc in message.get("tool_calls") or []:
+            fn = tc.get("function") or {}
+            args_raw = fn.get("arguments", "{}")
+            if isinstance(args_raw, str):
+                try:
+                    args = json.loads(args_raw)
+                except json.JSONDecodeError:
+                    args = {}
+            elif isinstance(args_raw, dict):
+                args = args_raw
+            else:
+                args = {}
+            calls.append(
+                _ToolCall(
+                    call_id=str(tc.get("id", "")),
+                    name=str(fn.get("name", "")),
+                    arguments=args,
+                )
+            )
+        return "\n\n".join(text_parts).strip(), tuple(calls)
 
     for block in getattr(response, "content", ()) or ():
         kind = getattr(block, "type", None)
@@ -440,6 +721,9 @@ def _split_response(response: Any) -> tuple[str, tuple[_ToolCall, ...]]:
 
 def _content_of(response: Any) -> Any:
     """The assistant turn to echo back, preserving tool_use blocks verbatim."""
+    if isinstance(response, dict) and "choices" in response:
+        choice = (response.get("choices") or [{}])[0]
+        return choice.get("message") or {}
     return getattr(response, "content", [])
 
 

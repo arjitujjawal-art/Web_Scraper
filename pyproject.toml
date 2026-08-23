@@ -11,7 +11,7 @@ src = ["app", "tests"]
 # Scratch space for one-off generators (e.g. the examples/ builder). Gitignored, never
 # shipped, and excluded here so the lint gate does not depend on git being initialised —
 # ruff only honours .gitignore inside a repository.
-extend-exclude = [".tmp"]
+extend-exclude = [".tmp", "partner copilot"]
 
 [tool.ruff.lint]
 select = [

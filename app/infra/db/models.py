@@ -28,7 +28,7 @@ from app.domain.enums import (
     SignalType,
     SourceType,
 )
-from app.domain.models import NormalizedSignal, RunReport
+from app.domain.models import JobPosting, NormalizedSignal, RunReport
 from app.infra.db.base import Base, UtcDateTime
 
 
@@ -186,4 +186,56 @@ class CollectorRunRow(Base):
             missing_fields=tuple(self.missing_fields or ()),
             rejected_records=self.rejected_records,
             rejection_reasons=tuple(self.rejection_reasons or ()),
+        )
+
+
+class JobPostingRow(Base):
+    """An active job vacancy (e.g. from LinkedIn)."""
+
+    __tablename__ = "job_postings"
+    __table_args__ = (Index("ix_job_postings_city_domain", "city", "domain"),)
+
+    job_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    title: Mapped[str] = mapped_column(String(256), nullable=False, index=True)
+    company: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
+    city: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    domain: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    job_type: Mapped[str] = mapped_column(String(64), default="Full-time")
+    salary_range: Mapped[str] = mapped_column(String(64), default="Not specified")
+    summary: Mapped[str] = mapped_column(Text, default="")
+    skills: Mapped[list[str]] = mapped_column(JSON, default=list)
+    source_url: Mapped[str] = mapped_column(String(512), default="")
+    source: Mapped[str] = mapped_column(String(64), default="LinkedIn Jobs")
+
+    @classmethod
+    def from_domain(cls, job: JobPosting) -> "JobPostingRow":
+        """Build a row from a domain JobPosting."""
+        return cls(
+            job_id=job.job_id,
+            title=job.title,
+            company=job.company,
+            city=job.city,
+            domain=job.domain,
+            job_type=job.job_type,
+            salary_range=job.salary_range,
+            summary=job.summary,
+            skills=list(job.skills),
+            source_url=job.source_url,
+            source=job.source,
+        )
+
+    def to_domain(self) -> JobPosting:
+        """Convert back to the frozen domain JobPosting."""
+        return JobPosting(
+            job_id=self.job_id,
+            title=self.title,
+            company=self.company,
+            city=self.city,
+            domain=self.domain,
+            job_type=self.job_type,
+            salary_range=self.salary_range,
+            summary=self.summary,
+            skills=tuple(self.skills or ()),
+            source_url=self.source_url,
+            source=self.source,
         )

@@ -34,9 +34,9 @@ from typing import Any
 from app.config import PROJECT_ROOT, Settings, get_settings
 from app.domain.convergence import build_zones
 from app.domain.enums import SourceType
-from app.domain.models import NormalizedSignal, RawRecord
+from app.domain.models import JobPosting, NormalizedSignal, RawRecord
 from app.domain.normalizer import normalize_batch
-from app.infra.db.repositories import SignalRepository
+from app.infra.db.repositories import JobRepository, SignalRepository
 from app.infra.db.session import (
     create_engine,
     create_schema,
@@ -47,6 +47,7 @@ from app.infra.db.session import (
 from app.services.clock import utcnow
 
 DEFAULT_SEED_FILE = PROJECT_ROOT / "seed" / "signals_seed.json"
+DEFAULT_JOBS_SEED_FILE = PROJECT_ROOT / "seed" / "jobs_seed.json"
 
 # Keys consumed by the seeder itself, or notes for a human reader. Everything
 # else in a record is handed to the normalizer as a collector field.
@@ -154,8 +155,48 @@ def _report(signals: Sequence[NormalizedSignal], now: datetime) -> None:
         print(f"  ... and {len(zones) - _TOP_ZONES} more")
 
 
-async def _write(signals: Sequence[NormalizedSignal], settings: Settings, *, reset: bool) -> int:
-    """Create the schema if needed and upsert the signals.
+def _load_jobs(path: Path) -> list[JobPosting]:
+    """Read seed/jobs_seed.json and return domain JobPosting instances."""
+    if not path.is_file():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise SeedError(f"jobs seed file is not valid JSON: {exc}") from exc
+
+    if not isinstance(data, list):
+        raise SeedError("jobs seed file must contain a JSON array")
+
+    jobs: list[JobPosting] = []
+    for item in data:
+        if not isinstance(item, dict):
+            continue
+        jobs.append(
+            JobPosting(
+                job_id=str(item.get("id", "")),
+                title=str(item.get("title", "")),
+                company=str(item.get("company", "")),
+                city=str(item.get("location", "")),
+                domain=str(item.get("domain", "")),
+                job_type=str(item.get("type", "Full-time")),
+                salary_range=str(item.get("salary_range", "Not specified")),
+                summary=str(item.get("summary", "")),
+                skills=tuple(str(s) for s in item.get("skills_required", ())),
+                source_url=str(item.get("url", "")),
+                source=str(item.get("source", "LinkedIn Jobs")),
+            )
+        )
+    return jobs
+
+
+async def _write(
+    signals: Sequence[NormalizedSignal],
+    jobs: Sequence[JobPosting],
+    settings: Settings,
+    *,
+    reset: bool,
+) -> tuple[int, int]:
+    """Create the schema if needed and upsert the signals and jobs.
 
     Uses `session_scope` rather than a request-scoped session because there is no
     request here: the script owns its transaction and commits once at the end.
@@ -167,7 +208,9 @@ async def _write(signals: Sequence[NormalizedSignal], settings: Settings, *, res
         await create_schema(engine)
         factory = create_session_factory(engine)
         async with session_scope(factory) as session:
-            return await SignalRepository(session).upsert_many(signals)
+            sig_count = await SignalRepository(session).upsert_many(signals)
+            job_count = await JobRepository(session).upsert_many(jobs) if jobs else 0
+            return sig_count, job_count
     finally:
         await engine.dispose()
 
@@ -175,10 +218,18 @@ async def _write(signals: Sequence[NormalizedSignal], settings: Settings, *, res
 def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="py -3.12 -m app.seed",
-        description="Load seed/signals_seed.json into the configured database.",
+        description=(
+            "Load seed/signals_seed.json and seed/jobs_seed.json into the configured database."
+        ),
     )
     parser.add_argument(
         "--seed-file", type=Path, default=DEFAULT_SEED_FILE, help="Alternative dataset to load."
+    )
+    parser.add_argument(
+        "--jobs-file",
+        type=Path,
+        default=DEFAULT_JOBS_SEED_FILE,
+        help="Alternative jobs dataset to load.",
     )
     parser.add_argument(
         "--reset", action="store_true", help="Drop every table before loading. Destructive."
@@ -196,6 +247,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     try:
         signals, problems = _normalize(_load_batches(args.seed_file), now)
+        jobs = _load_jobs(args.jobs_file)
     except SeedError as exc:
         print(f"seed aborted: {exc}")
         return 1
@@ -210,13 +262,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 1
 
     _report(signals, now)
+    if jobs:
+        print(f"jobs loaded     : {len(jobs)} postings")
     if args.dry_run:
         print("dry run: nothing written")
         return 0
 
     settings = get_settings()
-    stored = asyncio.run(_write(signals, settings, reset=args.reset))
-    print(f"stored {stored} signals in {settings.database_url}")
+    sig_count, job_count = asyncio.run(_write(signals, jobs, settings, reset=args.reset))
+    print(f"stored {sig_count} signals and {job_count} jobs in {settings.database_url}")
     return 0
 
 

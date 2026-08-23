@@ -54,9 +54,12 @@ class Settings(BaseSettings):
     # --- Auth --------------------------------------------------------------
     admin_api_key: str = ""
 
-    # --- Copilot (partner track) -------------------------------------------
+    # --- Copilot (AI assistant) -------------------------------------------
+    groq_api_key: str = ""
+    openai_api_key: str = ""
     anthropic_api_key: str = ""
-    copilot_model: str = "claude-sonnet-5"
+    copilot_provider: str = "groq"
+    copilot_model: str = "llama-3.3-70b-versatile"
     copilot_max_tool_iterations: int = 5
 
     # --- Storage -----------------------------------------------------------

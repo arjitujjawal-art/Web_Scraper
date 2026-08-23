@@ -18,8 +18,8 @@ from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.enums import CollectorAction, RunStatus, SourceType
-from app.domain.models import NormalizedSignal
-from app.infra.db.models import CollectorRunRow, SignalRow
+from app.domain.models import JobPosting, NormalizedSignal
+from app.infra.db.models import CollectorRunRow, JobPostingRow, SignalRow
 
 # `_filtered` is used with both `select(SignalRow)` and `select(func.count())`, which
 # have different row types. Parameterising on the statement keeps each caller's own
@@ -230,3 +230,63 @@ class CollectorRunRepository:
             collector_key=collector_key, action=CollectorAction.HEAL, limit=5
         )
         return next((row for row in rows if row.cli_status == "awaiting_approval"), None)
+
+
+class JobRepository:
+    """Reads and writes on the `job_postings` table."""
+
+    def __init__(self, session: AsyncSession) -> None:
+        self._session = session
+
+    async def upsert_many(self, jobs: Sequence[JobPosting]) -> int:
+        """Insert or update job postings by their deterministic id."""
+        for job in jobs:
+            await self._session.merge(JobPostingRow.from_domain(job))
+        await self._session.flush()
+        return len(jobs)
+
+    async def search(
+        self,
+        *,
+        city: str | None = None,
+        keyword: str | None = None,
+        domain: str | None = None,
+        limit: int = 10,
+        offset: int = 0,
+    ) -> tuple[JobPosting, ...]:
+        """Filtered search for active job vacancies."""
+        statement = select(JobPostingRow)
+        if city:
+            statement = statement.where(JobPostingRow.city.ilike(f"%{city}%"))
+        if domain:
+            statement = statement.where(JobPostingRow.domain.ilike(f"%{domain}%"))
+        if keyword:
+            kw = f"%{keyword}%"
+            statement = statement.where(
+                JobPostingRow.title.ilike(kw)
+                | JobPostingRow.company.ilike(kw)
+                | JobPostingRow.summary.ilike(kw)
+            )
+        statement = statement.order_by(JobPostingRow.job_id).limit(limit).offset(offset)
+        result = await self._session.execute(statement)
+        return tuple(row.to_domain() for row in result.scalars())
+
+    async def count(
+        self,
+        *,
+        city: str | None = None,
+        domain: str | None = None,
+    ) -> int:
+        """Total matching jobs."""
+        statement = select(func.count()).select_from(JobPostingRow)
+        if city:
+            statement = statement.where(JobPostingRow.city.ilike(f"%{city}%"))
+        if domain:
+            statement = statement.where(JobPostingRow.domain.ilike(f"%{domain}%"))
+        return int((await self._session.execute(statement)).scalar_one())
+
+    async def known_cities(self) -> tuple[str, ...]:
+        """Distinct cities appearing in stored job postings."""
+        statement = select(JobPostingRow.city).distinct().order_by(JobPostingRow.city)
+        result = await self._session.execute(statement)
+        return tuple(result.scalars())

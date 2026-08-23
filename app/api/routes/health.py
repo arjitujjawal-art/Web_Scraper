@@ -31,5 +31,9 @@ async def read_health(
         collectors_need_attention=sum(1 for status in statuses if status.needs_attention),
         active_jobs=runner.active_jobs,
         latest_signal_at=await signals.freshness(),
-        copilot_enabled=bool(settings.anthropic_api_key.strip()),
+        copilot_enabled=bool(
+            settings.groq_api_key.strip()
+            or settings.openai_api_key.strip()
+            or settings.anthropic_api_key.strip()
+        ),
     )

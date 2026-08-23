@@ -174,6 +174,23 @@ class NormalizationOutcome:
         return tuple(seen)
 
 
+@dataclass(frozen=True, slots=True)
+class JobPosting:
+    """An active job vacancy (e.g. from LinkedIn)."""
+
+    job_id: str
+    title: str
+    company: str
+    city: str
+    domain: str
+    job_type: str = "Full-time"
+    salary_range: str = "Not specified"
+    summary: str = ""
+    skills: tuple[str, ...] = ()
+    source_url: str = ""
+    source: str = "LinkedIn Jobs"
+
+
 def as_sequence(values: Sequence[str] | None) -> tuple[str, ...]:
     """Normalize an optional sequence into a tuple, for frozen dataclass fields."""
     return tuple(values) if values else ()

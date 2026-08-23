@@ -9,8 +9,8 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from app.domain.enums import SignalType, SourceType
-from app.domain.models import NormalizedSignal
-from app.infra.db.repositories import SignalRepository
+from app.domain.models import JobPosting, NormalizedSignal
+from app.infra.db.repositories import JobRepository, SignalRepository
 from app.infra.db.session import session_scope
 from fastapi import FastAPI
 from httpx import AsyncClient
@@ -68,6 +68,12 @@ async def store_signals(app: FastAPI, *signals: NormalizedSignal) -> None:
     """
     async with session_scope(app.state.session_factory) as session:
         await SignalRepository(session).upsert_many(signals)
+
+
+async def store_jobs(app: FastAPI, *jobs: JobPosting) -> None:
+    """Write job postings straight to the database."""
+    async with session_scope(app.state.session_factory) as session:
+        await JobRepository(session).upsert_many(jobs)
 
 
 def make_signal(
