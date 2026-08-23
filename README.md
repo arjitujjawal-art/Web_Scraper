@@ -568,6 +568,20 @@ mindmap
       Judge-reproducible demo
 ```
 
+## 👥 Team & Links
+
+**Built by:**
+
+| Name | Role |
+|---|---|
+| Arjit Ujjwal | Backend architecture, Bright Data Scraper Studio integration, self-healing pipeline |
+| Ganesh Nair | Frontend — spatial map, dashboards, UI |
+| Jayvee Shah | Backend architecture, Bright Data Scraper Studio integration, self-healing pipeline |
+| Sumedh Kulkarni | Frontend — spatial map, dashboards, UI |
+
+
+📣 **Read our hackathon journey:** [LinkedIn post](https://lnkd.in/p/dceu4rDr)
+
 | Criterion | Where to look |
 |---|---|
 | **Potential Impact** | Predictive, not reactive — see [Why This Exists](#-why-this-exists) |
