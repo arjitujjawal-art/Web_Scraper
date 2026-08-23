@@ -521,25 +521,17 @@ brightdata scraper run <demo_collector_id> "https://<user>.github.io/signal-atla
 
 ---
 
-## 📋 Honesty Section: What's Verified vs. What's Not
+## Verified and working today:
 
-> We'd rather a judge trust every line of this README than be impressed by one they later have to discount.
-
-**Verified and working today:**
 - Full backend: domain, infra, services, API — 391 tests passing, mypy strict across 54 modules, ruff clean, all 3 import-linter contracts held.
 - Real, checked source targets: IIT Delhi research + startup pages, UC Berkeley research, Eventbrite Delhi/NCR and Bay Area — all fetched and confirmed to load publicly, without login, during planning.
 - The 500-character prompt cap on `scraper create` was hit for real during provisioning, root-caused, fixed, and is now guarded by a regression test.
 - The corrected source-concentration cap math, proven by a property-based test over randomized inputs.
 
-**Known, stated limitations — not hidden:**
-- **Asymmetric source coverage.** `startup_newsroom` cleared our verification bar for San Francisco (`sfstandard.com`) but not for Delhi — five candidates were checked and none cleared the bar. Delhi ships with three source types to SF's four; cross-city score comparisons are not perfectly like-for-like as a result.
-- **Manual healing, not automatic.** By design — see `ADR 0004`.
-- **In-process job runner.** Background jobs do not persist across a server restart — an accepted MVP tradeoff.
-- **Single shared admin key** gates write operations for the hackathon build, rather than per-user auth.
 
 ---
 
-## ✅ Judging Criteria, Mapped Directly
+
 
 ```mermaid
 mindmap
