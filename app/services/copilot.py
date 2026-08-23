@@ -88,6 +88,7 @@ and `search_signals` when appropriate.
 - On-Demand Live Scraping: Remind users that if they want to index more vacancies from a specific \
 company career portal, university lab, or job feed, they can paste the URL directly into chat or use \
 the 'One-Stop Scraper' to scrape and pin it on the live map in real time!
+- Tool Calling Discipline: Call the necessary tools (e.g. get_emergence_score and/or search_signals). Once you receive the tool responses with the data, immediately write and return your complete, structured final analysis in the next response. Do NOT call the same tool repeatedly.
 - Formatting: Present job listings and signal comparisons in clean, elegant Markdown tables with \
 columns: `#`, `Title`, `Company / Institution`, `Domain`, `Type / Salary`, and `Key Skills / Links`.
 - Anti-Hallucination: Never state a number, score, or job vacancy you did not obtain from a \
@@ -162,18 +163,18 @@ class SignalTools:
                 "input_schema": {
                     "type": "object",
                     "properties": {
-                        "city": {"type": "string", "description": "e.g. Delhi, San Francisco"},
+                        "city": {"type": ["string", "null"], "description": "e.g. Delhi, San Francisco"},
                         "domain": {
-                            "type": "string",
+                            "type": ["string", "null"],
                             "description": (
                                 "Technology domain, e.g. AI/ML, Robotics, GreenTech, Fintech"
                             ),
                         },
                         "source_type": {
-                            "type": "string",
-                            "enum": [member.value for member in SourceType],
+                            "type": ["string", "null"],
+                            "description": "Optional: university_research, incubator_cohort, startup_newsroom, tech_event",
                         },
-                        "limit": {"type": "integer", "minimum": 1, "maximum": 50},
+                        "limit": {"type": ["integer", "null"], "minimum": 1, "maximum": 50},
                     },
                     "required": [],
                 },
@@ -188,8 +189,8 @@ class SignalTools:
                 "input_schema": {
                     "type": "object",
                     "properties": {
-                        "city": {"type": "string"},
-                        "domain": {"type": "string"},
+                        "city": {"type": "string", "description": "e.g. Delhi, San Francisco"},
+                        "domain": {"type": "string", "description": "e.g. AI/ML, Robotics"},
                     },
                     "required": ["city", "domain"],
                 },
@@ -204,20 +205,20 @@ class SignalTools:
                     "type": "object",
                     "properties": {
                         "city": {
-                            "type": "string",
+                            "type": ["string", "null"],
                             "description": ("e.g. Delhi, San Francisco, Gurugram, Noida, Berkeley"),
                         },
                         "keyword": {
-                            "type": "string",
+                            "type": ["string", "null"],
                             "description": (
                                 "Role title, skill, or company (e.g. Python, ML Engineer, InnoAI)"
                             ),
                         },
                         "domain": {
-                            "type": "string",
+                            "type": ["string", "null"],
                             "description": "Domain, e.g. AI/ML, Robotics, GreenTech, Fintech",
                         },
-                        "limit": {"type": "integer", "minimum": 1, "maximum": 50},
+                        "limit": {"type": ["integer", "null"], "minimum": 1, "maximum": 50},
                     },
                     "required": [],
                 },
@@ -541,6 +542,24 @@ class CopilotService:
             conversation.append({"role": "user", "content": results})
         else:
             logger.warning("copilot.iteration_limit", extra={"tools_used": used})
+            if not reply and used:
+                try:
+                    conversation.append(
+                        {
+                            "role": "user",
+                            "content": (
+                                "Synthesize and present your comprehensive final answer directly to the user "
+                                "now based on all the data above. Do not call any more tools."
+                            ),
+                        }
+                    )
+                    final_res = await complete(conversation, [])
+                    final_text, _ = _split_response(final_res)
+                    if final_text:
+                        reply = final_text
+                except Exception as exc:
+                    logger.warning("copilot.forced_synthesis_failed", extra={"error": str(exc)})
+
             reply = reply or (
                 "I could not finish looking that up. Try asking about one city and "
                 "one technology domain."

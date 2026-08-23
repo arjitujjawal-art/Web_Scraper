@@ -60,7 +60,7 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     copilot_provider: str = "groq"
     copilot_model: str = "openai/gpt-oss-120b"
-    copilot_max_tool_iterations: int = 5
+    copilot_max_tool_iterations: int = 8
 
     # --- Storage -----------------------------------------------------------
     database_url: str = "sqlite+aiosqlite:///./signals.db"
