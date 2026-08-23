@@ -74,6 +74,7 @@ class Settings(BaseSettings):
     # --- Collectors --------------------------------------------------------
     registry_path: Path = Field(default=PROJECT_ROOT / "collectors" / "registry.yaml")
     fixture_base_url: str = ""
+    auto_seed_on_startup: bool = True
 
     # --- Quality thresholds -------------------------------------------------
     fill_rate_threshold: float = 0.8

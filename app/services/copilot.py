@@ -4,6 +4,7 @@ Supports multi-turn tool calling across predictive emergence signals, active job
 and Bright Data scraper fleet operations.
 """
 
+import asyncio
 import json
 import logging
 import os
@@ -80,29 +81,31 @@ demand against leading research signals.
   4. Scraper Fleet Operations: Monitor Bright Data collector health, run history, and \
 trigger self-healing for degraded scrapers.
   5. Copilot Assistant: Ask questions about trends, scores, jobs, or scraping operations.
-- Predictive Signals vs. Active Jobs: University research, grant awards, and incubator cohorts \
-are LEADING indicators (predicting emergence months ahead); active job vacancies and fellowships \
-are CURRENT/LAGGING indicators (formal hiring). When users ask about career opportunities, fellowships, \
-or hiring in an area (like Noida, Gurugram, Okhla, Berkeley, or SF), query BOTH `search_active_jobs` \
-and `search_signals` when appropriate.
-- On-Demand Live Scraping: Remind users that if they want to index more vacancies from a specific \
-company career portal, university lab, or job feed, they can paste the URL directly into chat or use \
-the 'One-Stop Scraper' to scrape and pin it on the live map in real time!
-- Tool Calling Discipline: Call the necessary tools (e.g. get_emergence_score and/or search_signals). Once you receive the tool responses with the data, immediately write and return your complete, structured final analysis in the next response. Do NOT call the same tool repeatedly.
-- Formatting: Present job listings and signal comparisons in clean, elegant Markdown tables with \
-columns: `#`, `Title`, `Company / Institution`, `Domain`, `Type / Salary`, and `Key Skills / Links`.
-- Anti-Hallucination: Never state a number, score, or job vacancy you did not obtain from a \
-tool result. If a tool returns no data, state clearly that no records exist in the database.
+- Predictive Signals vs. Active Jobs: University research, grant awards, and incubator \
+cohorts are LEADING indicators (predicting emergence months ahead); active job vacancies \
+and fellowships are CURRENT/LAGGING indicators (formal hiring). When users ask about \
+career opportunities, fellowships, or hiring in an area (like Noida, Gurugram, Okhla, \
+Berkeley, or SF), query BOTH `search_active_jobs` and `search_signals` when appropriate.
+- On-Demand Live Scraping: Remind users that if they want to index more vacancies from \
+a specific company career portal, university lab, or job feed, they can paste the URL \
+directly into chat or use the 'One-Stop Scraper' to scrape and pin it in real time!
+- Tool Calling Discipline: Call necessary tools (e.g. get_emergence_score, search_signals). \
+Once you receive tool responses, immediately return your complete final analysis.
+- Formatting: Present job listings and signal comparisons in clean Markdown tables with \
+columns: `#`, `Title`, `Company / Institution`, `Domain`, `Type / Salary`, and `Key Skills`.
+- Anti-Hallucination: Never state a number, score, or job vacancy you did not obtain \
+from a tool result. If a tool returns no data, state clearly that no records exist.
 - Citations: When referencing predictive signals, cite signal IDs inline like [sig_abc123].
-- Scope: Primary coverage is Delhi (NCR including Noida, Gurugram, Okhla) and San Francisco (Bay Area).
-- Structured JSON Output & Dataset Exports: If the user asks for raw JSON, data exports, or API sample payloads (e.g. "Give me JSON data for Delhi signals", "Export jobs as JSON"):
+- Scope: Primary coverage is Delhi (NCR) and San Francisco (Bay Area).
+- Structured JSON Output & Dataset Exports: If the user asks for raw JSON or exports:
   1. Query the relevant tool to get the structured records.
-  2. Present the JSON schema/payload inside a clean, copyable ```json ``` markdown code block.
+  2. Present the JSON payload inside a clean, copyable ```json ``` markdown code block.
   3. Include direct links to the REST API download endpoints:
      - Signals JSON: `/api/signals/export?city={City}&domain={Domain}`
      - Jobs JSON: `/api/jobs/export?city={City}&domain={Domain}`
      - Opportunity Zones JSON: `/api/zones/export?city={City}`
-  4. Note that populated reference datasets are available in the public repo at `examples/sample_signals.json`, `examples/sample_jobs.json`, and `examples/sample_opportunity_zones.json`.
+  4. Note that reference datasets are in the public repo at `examples/sample_signals.json`, \
+`examples/sample_jobs.json`, and `examples/sample_opportunity_zones.json`.
 - Be concise, accurate, and structured in Markdown.
 """
 
@@ -168,7 +171,10 @@ class SignalTools:
                 "input_schema": {
                     "type": "object",
                     "properties": {
-                        "city": {"type": ["string", "null"], "description": "e.g. Delhi, San Francisco"},
+                        "city": {
+                            "type": ["string", "null"],
+                            "description": "e.g. Delhi, San Francisco",
+                        },
                         "domain": {
                             "type": ["string", "null"],
                             "description": (
@@ -177,7 +183,10 @@ class SignalTools:
                         },
                         "source_type": {
                             "type": ["string", "null"],
-                            "description": "Optional: university_research, incubator_cohort, startup_newsroom, tech_event",
+                            "description": (
+                                "Optional: university_research, incubator_cohort, "
+                                "startup_newsroom, tech_event"
+                            ),
                         },
                         "limit": {"type": ["integer", "null"], "minimum": 1, "maximum": 50},
                     },
@@ -212,7 +221,7 @@ class SignalTools:
                     "properties": {
                         "city": {
                             "type": ["string", "null"],
-                            "description": ("e.g. Delhi, San Francisco, Gurugram, Noida, Berkeley"),
+                            "description": "e.g. Delhi, San Francisco, Gurugram, Noida, Berkeley",
                         },
                         "keyword": {
                             "type": ["string", "null"],
@@ -226,7 +235,9 @@ class SignalTools:
                         },
                         "trigger_live_crawl": {
                             "type": ["boolean", "null"],
-                            "description": "Whether to trigger background Bright Data web crawl (default true)",
+                            "description": (
+                                "Whether to trigger background Bright Data web crawl (default true)"
+                            ),
                         },
                         "limit": {"type": ["integer", "null"], "minimum": 1, "maximum": 50},
                     },
@@ -349,7 +360,14 @@ class SignalTools:
 
     async def _search_jobs(self, arguments: Mapping[str, Any]) -> ToolResult:
         if not self.jobs:
-            return ToolResult(payload={"total_matching": 0, "returned": 0, "jobs": [], "live_crawl_initiated": False})
+            return ToolResult(
+                payload={
+                    "total_matching": 0,
+                    "returned": 0,
+                    "jobs": [],
+                    "live_crawl_initiated": False,
+                }
+            )
 
         city_raw = arguments.get("city")
         keyword = _text(arguments.get("keyword"))
@@ -568,8 +586,9 @@ class CopilotService:
                             {
                                 "role": "user",
                                 "content": (
-                                    "Synthesize and present your comprehensive final answer directly to the user "
-                                    "now based on all the data above. Do not call any more tools."
+                                    "Synthesize and present your comprehensive final answer "
+                                    "directly to the user now based on all the data above. "
+                                    "Do not call any more tools."
                                 ),
                             }
                         )
@@ -577,7 +596,7 @@ class CopilotService:
                         final_text, _ = _split_response(final_res)
                         if final_text:
                             reply = final_text
-                    except Exception as exc:
+                    except Exception as exc:  # noqa: BLE001
                         logger.warning("copilot.forced_synthesis_failed", extra={"error": str(exc)})
 
                 reply = reply or (
@@ -587,28 +606,45 @@ class CopilotService:
         except Exception as exc:
             logger.warning("copilot.fallback_to_direct_db", extra={"error": str(exc)})
             norm_msg = message.lower()
-            target_city = "Gurugram" if any(w in norm_msg for w in ("gurugram", "gurgaon")) else (
-                "Noida" if "noida" in norm_msg else (
-                    "Berkeley" if "berkeley" in norm_msg else (
-                        "San Francisco" if any(w in norm_msg for w in ("sf", "san francisco", "soma")) else "Delhi"
+            target_city = (
+                "Gurugram"
+                if any(w in norm_msg for w in ("gurugram", "gurgaon"))
+                else (
+                    "Noida"
+                    if "noida" in norm_msg
+                    else (
+                        "Berkeley"
+                        if "berkeley" in norm_msg
+                        else (
+                            "San Francisco"
+                            if any(w in norm_msg for w in ("sf", "san francisco", "soma"))
+                            else "Delhi"
+                        )
                     )
                 )
             )
             jobs_res = await self._tools._search_jobs({"city": target_city, "limit": 10})
-            jobs_list = jobs_res.payload.get("jobs", [])
+            jobs_list: list[dict[str, Any]] = []
+            if isinstance(jobs_res.payload, Mapping):
+                raw_jobs = jobs_res.payload.get("jobs", [])
+                if isinstance(raw_jobs, list):
+                    jobs_list = cast(list[dict[str, Any]], raw_jobs)
             if jobs_list:
                 table_rows = "\n".join(
-                    f"| {i+1} | {j['title']} | **{j['company']}** | {j['domain']} | {j['salary_range']} | {', '.join(j.get('skills', []))} |"
+                    f"| {i + 1} | {j['title']} | **{j['company']}** | {j['domain']} | "
+                    f"{j['salary_range']} | {', '.join(j.get('skills', []))} |"
                     for i, j in enumerate(jobs_list)
                 )
                 reply = (
-                    f"### Active Job Listings – **{target_city}**\n\n"
+                    f"### Active Job Listings - **{target_city}**\n\n"
                     f"| # | Title | Company / Institution | Domain | Salary Range | Key Skills |\n"
                     f"|---|---|---|---|---|---|\n"
                     f"{table_rows}\n\n"
                     f"*Retrieved directly from database records.*"
                 )
-                return CopilotAnswer(reply=reply, citations=(), tools_used=("search_active_jobs",), grounded=True)
+                return CopilotAnswer(
+                    reply=reply, citations=(), tools_used=("search_active_jobs",), grounded=True
+                )
             raise exc
 
         logger.info(
@@ -753,7 +789,6 @@ class CopilotService:
                 "temperature": 0.0,
             }
 
-            import asyncio
             for attempt in range(3):
                 try:
                     async with httpx.AsyncClient(timeout=45.0) as client:
@@ -782,14 +817,25 @@ class CopilotService:
                                 "copilot.provider_error",
                                 extra={"status": res.status_code, "body": res.text},
                             )
-                            raise CopilotUnavailable(f"LLM provider error ({res.status_code}): {res.text}")
+                            raise CopilotUnavailable(
+                                f"LLM provider error ({res.status_code}): {res.text}"
+                            )
                         return res.json()
-                except (httpx.ConnectError, httpx.TransportError, httpx.TimeoutException) as net_err:
-                    logger.warning("copilot.network_retry", extra={"attempt": attempt + 1, "error": str(net_err)})
+                except (
+                    httpx.ConnectError,
+                    httpx.TransportError,
+                    httpx.TimeoutException,
+                ) as net_err:
+                    logger.warning(
+                        "copilot.network_retry",
+                        extra={"attempt": attempt + 1, "error": str(net_err)},
+                    )
                     if attempt < 2:
                         await asyncio.sleep(1.0 * (attempt + 1))
                     else:
-                        raise CopilotUnavailable(f"Network connectivity error contacting AI provider: {net_err}") from net_err
+                        raise CopilotUnavailable(
+                            f"Network connectivity error contacting AI provider: {net_err}"
+                        ) from net_err
 
         return complete
 

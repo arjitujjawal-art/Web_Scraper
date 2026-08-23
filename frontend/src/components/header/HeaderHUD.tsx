@@ -1,4 +1,5 @@
 import React from 'react';
+import { API_BASE } from '../../api/client';
 import type { Domain } from '../../api/types';
 import { 
   Radio, 
@@ -137,7 +138,7 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
 
           {/* Export Structured JSON Dataset */}
           <a
-            href={`http://localhost:8000/api/signals/export?city=${activeCity === 'delhi' ? 'Delhi' : 'San Francisco'}${selectedDomain ? `&domain=${encodeURIComponent(selectedDomain)}` : ''}`}
+            href={`${API_BASE}/signals/export?city=${activeCity === 'delhi' ? 'Delhi' : 'San Francisco'}${selectedDomain ? `&domain=${encodeURIComponent(selectedDomain)}` : ''}`}
             download
             className="flex items-center gap-1.5 px-3 py-2.5 rounded-2xl text-xs font-bold text-slate-200 glass-pill hover:text-cyan-300 hover:border-cyan-400/50 transition-all shadow hover:scale-105"
             title="Download structured JSON dataset for active filters"

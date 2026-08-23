@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { apiClient, getCoordinatesForLocation } from './api/client';
+import { apiClient, getCoordinatesForLocation, API_BASE } from './api/client';
 import type { OpportunityZone, SignalSummary, JobPosting, AdHocScrapeResult, CopilotCitation, Domain } from './api/types';
 import { LandingView } from './components/landing/LandingView';
 import { HubMapView } from './components/landing/HubMapView';
@@ -300,7 +300,7 @@ export const App: React.FC = () => {
 
             {/* Export JSON Attachment Button */}
             <a
-              href={`http://localhost:8000/api/signals/export?city=${activeCity === 'delhi' ? 'Delhi' : 'San Francisco'}${selectedDomain ? `&domain=${encodeURIComponent(selectedDomain)}` : ''}`}
+              href={`${API_BASE}/signals/export?city=${activeCity === 'delhi' ? 'Delhi' : 'San Francisco'}${selectedDomain ? `&domain=${encodeURIComponent(selectedDomain)}` : ''}`}
               download
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-zinc-300 hover:text-white transition-all shadow"
               title="Download structured JSON export"

@@ -6,7 +6,12 @@ import type {
   AdHocScrapeResult,
 } from './types';
 
-const API_BASE = '/api';
+export const API_BASE = (
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, '') ||
+  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? '/api'
+    : 'https://signal-atlas-api.onrender.com/api')
+);
 
 export const apiClient = {
   async getHealth() {

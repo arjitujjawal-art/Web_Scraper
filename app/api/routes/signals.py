@@ -1,5 +1,6 @@
 """Signal reads — the evidence layer, browsable on its own."""
 
+import json
 from datetime import datetime
 from typing import Annotated
 
@@ -52,7 +53,6 @@ async def export_signals(
     source_type: SourceType | None = None,
 ) -> Response:
     """Download full filtered signals dataset as an attachment JSON file."""
-    import json
     page = await signals.search(
         city=city,
         domain=domain,

@@ -1,5 +1,6 @@
 """Active job vacancies query route for map layer and talent search."""
 
+import json
 from typing import Annotated
 
 from fastapi import APIRouter, Query, Response
@@ -42,7 +43,6 @@ async def export_jobs(
     keyword: Annotated[str | None, Query(max_length=128)] = None,
 ) -> Response:
     """Download full filtered jobs dataset as an attachment JSON file."""
-    import json
     items = await jobs.search(
         city=city,
         domain=domain,

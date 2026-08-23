@@ -6,11 +6,18 @@ Smart-routes arbitrary URLs:
   and normalizes/stores extracted signals into the atlas database.
 """
 
+import asyncio
 import hashlib
+import json
 import logging
+import os
+import re
 from collections.abc import Mapping, Sequence
+from datetime import UTC, datetime
 from typing import Any
 from urllib.parse import urlparse
+
+import httpx
 
 from app.config import Settings, get_settings
 from app.domain.enums import SourceType
@@ -75,7 +82,6 @@ class AdHocScraperService:
                 extra={"target_url": target_url, "collector_id": existing_collector_id},
             )
             try:
-                import asyncio
                 run_outcome = await asyncio.wait_for(
                     self._cli.run(existing_collector_id, target_url),
                     timeout=6.0,
@@ -86,7 +92,7 @@ class AdHocScraperService:
                     )
                     if payload.get("signals_saved", 0) > 0:
                         return payload
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001
                 logger.warning(
                     "adhoc.fast_path_error",
                     extra={"target_url": target_url, "error": str(exc)},
@@ -103,7 +109,6 @@ class AdHocScraperService:
         )
 
         try:
-            import asyncio
             create_outcome = await asyncio.wait_for(
                 self._cli.create(target_url, cleaned_prompt, name=collector_name),
                 timeout=5.0,
@@ -120,7 +125,7 @@ class AdHocScraperService:
                     )
                     if payload.get("signals_saved", 0) > 0:
                         return payload
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             logger.warning(
                 "adhoc.cli_create_fallback_to_llm",
                 extra={"target_url": target_url, "error": str(exc)},
@@ -138,12 +143,6 @@ class AdHocScraperService:
         prompt: str = "",
     ) -> list[dict[str, Any]]:
         """Fallback web fetcher + Groq LLM structured extractor for unsupported domains."""
-        import json
-        import os
-        import re
-        import httpx
-        from datetime import datetime, timezone
-
         html_content = ""
         try:
             async with httpx.AsyncClient(
@@ -154,48 +153,62 @@ class AdHocScraperService:
                     )
                 },
                 follow_redirects=True,
-                verify=False,
                 timeout=12.0,
             ) as client:
                 resp = await client.get(target_url)
                 if resp.status_code == 200:
                     html_content = resp.text
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             logger.warning("adhoc.fetch_failed", extra={"error": str(exc), "url": target_url})
 
         # Strip scripts, styles, tags to get clean text
-        cleaned_text = re.sub(r"<script.*?</script>", " ", html_content, flags=re.DOTALL | re.IGNORECASE)
-        cleaned_text = re.sub(r"<style.*?</style>", " ", cleaned_text, flags=re.DOTALL | re.IGNORECASE)
+        cleaned_text = re.sub(
+            r"<script.*?</script>", " ", html_content, flags=re.DOTALL | re.IGNORECASE
+        )
+        cleaned_text = re.sub(
+            r"<style.*?</style>", " ", cleaned_text, flags=re.DOTALL | re.IGNORECASE
+        )
         cleaned_text = re.sub(r"<[^>]+>", " ", cleaned_text)
         cleaned_text = re.sub(r"\s+", " ", cleaned_text).strip()[:6000]
 
-        groq_key = (self._settings.groq_api_key if self._settings else None) or os.getenv("GROQ_API_KEY", "").strip()
+        groq_key = (self._settings.groq_api_key if self._settings else None) or os.getenv(
+            "GROQ_API_KEY", ""
+        ).strip()
         if not cleaned_text or not groq_key:
             # Fallback heuristic row if no text or no Groq key
             return [
                 {
                     "title": f"Intelligence Signal from {urlparse(target_url).netloc}",
-                    "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                    "city": "Delhi" if any(k in target_url.lower() for k in ("delhi", "iitd", "noida", "gurugram")) else "San Francisco",
+                    "date": datetime.now(UTC).strftime("%Y-%m-%d"),
+                    "city": (
+                        "Delhi"
+                        if any(
+                            k in target_url.lower() for k in ("delhi", "iitd", "noida", "gurugram")
+                        )
+                        else "San Francisco"
+                    ),
                     "domain": "AI/ML",
                     "summary": f"Signal captured from {target_url}",
                     "url": target_url,
                 }
             ]
 
+        user_instruction = (
+            prompt or "Extract announcements, research initiatives, grants, or events."
+        )
         extraction_prompt = f"""\
 You are an expert AI data extractor.
 Analyze the following webpage content from URL: {target_url}
-User Extraction Instructions: {prompt or "Extract announcements, research initiatives, grants, expansions, or events."}
+User Extraction Instructions: {user_instruction}
 
-Extract all concrete technology innovation signals, research breakthroughs, startups, or events from the page into a strict JSON array of objects.
+Extract all technology innovation signals or breakthroughs into a strict JSON array.
 Return ONLY valid JSON with this schema (no commentary):
 [
   {{
     "title": "Clear concise title of the announcement",
     "date": "YYYY-MM-DD (or current year date)",
     "city": "Delhi" or "San Francisco",
-    "domain": "one of: AI/ML, Robotics, Biotech, Climate & Energy, Semiconductors, Quantum, Fintech, Cybersecurity",
+    "domain": "AI/ML, Robotics, Biotech, Climate & Energy, Semiconductors, Quantum, Fintech",
     "summary": "1-2 sentence executive summary of the signal",
     "url": "{target_url}"
   }}
@@ -216,7 +229,12 @@ Webpage Content:
                     json={
                         "model": "llama-3.3-70b-versatile",
                         "messages": [
-                            {"role": "system", "content": "You are a structured data extractor that outputs only valid JSON arrays."},
+                            {
+                                "role": "system",
+                                "content": (
+                                    "You are a structured data extractor that outputs valid JSON."
+                                ),
+                            },
                             {"role": "user", "content": extraction_prompt},
                         ],
                         "temperature": 0.1,
@@ -230,14 +248,18 @@ Webpage Content:
                         parsed = json.loads(match.group(0))
                         if isinstance(parsed, list) and len(parsed) > 0:
                             return parsed
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             logger.warning("adhoc.groq_extraction_failed", extra={"error": str(exc)})
 
         return [
             {
                 "title": f"Captured Tech Signal from {urlparse(target_url).netloc}",
-                "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                "city": "Delhi" if any(k in target_url.lower() for k in ("delhi", "iitd", "noida", "gurugram")) else "San Francisco",
+                "date": datetime.now(UTC).strftime("%Y-%m-%d"),
+                "city": (
+                    "Delhi"
+                    if any(k in target_url.lower() for k in ("delhi", "iitd", "noida", "gurugram"))
+                    else "San Francisco"
+                ),
                 "domain": "AI/ML",
                 "summary": f"Signal captured from {target_url}",
                 "url": target_url,
@@ -267,7 +289,10 @@ Webpage Content:
         )
         source_type = (
             SourceType.UNIVERSITY_RESEARCH
-            if any(k in source_url.lower() for k in ("iitd", "edu", "research", "univ", "lab", "bair", "stanford", "berkeley"))
+            if any(
+                k in source_url.lower()
+                for k in ("iitd", "edu", "research", "univ", "lab", "bair", "stanford", "berkeley")
+            )
             else SourceType.STARTUP_NEWSROOM
         )
 

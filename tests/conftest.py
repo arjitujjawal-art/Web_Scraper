@@ -100,6 +100,7 @@ def settings(tmp_path: Path) -> Settings:
         openai_api_key="",
         anthropic_api_key="",
         cli_max_concurrency=1,
+        auto_seed_on_startup=False,
     )
 
 
