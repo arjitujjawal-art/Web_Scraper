@@ -21,6 +21,8 @@
 ```
 
 ### We don't scrape opportunities. We scrape the signals that reveal where opportunities are about to emerge.
+📣 **Deployed link :** [click on this](https://web-scraper-day.pages.dev)
+
 
 *A self-healing, predictive signal-convergence engine built on Bright Data Scraper Studio.*
 *Built for **Into the Scrape-Verse** — WeMakeDevs × Bright Data*
